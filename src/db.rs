@@ -53,7 +53,7 @@ mod tests {
 
     #[test]
     fn test_init_db() {
-        let db_location = "/tmp/test_init_k8p.db";
+        let db_location = "/tmp/test_init_triples.db";
 
         // Ensure there's no db file before the test
         let _ = fs::remove_file(db_location);
@@ -75,7 +75,7 @@ mod tests {
 
     #[test]
     fn test_create_table() {
-        let db_location = "/tmp/test_k8p.db";
+        let db_location = "/tmp/test_triples.db";
 
         // Ensure there's no db file before the test
         let _ = fs::remove_file(db_location);
