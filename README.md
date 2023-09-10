@@ -8,7 +8,7 @@ Experimental Rust lib that will store any data in triple format.
 
 * main API / usage is embedded - ie via rust API and crate dependency via cargo.toml
 * stores only subject, predicate, and object where 
-  * subject is always a UUID
+  * subject is always an RDF name
   * predicate is always an RDF name
   * object is always a UTF string
 * append-only / intended for event-sourcing
