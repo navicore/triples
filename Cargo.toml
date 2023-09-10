@@ -9,6 +9,10 @@ keywords = ["rdf", "event-sourcing", "triples"]
 documentation = "https://docs.rs/triples"
 repository = "https://github.com/navicore/triples"
 
+[lib]
+name = "triples"
+path = "src/lib.rs"
+
 [[bin]]
 name = "triples"
 path = "src/main.rs"
