@@ -6,6 +6,7 @@ Experimental Rust lib that will store any data in triple format.
 
 ## Features
 
+* main API / usage is embedded - ie via rust API and crate dependency via cargo.toml
 * stores only subject, predicate, and object where 
   * subject is always a UUID
   * predicate is always an RDF name
