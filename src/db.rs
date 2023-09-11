@@ -1,29 +1,17 @@
+#[cfg(feature = "postgres")]
+use anyhow::Error;
 use sqlx::sqlite::SqlitePool;
+use sqlx::Pool;
+use sqlx::Sqlite;
 use std::fs::File;
 use std::path::Path;
 use tracing::info;
 
 /// # Errors
 ///
-/// Will return `Err` if function cannot create db file
-pub async fn init(db_location: String) -> Result<SqlitePool, Box<dyn std::error::Error>> {
-    let db_url = format!("sqlite:{db_location}");
-    let db_path = Path::new(&db_location);
-    if db_path.exists() {
-        info!("adding to db {}", db_url);
-    } else {
-        info!("creating db {}", db_url);
-        File::create(&db_location)?;
-    }
-
-    let pool = SqlitePool::connect(&db_url).await?;
-    Ok(pool)
-}
-
-/// # Errors
-///
 /// Will return `Err` if function cannot create db table
-pub async fn create_table(pool: &SqlitePool) -> Result<(), Box<dyn std::error::Error>> {
+#[cfg(all(feature = "sqlite", not(feature = "disable-sqlite")))]
+pub async fn create_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::error::Error>> {
     sqlx::query(
         r#"
         CREATE TABLE IF NOT EXISTS triples (
@@ -44,6 +32,44 @@ pub async fn create_table(pool: &SqlitePool) -> Result<(), Box<dyn std::error::E
     Ok(())
 }
 
+/// # Errors
+///
+/// Will return `Err` if function cannot init db file
+#[cfg(all(feature = "sqlite", not(feature = "disable-sqlite")))]
+pub async fn init_db(db_location: String) -> Result<Pool<Sqlite>, Box<dyn std::error::Error>> {
+    let db_url = format!("sqlite:{db_location}");
+    let db_path = Path::new(&db_location);
+    if db_path.exists() {
+        info!("adding to db {}", db_url);
+    } else {
+        info!("creating db {}", db_url);
+        File::create(&db_location)?;
+    }
+
+    let pool = SqlitePool::connect(&db_url).await?;
+    Ok(pool)
+}
+
+/// # Errors
+///
+/// Will return `Err` if function cannot init db server connection
+#[cfg(feature = "postgres")]
+pub async fn init_db(db_location: String) -> Result<Pool<sqlx::Postgres>, Error> {
+    Err(Error::msg(
+        "Postgres initialization is not yet implemented.",
+    ))
+}
+
+/// # Errors
+///
+/// Will return `Err` if function cannot create table
+#[cfg(feature = "postgres")]
+pub async fn create_table(pool: &Pool<sqlx::Postgres>) -> Result<(), Error> {
+    Err(Error::msg(
+        "Postgres initialization is not yet implemented.",
+    ))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -60,7 +86,7 @@ mod tests {
 
         let rt = Runtime::new().unwrap();
         rt.block_on(async {
-            let _pool = init(db_location.to_string()).await.unwrap();
+            let _pool = init_db(db_location.to_string()).await.unwrap();
 
             // Check if the database has been created successfully
             let mut conn = SqliteConnection::connect(&format!("sqlite:{}", db_location))
@@ -82,7 +108,7 @@ mod tests {
 
         let rt = Runtime::new().unwrap();
         rt.block_on(async {
-            let pool = init(db_location.to_string()).await.unwrap();
+            let pool = init_db(db_location.to_string()).await.unwrap();
 
             match create_table(&pool).await {
                 Ok(_) => (),
