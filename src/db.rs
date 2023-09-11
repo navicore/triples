@@ -11,14 +11,37 @@ use tracing::info;
 ///
 /// Will return `Err` if function cannot create db table
 #[cfg(all(feature = "sqlite", not(feature = "disable-sqlite")))]
-pub async fn create_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn create_names_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::error::Error>> {
+    sqlx::query(
+        r#"
+        CREATE TABLE IF NOT EXISTS names (
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_names ON names (name);
+        "#,
+    )
+    .execute(pool)
+    .await?;
+
+    Ok(())
+}
+
+/// # Errors
+///
+/// Will return `Err` if function cannot create db table
+#[cfg(all(feature = "sqlite", not(feature = "disable-sqlite")))]
+pub async fn create_triples_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::error::Error>> {
     sqlx::query(
         r#"
         CREATE TABLE IF NOT EXISTS triples (
             id INTEGER PRIMARY KEY,
-            subject TEXT NOT NULL,
-            predicate TEXT NOT NULL,
-            object TEXT NOT NULL
+            subject INTEGER NOT NULL,
+            predicate INTEGER NOT NULL,
+            object TEXT NOT NULL,
+            FOREIGN KEY (subject) REFERENCES names(id),
+            FOREIGN KEY (predicate) REFERENCES names(id)
         );
 
         CREATE INDEX IF NOT EXISTS idx_subject ON triples (subject);
@@ -64,7 +87,7 @@ pub async fn init_db(db_location: String) -> Result<Pool<sqlx::Postgres>, Error>
 ///
 /// Will return `Err` if function cannot create table
 #[cfg(feature = "postgres")]
-pub async fn create_table(pool: &Pool<sqlx::Postgres>) -> Result<(), Error> {
+pub async fn create_triples_table(pool: &Pool<sqlx::Postgres>) -> Result<(), Error> {
     Err(Error::msg(
         "Postgres initialization is not yet implemented.",
     ))
@@ -100,7 +123,7 @@ mod tests {
     }
 
     #[test]
-    fn test_create_table() {
+    fn test_create_tables() {
         let db_location = "/tmp/test_triples.db";
 
         // Ensure there's no db file before the test
@@ -110,9 +133,14 @@ mod tests {
         rt.block_on(async {
             let pool = init_db(db_location.to_string()).await.unwrap();
 
-            match create_table(&pool).await {
+            match create_names_table(&pool).await {
                 Ok(_) => (),
-                Err(e) => panic!("create_table failed with {:?}", e),
+                Err(e) => panic!("create_names_table failed with {:?}", e),
+            }
+
+            match create_triples_table(&pool).await {
+                Ok(_) => (),
+                Err(e) => panic!("create_triples_table failed with {:?}", e),
             }
 
             // Check if the table has been created
