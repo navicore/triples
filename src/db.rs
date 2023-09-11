@@ -11,7 +11,7 @@ use tracing::info;
 ///
 /// Will return `Err` if function cannot create db table
 #[cfg(all(feature = "sqlite", not(feature = "disable-sqlite")))]
-pub async fn create_names_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::error::Error>> {
+async fn create_names_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::error::Error>> {
     sqlx::query(
         r#"
         CREATE TABLE IF NOT EXISTS names (
@@ -32,7 +32,7 @@ pub async fn create_names_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::
 ///
 /// Will return `Err` if function cannot create db table
 #[cfg(all(feature = "sqlite", not(feature = "disable-sqlite")))]
-pub async fn create_triples_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::error::Error>> {
+async fn create_triples_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::error::Error>> {
     sqlx::query(
         r#"
         CREATE TABLE IF NOT EXISTS triples (
@@ -59,7 +59,7 @@ pub async fn create_triples_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std
 ///
 /// Will return `Err` if function cannot init db file
 #[cfg(all(feature = "sqlite", not(feature = "disable-sqlite")))]
-pub async fn init_db(db_location: String) -> Result<Pool<Sqlite>, Box<dyn std::error::Error>> {
+pub async fn init(db_location: String) -> Result<Pool<Sqlite>, Box<dyn std::error::Error>> {
     let db_url = format!("sqlite:{db_location}");
     let db_path = Path::new(&db_location);
     if db_path.exists() {
@@ -70,6 +70,11 @@ pub async fn init_db(db_location: String) -> Result<Pool<Sqlite>, Box<dyn std::e
     }
 
     let pool = SqlitePool::connect(&db_url).await?;
+
+    create_names_table(&pool).await?;
+
+    create_triples_table(&pool).await?;
+
     Ok(pool)
 }
 
@@ -77,7 +82,7 @@ pub async fn init_db(db_location: String) -> Result<Pool<Sqlite>, Box<dyn std::e
 ///
 /// Will return `Err` if function cannot init db server connection
 #[cfg(feature = "postgres")]
-pub async fn init_db(db_location: String) -> Result<Pool<sqlx::Postgres>, Error> {
+pub async fn init(db_location: String) -> Result<Pool<sqlx::Postgres>, Error> {
     Err(Error::msg(
         "Postgres initialization is not yet implemented.",
     ))
@@ -87,7 +92,7 @@ pub async fn init_db(db_location: String) -> Result<Pool<sqlx::Postgres>, Error>
 ///
 /// Will return `Err` if function cannot create table
 #[cfg(feature = "postgres")]
-pub async fn create_triples_table(pool: &Pool<sqlx::Postgres>) -> Result<(), Error> {
+async fn create_triples_table(pool: &Pool<sqlx::Postgres>) -> Result<(), Error> {
     Err(Error::msg(
         "Postgres initialization is not yet implemented.",
     ))
@@ -101,29 +106,7 @@ mod tests {
     use tokio::runtime::Runtime;
 
     #[test]
-    fn test_init_db() {
-        let db_location = "/tmp/test_init_triples.db";
-
-        // Ensure there's no db file before the test
-        let _ = fs::remove_file(db_location);
-
-        let rt = Runtime::new().unwrap();
-        rt.block_on(async {
-            let _pool = init_db(db_location.to_string()).await.unwrap();
-
-            // Check if the database has been created successfully
-            let mut conn = SqliteConnection::connect(&format!("sqlite:{}", db_location))
-                .await
-                .unwrap();
-            assert!(conn.ping().await.is_ok());
-        });
-
-        // Clean up after the test
-        let _ = fs::remove_file(db_location);
-    }
-
-    #[test]
-    fn test_create_tables() {
+    fn test_init() {
         let db_location = "/tmp/test_triples.db";
 
         // Ensure there's no db file before the test
@@ -131,19 +114,22 @@ mod tests {
 
         let rt = Runtime::new().unwrap();
         rt.block_on(async {
-            let pool = init_db(db_location.to_string()).await.unwrap();
+            let pool = init(db_location.to_string()).await.unwrap();
 
-            match create_names_table(&pool).await {
-                Ok(_) => (),
-                Err(e) => panic!("create_names_table failed with {:?}", e),
-            }
+            // Check if the database has been created - conn is not used beyond this test
+            let mut conn = SqliteConnection::connect(&format!("sqlite:{}", db_location))
+                .await
+                .unwrap();
+            assert!(conn.ping().await.is_ok());
 
-            match create_triples_table(&pool).await {
-                Ok(_) => (),
-                Err(e) => panic!("create_triples_table failed with {:?}", e),
-            }
+            // Check if the names table has been created
+            let row: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM names")
+                .fetch_one(&pool)
+                .await
+                .unwrap();
+            assert_eq!(row.0, 0);
 
-            // Check if the table has been created
+            // Check if the triples table has been created
             let row: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM triples")
                 .fetch_one(&pool)
                 .await
