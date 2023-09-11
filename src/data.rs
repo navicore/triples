@@ -2,32 +2,37 @@ use regex::Regex;
 use std::collections::HashMap;
 use std::fmt;
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum RdfNameError {
+    InvalidIRI,
+    // Add more error variants here as needed.
+}
+
 /// Represents an RDF name (a simple IRI validation is performed).
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct RdfName(String);
 
-impl fmt::Display for RdfName {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.0)
-    }
-}
-
 impl RdfName {
-    /// Constructs a new `RdfName` if the input string is a valid IRI.
-    #[must_use]
-    pub fn new(name: String) -> Option<Self> {
+    /// # Errors
+    /// Will return `Err` if name is not a valid IRI
+    pub fn new(name: String) -> Result<Self, RdfNameError> {
         if Self::is_valid(&name) {
-            Some(Self(name))
+            Ok(Self(name))
         } else {
-            None
+            Err(RdfNameError::InvalidIRI)
         }
     }
 
     /// Checks if the given string is a valid IRI.
-    /// Find a lib if this is not enough validation.
     fn is_valid(name: &str) -> bool {
         Regex::new(r"^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$")
             .map_or(false, |iri_regex| iri_regex.is_match(name))
+    }
+}
+
+impl fmt::Display for RdfName {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)
     }
 }
 
@@ -88,13 +93,13 @@ mod tests {
     #[test]
     fn rdf_name_valid() {
         let valid_iri = RdfName::new("https://www.example.com/test".to_string());
-        assert!(valid_iri.is_some());
+        assert!(valid_iri.is_ok());
     }
 
     #[test]
     fn rdf_name_invalid() {
         let invalid_iri = RdfName::new("invalid_string".to_string());
-        assert_eq!(invalid_iri, None, "Unexpected IRI: {:?}", invalid_iri);
+        assert!(!invalid_iri.is_ok());
     }
 
     #[test]
