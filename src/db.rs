@@ -1,9 +1,8 @@
-#[cfg(feature = "postgres")]
-use anyhow::Error;
+// #[cfg(feature = "postgres")]
+// use anyhow::Error;
 use sqlx::Pool;
 use sqlx::Sqlite;
 use std::fs::File;
-use std::path::Path;
 use tracing::info;
 
 /// # Errors
@@ -60,7 +59,8 @@ async fn create_triples_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::er
 #[cfg(all(feature = "sqlite", not(feature = "disable-sqlite")))]
 pub async fn init(db_location: String) -> Result<Pool<Sqlite>, Box<dyn std::error::Error>> {
     let db_url = format!("sqlite:{db_location}");
-    let db_path = Path::new(&db_location);
+
+    let db_path = std::path::Path::new(&db_location);
     if db_path.exists() {
         info!("adding to db {}", db_url);
     } else {
