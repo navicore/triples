@@ -7,6 +7,14 @@ pub enum RdfNameError {
     InvalidIRI,
     // Add more error variants here as needed.
 }
+impl std::error::Error for RdfNameError {}
+impl fmt::Display for RdfNameError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Self::InvalidIRI => write!(f, "Invalid IRI"),
+        }
+    }
+}
 
 /// Represents an RDF name (a simple IRI validation is performed).
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -40,7 +48,7 @@ impl fmt::Display for RdfName {
 #[derive(Debug, Clone)]
 pub struct Subject {
     subject: RdfName,
-    predicates_objects: HashMap<RdfName, String>,
+    predicate_object_pairs: HashMap<RdfName, String>,
 }
 
 impl fmt::Display for Subject {
@@ -49,7 +57,7 @@ impl fmt::Display for Subject {
             f,
             "Subject IRI: {}, Predicate Objects: {}",
             self.subject.0,
-            self.predicates_objects.len()
+            self.predicate_object_pairs.len()
         )
     }
 }
@@ -60,7 +68,7 @@ impl Subject {
     pub fn new(subject: RdfName) -> Self {
         Self {
             subject,
-            predicates_objects: HashMap::new(),
+            predicate_object_pairs: HashMap::new(),
         }
     }
 
@@ -70,24 +78,33 @@ impl Subject {
     }
 
     #[must_use]
-    pub const fn predicates_objects(&self) -> &HashMap<RdfName, String> {
-        &self.predicates_objects
+    pub fn predicate_object_pairs(&self) -> impl Iterator<Item = (&RdfName, &String)> {
+        self.predicate_object_pairs.iter()
     }
-
     /// Adds or updates a predicate/object pair for the subject.
     pub fn add(&mut self, predicate: RdfName, object: String) {
-        self.predicates_objects.insert(predicate, object);
+        self.predicate_object_pairs.insert(predicate, object);
     }
 
     /// Removes a predicate/object pair given the predicate. Returns true if the predicate was present.
     pub fn remove(&mut self, predicate: &RdfName) -> bool {
-        self.predicates_objects.remove(predicate).is_some()
+        self.predicate_object_pairs.remove(predicate).is_some()
     }
 
     /// Fetches the object for a given predicate, if it exists.
     #[must_use]
     pub fn get(&self, predicate: &RdfName) -> Option<&String> {
-        self.predicates_objects.get(predicate)
+        self.predicate_object_pairs.get(predicate)
+    }
+
+    /// Returns an iterator over all predicates.
+    pub fn all_predicates(&self) -> impl Iterator<Item = &RdfName> {
+        self.predicate_object_pairs.keys()
+    }
+
+    /// Returns an iterator over all objects.
+    pub fn all_objects(&self) -> impl Iterator<Item = &String> {
+        self.predicate_object_pairs.values()
     }
 }
 
