@@ -13,6 +13,10 @@ pub struct DbApi {
 
 impl DbApi {
     /// Constructs a new instance of `DbApi` and initializes the pool.
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` if db can not be initialized
     pub async fn new(db_location: String) -> Result<Self, Box<dyn std::error::Error>> {
         let pool = db::init(db_location).await?;
         Ok(Self { pool })
@@ -25,12 +29,15 @@ impl DbApi {
     /// Will return `Err` if insertion cannot be performed.
     pub async fn insert(&self, subject: &Subject) -> Result<(), Box<dyn std::error::Error>> {
         let pool = &self.pool;
+
+        let tx = pool.begin().await?; // Start a new transaction
+
         // Insert the subject name if it doesn't exist, or get its ID
         sqlx::query(
             r#"
-    INSERT INTO names (name) VALUES (?1)
-    ON CONFLICT(name) DO NOTHING
-    "#,
+            INSERT INTO names (name) VALUES (?1)
+            ON CONFLICT(name) DO NOTHING
+            "#,
         )
         .bind(&subject.name().to_string())
         .execute(pool)
@@ -79,7 +86,7 @@ impl DbApi {
             .execute(pool)
             .await?;
         }
-
+        tx.commit().await?; // Commit the transaction
         Ok(())
     }
 
@@ -88,7 +95,7 @@ impl DbApi {
     /// # Errors
     ///
     /// Will return `Err` if the data cannot be queried from the database.
-    pub async fn query(&self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn query(&self) -> Result<(), Box<dyn std::error::Error>> {
         // TODO: Implement the query logic
         Ok(())
     }
@@ -134,9 +141,8 @@ mod tests {
         // Use the insert function
         db_api.insert(&subject).await.expect("Insert failed");
 
-        // Query the database to ensure data was inserted correctly
-        // This is a simple check and can be expanded for more thorough testing
-        let result: (String, String, String) = sqlx::query_as(
+        // Fetch all matching rows
+        let results: Vec<(String, String, String)> = sqlx::query_as(
             r#"
             SELECT subjects.name, predicates.name, triples.object
             FROM triples
@@ -145,16 +151,23 @@ mod tests {
             WHERE subjects.name = ?1
             "#,
         )
-        .bind(&subject_iri) // <-- bind the parameter here
-        .fetch_one(&db_api.pool)
+        .bind(&subject_iri)
+        .fetch_all(&db_api.pool)
         .await
         .expect("Failed to fetch from test DB");
 
-        assert_eq!(result.0, subject_iri);
-        assert_eq!(result.1, predicate_1_iri);
-        assert_eq!(result.2, object_1_value);
+        // Check that there are 2 rows
+        assert_eq!(results.len(), 2);
 
-        // Cleanup is done automatically as it's an in-memory DB
+        // Assert the values of the first row
+        assert_eq!(results[0].0, subject_iri);
+        assert_eq!(results[0].1, predicate_1_iri);
+        assert_eq!(results[0].2, object_1_value);
+
+        // Assert the values of the second row
+        assert_eq!(results[1].0, subject_iri);
+        assert_eq!(results[1].1, predicate_2_iri);
+        assert_eq!(results[1].2, object_2_value);
     }
 
     #[tokio::test]
