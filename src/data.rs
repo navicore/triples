@@ -69,6 +69,11 @@ impl Subject {
         &self.subject
     }
 
+    #[must_use]
+    pub const fn predicates_objects(&self) -> &HashMap<RdfName, String> {
+        &self.predicates_objects
+    }
+
     /// Adds or updates a predicate/object pair for the subject.
     pub fn add(&mut self, predicate: RdfName, object: String) {
         self.predicates_objects.insert(predicate, object);

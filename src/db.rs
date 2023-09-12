@@ -1,6 +1,5 @@
 #[cfg(feature = "postgres")]
 use anyhow::Error;
-use sqlx::sqlite::SqlitePool;
 use sqlx::Pool;
 use sqlx::Sqlite;
 use std::fs::File;
@@ -16,7 +15,7 @@ async fn create_names_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::erro
         r#"
         CREATE TABLE IF NOT EXISTS names (
             id INTEGER PRIMARY KEY,
-            name TEXT NOT NULL
+            name TEXT UNIQUE NOT NULL
         );
 
         CREATE INDEX IF NOT EXISTS idx_names ON names (name);
@@ -69,7 +68,7 @@ pub async fn init(db_location: String) -> Result<Pool<Sqlite>, Box<dyn std::erro
         File::create(&db_location)?;
     }
 
-    let pool = SqlitePool::connect(&db_url).await?;
+    let pool = Pool::connect(&db_url).await?;
 
     create_names_table(&pool).await?;
 
@@ -101,7 +100,6 @@ async fn create_triples_table(pool: &Pool<sqlx::Postgres>) -> Result<(), Error> 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use sqlx::{Connection, SqliteConnection};
     use std::fs;
     use tokio::runtime::Runtime;
 
@@ -115,12 +113,6 @@ mod tests {
         let rt = Runtime::new().unwrap();
         rt.block_on(async {
             let pool = init(db_location.to_string()).await.unwrap();
-
-            // Check if the database has been created - conn is not used beyond this test
-            let mut conn = SqliteConnection::connect(&format!("sqlite:{}", db_location))
-                .await
-                .unwrap();
-            assert!(conn.ping().await.is_ok());
 
             // Check if the names table has been created
             let row: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM names")
