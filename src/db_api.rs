@@ -1,6 +1,7 @@
 use crate::data::Subject;
 use sqlx::Pool;
 use sqlx::Sqlite;
+use tracing::debug;
 
 // #[cfg(feature = "postgres")]
 // use sqlx::Postgres;
@@ -18,7 +19,8 @@ impl DbApi {
     ///
     /// Will return `Err` if db can not be initialized
     pub async fn new(db_location: String) -> Result<Self, Box<dyn std::error::Error>> {
-        let pool = db::init(db_location).await?;
+        let pool = db::init(db_location.clone()).await?;
+        debug!("db {db_location} initialized");
         Ok(Self { pool })
     }
 

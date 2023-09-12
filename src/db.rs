@@ -3,7 +3,7 @@
 use sqlx::Pool;
 use sqlx::Sqlite;
 use std::fs::File;
-use tracing::info;
+use tracing::{debug, info};
 
 /// # Errors
 ///
@@ -23,6 +23,7 @@ async fn create_names_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::erro
     .execute(pool)
     .await?;
 
+    debug!("db names table initialized");
     Ok(())
 }
 
@@ -50,6 +51,7 @@ async fn create_triples_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::er
     .execute(pool)
     .await?;
 
+    debug!("db triples table initialized");
     Ok(())
 }
 
