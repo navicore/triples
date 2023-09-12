@@ -88,7 +88,7 @@ impl DbApi {
             .insert_name_and_get_id(&subject.name().to_string())
             .await?;
 
-        for (predicate, object) in subject.predicates_objects() {
+        for (predicate, object) in subject.predicate_object_pairs() {
             let fetched_predicate_id = self.insert_name_and_get_id(&predicate.to_string()).await?;
             self.insert_triple(fetched_subject_id, fetched_predicate_id, object)
                 .await?;
@@ -231,24 +231,16 @@ mod tests {
             queried_subject.name().to_string()
         );
 
-        let original_predicates_objects: Vec<_> = subject.predicates_objects().iter().collect();
-        let queried_predicates_objects: Vec<_> =
-            queried_subject.predicates_objects().iter().collect();
+        let original_predicates: Vec<_> = subject.all_predicates().collect();
+        let queried_predicates: Vec<_> = queried_subject.all_predicates().collect();
 
-        assert_eq!(
-            original_predicates_objects.len(),
-            queried_predicates_objects.len()
-        );
+        // First, ensure that the predicates are the same and in the same order
+        assert_eq!(original_predicates, queried_predicates);
 
-        for ((original_predicate, original_object), (queried_predicate, queried_object)) in
-            original_predicates_objects
-                .iter()
-                .zip(queried_predicates_objects.iter())
-        {
-            assert_eq!(
-                original_predicate.to_string(),
-                queried_predicate.to_string()
-            );
+        // Now compare the associated objects using the predicate keys
+        for predicate in original_predicates {
+            let original_object = subject.get(predicate).unwrap();
+            let queried_object = queried_subject.get(predicate).unwrap();
             assert_eq!(original_object, queried_object);
         }
     }
