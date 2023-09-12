@@ -24,6 +24,55 @@ impl DbApi {
         Ok(Self { pool })
     }
 
+    async fn insert_name_and_get_id(&self, name: &str) -> Result<i64, Box<dyn std::error::Error>> {
+        let pool = &self.pool;
+
+        // Insert the name if it doesn't exist
+        sqlx::query(
+            r#"
+            INSERT INTO names (name) VALUES (?1)
+            ON CONFLICT(name) DO NOTHING
+            "#,
+        )
+        .bind(name)
+        .execute(pool)
+        .await?;
+
+        // Fetch and return the ID of the name
+        let id: i64 = sqlx::query_scalar(
+            r#"
+            SELECT id FROM names WHERE name = ?1
+            "#,
+        )
+        .bind(name)
+        .fetch_one(pool)
+        .await?;
+
+        Ok(id)
+    }
+
+    async fn insert_triple(
+        &self,
+        subject_id: i64,
+        predicate_id: i64,
+        object: &str,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let pool = &self.pool;
+
+        sqlx::query(
+            r#"
+            INSERT INTO triples (subject, predicate, object) VALUES (?1, ?2, ?3)
+            "#,
+        )
+        .bind(subject_id)
+        .bind(predicate_id)
+        .bind(object)
+        .execute(pool)
+        .await?;
+
+        Ok(())
+    }
+
     /// Inserts a given RDF subject into the database.
     ///
     /// # Errors
@@ -32,63 +81,20 @@ impl DbApi {
     pub async fn insert(&self, subject: &Subject) -> Result<(), Box<dyn std::error::Error>> {
         let pool = &self.pool;
 
-        let tx = pool.begin().await?; // Start a new transaction
+        let tx = pool.begin().await?;
 
-        // Insert the subject name if it doesn't exist, or get its ID
-        sqlx::query(
-            r#"
-            INSERT INTO names (name) VALUES (?1)
-            ON CONFLICT(name) DO NOTHING
-            "#,
-        )
-        .bind(&subject.name().to_string())
-        .execute(pool)
-        .await?;
+        let fetched_subject_id = self
+            .insert_name_and_get_id(&subject.name().to_string())
+            .await?;
 
-        let fetched_subject_id: i64 = sqlx::query_scalar(
-            r#"
-    SELECT id FROM names WHERE name = ?1
-    "#,
-        )
-        .bind(&subject.name().to_string())
-        .fetch_one(pool)
-        .await?;
-
-        // For each predicate-object pair, insert into the DB
         for (predicate, object) in subject.predicates_objects() {
-            // Insert the predicate name if it doesn't exist, or get its ID
-            sqlx::query(
-                r#"
-        INSERT INTO names (name) VALUES (?1)
-        ON CONFLICT(name) DO NOTHING
-        "#,
-            )
-            .bind(&predicate.to_string())
-            .execute(pool)
-            .await?;
-
-            let fetched_predicate_id: i64 = sqlx::query_scalar(
-                r#"
-        SELECT id FROM names WHERE name = ?1
-        "#,
-            )
-            .bind(&predicate.to_string())
-            .fetch_one(pool)
-            .await?;
-
-            // Insert the subject-predicate-object triple into the triples table
-            sqlx::query(
-                r#"
-        INSERT INTO triples (subject, predicate, object) VALUES (?1, ?2, ?3)
-        "#,
-            )
-            .bind(fetched_subject_id)
-            .bind(fetched_predicate_id)
-            .bind(object)
-            .execute(pool)
-            .await?;
+            let fetched_predicate_id = self.insert_name_and_get_id(&predicate.to_string()).await?;
+            self.insert_triple(fetched_subject_id, fetched_predicate_id, object)
+                .await?;
         }
-        tx.commit().await?; // Commit the transaction
+
+        tx.commit().await?;
+
         Ok(())
     }
 
