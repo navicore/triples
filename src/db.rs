@@ -77,25 +77,25 @@ pub async fn init(db_location: String) -> Result<Pool<Sqlite>, Box<dyn std::erro
     Ok(pool)
 }
 
-/// # Errors
-///
-/// Will return `Err` if function cannot init db server connection
-#[cfg(feature = "postgres")]
-pub async fn init(db_location: String) -> Result<Pool<sqlx::Postgres>, Error> {
-    Err(Error::msg(
-        "Postgres initialization is not yet implemented.",
-    ))
-}
-
-/// # Errors
-///
-/// Will return `Err` if function cannot create table
-#[cfg(feature = "postgres")]
-async fn create_triples_table(pool: &Pool<sqlx::Postgres>) -> Result<(), Error> {
-    Err(Error::msg(
-        "Postgres initialization is not yet implemented.",
-    ))
-}
+// /// # Errors
+// ///
+// /// Will return `Err` if function cannot init db server connection
+// #[cfg(feature = "postgres")]
+// pub async fn init(db_location: String) -> Result<Pool<sqlx::Postgres>, Error> {
+//     Err(Error::msg(
+//         "Postgres initialization is not yet implemented.",
+//     ))
+// }
+//
+// /// # Errors
+// ///
+// /// Will return `Err` if function cannot create table
+// #[cfg(feature = "postgres")]
+// async fn create_triples_table(pool: &Pool<sqlx::Postgres>) -> Result<(), Error> {
+//     Err(Error::msg(
+//         "Postgres initialization is not yet implemented.",
+//     ))
+// }
 
 #[cfg(test)]
 mod tests {

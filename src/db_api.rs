@@ -2,8 +2,8 @@ use crate::data::Subject;
 use sqlx::Pool;
 use sqlx::Sqlite;
 
-#[cfg(feature = "postgres")]
-use sqlx::Postgres;
+// #[cfg(feature = "postgres")]
+// use sqlx::Postgres;
 
 use crate::db;
 
@@ -149,6 +149,7 @@ mod tests {
             JOIN names AS subjects ON triples.subject = subjects.id
             JOIN names AS predicates ON triples.predicate = predicates.id
             WHERE subjects.name = ?1
+            ORDER BY predicates.name
             "#,
         )
         .bind(&subject_iri)
