@@ -7,6 +7,14 @@ pub enum RdfNameError {
     InvalidIRI,
     // Add more error variants here as needed.
 }
+impl std::error::Error for RdfNameError {}
+impl fmt::Display for RdfNameError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Self::InvalidIRI => write!(f, "Invalid IRI"),
+        }
+    }
+}
 
 /// Represents an RDF name (a simple IRI validation is performed).
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]

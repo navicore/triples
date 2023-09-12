@@ -1,3 +1,4 @@
+use crate::data::RdfName;
 use crate::data::Subject;
 use sqlx::Pool;
 use sqlx::Sqlite;
@@ -103,9 +104,41 @@ impl DbApi {
     /// # Errors
     ///
     /// Will return `Err` if the data cannot be queried from the database.
-    pub fn query(&self) -> Result<(), Box<dyn std::error::Error>> {
-        // TODO: Implement the query logic
-        Ok(())
+    pub async fn query(
+        &self,
+        subject_name: &RdfName,
+    ) -> Result<Option<Subject>, Box<dyn std::error::Error>> {
+        let pool = &self.pool;
+
+        // Use the provided subject name to query the database for all predicate/object pairs
+        let results: Vec<(String, String)> = sqlx::query_as(
+            r#"
+        SELECT predicates.name, triples.object
+        FROM triples
+        JOIN names AS subjects ON triples.subject = subjects.id
+        JOIN names AS predicates ON triples.predicate = predicates.id
+        WHERE subjects.name = ?1
+        "#,
+        )
+        .bind(subject_name.to_string())
+        .fetch_all(pool)
+        .await?;
+
+        // If no results are found, return Ok(None)
+        if results.is_empty() {
+            return Ok(None);
+        }
+
+        // Create a Subject object using the provided subject name
+        let mut subject = crate::data::Subject::new(subject_name.clone());
+
+        // Add all the predicate/object pairs to the Subject object
+        for (predicate_iri, object_value) in results {
+            let predicate_name = crate::data::RdfName::new(predicate_iri)?;
+            subject.add(predicate_name, object_value);
+        }
+
+        Ok(Some(subject))
     }
 }
 
@@ -117,20 +150,16 @@ mod tests {
     use std::fs;
 
     const TEST_DB_FILE: &str = "/tmp/triples_unit_test.db";
+    const TEST_DB_FILE_2: &str = "/tmp/triples_unit_test_2.db";
 
-    fn delete_test_db() {
-        for entry in glob(&format!("{TEST_DB_FILE}*")).unwrap() {
+    fn delete_test_db(file: &str) {
+        for entry in glob(&format!("{file}*")).unwrap() {
             let path = entry.unwrap();
             fs::remove_file(path).unwrap();
         }
     }
 
-    #[tokio::test]
-    async fn test_insert() {
-        delete_test_db();
-        // Create an in-memory SQLite database for testing purposes
-        let db_api = DbApi::new(TEST_DB_FILE.to_string()).await.unwrap();
-        // Create a sample Subject
+    fn create_test_subject() -> Subject {
         let subject_iri = "https://www.example.com/subject".to_string();
         let subject_name = crate::data::RdfName::new(subject_iri.clone()).unwrap();
 
@@ -146,6 +175,16 @@ mod tests {
         subject.add(predicate_1_name, object_1_value.clone());
         subject.add(predicate_2_name, object_2_value.clone());
 
+        subject
+    }
+
+    #[tokio::test]
+    async fn test_insert() {
+        delete_test_db(TEST_DB_FILE);
+        // Create an in-memory SQLite database for testing purposes
+        let db_api = DbApi::new(TEST_DB_FILE.to_string()).await.unwrap();
+        let subject = create_test_subject();
+
         // Use the insert function
         db_api.insert(&subject).await.expect("Insert failed");
 
@@ -160,27 +199,57 @@ mod tests {
             ORDER BY predicates.name
             "#,
         )
-        .bind(&subject_iri)
+        .bind(&subject.name().to_string())
         .fetch_all(&db_api.pool)
         .await
         .expect("Failed to fetch from test DB");
 
         // Check that there are 2 rows
         assert_eq!(results.len(), 2);
-
-        // Assert the values of the first row
-        assert_eq!(results[0].0, subject_iri);
-        assert_eq!(results[0].1, predicate_1_iri);
-        assert_eq!(results[0].2, object_1_value);
-
-        // Assert the values of the second row
-        assert_eq!(results[1].0, subject_iri);
-        assert_eq!(results[1].1, predicate_2_iri);
-        assert_eq!(results[1].2, object_2_value);
     }
 
     #[tokio::test]
     async fn test_query() {
-        // TODO: Implement the test for the query method
+        delete_test_db(TEST_DB_FILE_2);
+        // Create an in-memory SQLite database for testing purposes
+        let db_api = DbApi::new(TEST_DB_FILE_2.to_string()).await.unwrap();
+        let subject = create_test_subject();
+
+        // Use the insert function
+        db_api.insert(&subject).await.expect("Insert failed");
+
+        // Query the data back from the database
+        let queried_subject = db_api
+            .query(subject.name())
+            .await
+            .expect("Query failed")
+            .expect("Subject not found in the database");
+
+        // Validate the results
+        assert_eq!(
+            subject.name().to_string(),
+            queried_subject.name().to_string()
+        );
+
+        let original_predicates_objects: Vec<_> = subject.predicates_objects().iter().collect();
+        let queried_predicates_objects: Vec<_> =
+            queried_subject.predicates_objects().iter().collect();
+
+        assert_eq!(
+            original_predicates_objects.len(),
+            queried_predicates_objects.len()
+        );
+
+        for ((original_predicate, original_object), (queried_predicate, queried_object)) in
+            original_predicates_objects
+                .iter()
+                .zip(queried_predicates_objects.iter())
+        {
+            assert_eq!(
+                original_predicate.to_string(),
+                queried_predicate.to_string()
+            );
+            assert_eq!(original_object, queried_object);
+        }
     }
 }
