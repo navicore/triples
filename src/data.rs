@@ -77,7 +77,6 @@ impl Subject {
         &self.subject
     }
 
-    #[must_use]
     pub fn predicate_object_pairs(&self) -> impl Iterator<Item = (&RdfName, &String)> {
         self.predicate_object_pairs.iter()
     }
