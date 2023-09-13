@@ -36,6 +36,7 @@ async fn create_triples_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::er
         r#"
         CREATE TABLE IF NOT EXISTS triples (
             id INTEGER PRIMARY KEY,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             subject INTEGER NOT NULL,
             predicate INTEGER NOT NULL,
             object TEXT NOT NULL,
