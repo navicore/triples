@@ -9,6 +9,10 @@ use tracing::debug;
 
 use crate::db;
 
+pub fn str_to_string(s: &str) -> String {
+    s.to_string()
+}
+
 pub struct DbApi {
     pool: Pool<Sqlite>,
 }

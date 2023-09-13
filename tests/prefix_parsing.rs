@@ -1,0 +1,37 @@
+use lalrpop_util::lalrpop_mod;
+
+lalrpop_mod!(pub prefix); // synthesized by LALRPOP
+
+#[test]
+fn test_prefix_parsing() {
+    // Valid input
+    let input = "@prefix ns: <http://example.com/ns#> .";
+    match prefix::PrefixParser::new().parse(input) {
+        Ok((ns, uri)) => {
+            assert_eq!(ns, "ns");
+            assert_eq!(uri, "http://example.com/ns#");
+        }
+        _ => assert!(false, "Failed to parse valid input"),
+    }
+
+    // Optionally, you can add more checks for valid inputs.
+
+    // Test for invalid input
+    let invalid_input = "@prefix ns http://example.com/ns# .";
+    assert!(
+        prefix::PrefixParser::new().parse(invalid_input).is_err(),
+        "Invalid input was wrongly accepted"
+    );
+
+    // Test for input with different whitespace patterns
+    let input_with_spaces = "@prefix    ns  :    <http://example.com/ns#>    .";
+    match prefix::PrefixParser::new().parse(input_with_spaces) {
+        Ok((ns, uri)) => {
+            assert_eq!(ns, "ns");
+            assert_eq!(uri, "http://example.com/ns#");
+        }
+        _ => assert!(false, "Failed to parse input with spaces"),
+    }
+
+    // ... And you can add more test cases as needed
+}

@@ -1,0 +1,11 @@
+grammar;
+
+use triples::db_api::str_to_string;
+
+pub Prefix: (String, String) = {
+    "@prefix" <ns:Namespace> ":" WhitespaceOpt "<" <t:Token> ">" WhitespaceOpt "." => (ns, t)
+};
+
+Namespace: String = <n:("[^:]+")> => str_to_string(n);
+Token: String = <t:("[^>]+")> => str_to_string(t);
+WhitespaceOpt: () = <"[ \t]*">;
