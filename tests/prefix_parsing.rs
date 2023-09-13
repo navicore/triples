@@ -11,7 +11,7 @@ fn test_prefix_parsing() {
             assert_eq!(ns, "ns");
             assert_eq!(uri, "http://example.com/ns#");
         }
-        _ => assert!(false, "Failed to parse valid input"),
+        d => assert!(false, "Failed to parse valid input: {:?}", d),
     }
 
     // Optionally, you can add more checks for valid inputs.
