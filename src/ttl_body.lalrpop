@@ -4,9 +4,9 @@ use crate::ttl_data::{ParsedLine, Terminator};
 
 // Entry rule for each line
 pub Line: ParsedLine<'input> = {
-    RDFName => ParsedLine::Subject(<>),
-    RDFName Object ";" => ParsedLine::PredObj(<> , <>, Terminator::SemiColon),
-    RDFName Object ";" "." => ParsedLine::PredObjTerm(<> , <>, Terminator::SemiColonDot)
+    <subject:RDFName> => ParsedLine::Subject(subject),
+    <subject:RDFName> <object:Object> ";" => ParsedLine::PredObj(subject , object, Terminator::SemiColon),
+    <subject:RDFName> <object:Object> ";" "." => ParsedLine::PredObjTerm(subject , object, Terminator::SemiColonDot)
 };
 
 // RDF Name (like res:... or prop:...)
