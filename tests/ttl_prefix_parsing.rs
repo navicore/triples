@@ -1,9 +1,7 @@
-use lalrpop_util::lalrpop_mod;
-
-lalrpop_mod!(pub prefix); // synthesized by LALRPOP
+use triples::ttl_prefix::PrefixParser;
 
 fn test_prefix(input: &str) {
-    let parser = prefix::PrefixParser::new();
+    let parser = PrefixParser::new();
     let result = parser.parse(input);
     assert!(result.is_ok(), "Parse failed with: {:?}", result);
     assert_eq!(
