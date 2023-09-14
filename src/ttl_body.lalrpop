@@ -3,20 +3,20 @@ grammar;
 use crate::ttl_data::{ParsedLine, Terminator};
 
 // Entry rule for each line
-pub Line: ParsedLine<'input> = {
-    <subject:RDFName> => ParsedLine::Subject(subject),
-    <subject:RDFName> <object:Object> ";" => ParsedLine::PredObj(subject , object, Terminator::SemiColon),
-    <subject:RDFName> <object:Object> ";" "." => ParsedLine::PredObjTerm(subject , object, Terminator::SemiColonDot)
+pub Line: ParsedLine = {
+    <subject:RDFName> => ParsedLine::Subject(subject.to_string()),
+    <subject:RDFName> <object:Object> ";" => ParsedLine::PredObj(subject.to_string() , object.to_string(), Terminator::SemiColon),
+    <subject:RDFName> <object:Object> ";" "." => ParsedLine::PredObjTerm(subject.to_string() , object.to_string(), Terminator::SemiColonDot)
 };
 
 // RDF Name (like res:... or prop:...)
-RDFName: &'input str = {
-    <name:Ident> ":" <rest:Ident> => format!("{}:{}", name, rest).as_str()
+RDFName: String = {
+    <name:Ident> ":" <rest:Ident> => format!("{}:{}", name, rest)
 };
 
 NotQuoteChar: &'input str = r#"[^"a-zA-Z_]"#;
-Object: &'input str = {
-    "\"" <val:NotQuoteChar+> "\"" => val
+Object: String = {
+    "\"" <val:NotQuoteChar+> "\"" => val.join("")
 };
 
 // Definition of an identifier

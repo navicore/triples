@@ -1,9 +1,9 @@
 #[allow(dead_code)] // clippy can't see lalrpop
 #[derive(Debug, Eq, PartialEq, Clone)]
-pub enum ParsedLine<'input> {
-    Subject(&'input str),
-    PredObj(&'input str, &'input str, Terminator),
-    PredObjTerm(&'input str, &'input str, Terminator),
+pub enum ParsedLine {
+    Subject(String),
+    PredObj(String, String, Terminator),
+    PredObjTerm(String, String, Terminator),
 }
 
 #[allow(dead_code)] // clippy can't see lalrpop
