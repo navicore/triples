@@ -8,6 +8,12 @@ fn test_prefix_basic() {
     let input = "@prefix myns: <http://example.com/myns#> .";
     let result = parser.parse(input);
     assert!(result.is_ok(), "Parse failed with: {:?}", result);
+    assert_eq!(
+        result.clone().unwrap(),
+        ("".to_string(), "".to_string()),
+        "Parse failed with: {:?}",
+        result
+    );
 }
 // #[test]
 // fn test_prefix_parsing() {
