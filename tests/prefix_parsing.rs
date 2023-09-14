@@ -10,7 +10,7 @@ fn test_prefix_basic() {
     assert!(result.is_ok(), "Parse failed with: {:?}", result);
     assert_eq!(
         result.clone().unwrap(),
-        ("".to_string(), "".to_string()),
+        ("myns".to_string(), "http://example.com/myns#".to_string()),
         "Parse failed with: {:?}",
         result
     );
