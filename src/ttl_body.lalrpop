@@ -1,12 +1,12 @@
 grammar;
 
-use crate::ttl_data::{ParsedLine, Terminator};
+use crate::ttl_data::ParsedLine;
 
 // Entry rule for each line
 pub Line: ParsedLine = {
     <subject:RDFName> => ParsedLine::Subject(subject.to_string()),
-    <subject:RDFName> <object:Object> ";" => ParsedLine::PredObj(subject.to_string() , object.to_string(), Terminator::SemiColon),
-    <subject:RDFName> <object:Object> ";" "." => ParsedLine::PredObjTerm(subject.to_string() , object.to_string(), Terminator::SemiColonDot)
+    <subject:RDFName> "\"" <object:Ident> "\"" ";" => ParsedLine::PredObj(subject.to_string() , object.to_string()),
+    <subject:RDFName> "\"" <object:Ident> "\"" ";" "." => ParsedLine::PredObjTerm(subject.to_string() , object.to_string())
 };
 
 // RDF Name (like res:... or prop:...)
@@ -14,11 +14,10 @@ RDFName: String = {
     <name:Ident> ":" <rest:Ident> => format!("{}:{}", name, rest)
 };
 
-NotQuoteChar: &'input str = r#"[^"a-zA-Z_]"#;
-Object: String = {
-    "\"" <val:NotQuoteChar+> "\"" => val.join("")
+// Definition of an identifier
+Ident: &'input str = {
+    r"[a-zA-Z_][a-zA-Z0-9_]*" => <>,
+    UUID => <>
 };
 
-// Definition of an identifier
-Ident: &'input str = r"[a-zA-Z_][a-zA-Z0-9_]*";
-
+UUID: &'input str = r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
