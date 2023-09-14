@@ -15,8 +15,6 @@ Uri: &'input str = {
     "<" <u:UriContent> ">" => u
 };
 
-// Definition of an identifier. To resolve ambiguity, we exclude '<' and '>' characters.
 Ident: &'input str = r"[a-zA-Z_][a-zA-Z0-9_]*";
 
-// Definition of URI content
 UriContent: &'input str = r"https?://[^>]+";
