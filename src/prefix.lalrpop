@@ -1,11 +1,22 @@
 grammar;
 
-use triples::db_api::str_to_string;
-
+// Top-level rule
 pub Prefix: (String, String) = {
-    "@prefix" <ns:Namespace> ":" WhitespaceOpt "<" <t:Token> ">" WhitespaceOpt "." => (ns, t)
+    "@prefix" <ns:Namespace>":" <uri:Uri> "." => (ns.to_string(), uri.to_string())
 };
 
-Namespace: String = <n:("[^:]+")> => str_to_string(n);
-Token: String = <t:("[^>]+")> => str_to_string(t);
-WhitespaceOpt: () = <"[ \t]*">;
+// Captures the namespace (like "myns:")
+Namespace: &'input str = {
+    <n:Ident> => n
+};
+
+// Captures the URI enclosed in angle brackets (like "<http://example.com/myns#>")
+Uri: &'input str = {
+    "<" <u:UriContent> ">" => u
+};
+
+// Definition of an identifier. To resolve ambiguity, we exclude '<' and '>' characters.
+Ident: &'input str = r"[a-zA-Z_][a-zA-Z0-9_]*";
+
+// Definition of URI content
+UriContent: &'input str = r"http://[^>]+";
