@@ -2,10 +2,8 @@ use lalrpop_util::lalrpop_mod;
 
 lalrpop_mod!(pub prefix); // synthesized by LALRPOP
 
-#[test]
-fn test_prefix_basic() {
+fn test_prefix(input: &str) {
     let parser = prefix::PrefixParser::new();
-    let input = "@prefix myns: <http://example.com/myns#> .";
     let result = parser.parse(input);
     assert!(result.is_ok(), "Parse failed with: {:?}", result);
     assert_eq!(
@@ -14,6 +12,21 @@ fn test_prefix_basic() {
         "Parse failed with: {:?}",
         result
     );
+}
+
+#[test]
+fn test_prefix_basic() {
+    let input = "@prefix myns: <http://example.com/myns#> .";
+    test_prefix(input);
+    // let parser = prefix::PrefixParser::new();
+    // let result = parser.parse(input);
+    // assert!(result.is_ok(), "Parse failed with: {:?}", result);
+    // assert_eq!(
+    //     result.clone().unwrap(),
+    //     ("myns".to_string(), "http://example.com/myns#".to_string()),
+    //     "Parse failed with: {:?}",
+    //     result
+    // );
 }
 // #[test]
 // fn test_prefix_parsing() {
