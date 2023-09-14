@@ -9,6 +9,7 @@ use tracing::debug;
 
 use crate::db;
 
+#[must_use]
 pub fn str_to_string(s: &str) -> String {
     s.to_string()
 }

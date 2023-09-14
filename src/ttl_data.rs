@@ -1,5 +1,5 @@
 #[allow(dead_code)] // clippy can't see lalrpop
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, Eq, PartialEq, Clone)]
 pub enum ParsedLine<'input> {
     Subject(&'input str),
     PredObj(&'input str, &'input str, Terminator),
@@ -7,7 +7,7 @@ pub enum ParsedLine<'input> {
 }
 
 #[allow(dead_code)] // clippy can't see lalrpop
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub enum Terminator {
     SemiColon,
     SemiColonDot,
