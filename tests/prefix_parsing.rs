@@ -29,4 +29,8 @@ fn test_prefix_basic() {
     test_prefix(input);
     let input = "@prefix myns:<https://example.com/myns#>.";
     test_prefix(input);
+    let input = "    @prefix myns:<https://example.com/myns#>.";
+    test_prefix(input);
+    let input = "\t@prefix myns:<https://example.com/myns#>.";
+    test_prefix(input);
 }
