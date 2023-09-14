@@ -1,0 +1,24 @@
+grammar;
+
+use crate::ttl_data::{ParsedLine, Terminator};
+
+// Entry rule for each line
+pub Line: ParsedLine<'input> = {
+    RDFName => ParsedLine::Subject(<>),
+    RDFName Object ";" => ParsedLine::PredObj(<> , <>, Terminator::SemiColon),
+    RDFName Object ";" "." => ParsedLine::PredObjTerm(<> , <>, Terminator::SemiColonDot)
+};
+
+// RDF Name (like res:... or prop:...)
+RDFName: &'input str = {
+    <name:Ident> ":" <rest:Ident> => format!("{}:{}", name, rest).as_str()
+};
+
+NotQuoteChar: &'input str = r#"[^"a-zA-Z_]"#;
+Object: &'input str = {
+    "\"" <val:NotQuoteChar+> "\"" => val
+};
+
+// Definition of an identifier
+Ident: &'input str = r"[a-zA-Z_][a-zA-Z0-9_]*";
+
