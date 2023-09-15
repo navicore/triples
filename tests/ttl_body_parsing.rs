@@ -1,4 +1,4 @@
-use triples::ttl_body::LineParser;
+use triples::ttl::LineParser;
 use triples::ttl_data::ParsedLine;
 
 #[test]

@@ -4,10 +4,27 @@ use crate::ttl_data::ParsedLine;
 
 // Entry rule for each line
 pub Line: ParsedLine = {
+    <prefix:Prefix> => ParsedLine::Prefix(prefix.0, prefix.1),
     <subject:RDFName> => ParsedLine::Subject(subject.0, subject.1),
     <pair:PredicateObjectPair> => ParsedLine::PredObj(pair.0.0, pair.0.1, pair.1),
     <pair:PredicateObjectPair> "." => ParsedLine::PredObjTerm(pair.0.0, pair.0.1, pair.1)
 };
+
+pub Prefix: (String, String) = {
+    "@prefix" <ns:Namespace>":" <uri:Uri> "." => (ns.to_string(), uri.to_string())
+};
+
+// Captures the namespace (like "myns:")
+Namespace: &'input str = {
+    <n:Ident> => n
+};
+
+// Captures the URI enclosed in angle brackets (like "<http://example.com/myns#>")
+Uri: &'input str = {
+    "<" <u:UriContent> ">" => u
+};
+
+UriContent: &'input str = r"https?://[^>]+";
 
 PredicateObjectPair: ((Option<String>, String), String) = {
     <predicate:RDFName> <object:Object> ";" => (predicate, object.to_string())
@@ -28,7 +45,11 @@ Ident: &'input str = {
 UUID: &'input str = r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
 
 Object: String = {
-    <quoted:r#""[^"]*""#> => {
+    <quoted:EscapedString> => {
         quoted.trim_matches('"').to_string()
     }
+};
+
+EscapedString: &'input str = {
+    r#""([^"\\]|\\.)*""# => <>
 };
