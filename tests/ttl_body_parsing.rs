@@ -9,7 +9,10 @@ fn test_subject_line_parsing() {
     let parsed1 = parser.parse(line1).unwrap();
     assert_eq!(
         parsed1,
-        ParsedLine::Subject("res:505776d3-80ea-497f-a4ef-753eeb418c50".to_string())
+        ParsedLine::Subject(
+            "res".to_string(),
+            "505776d3-80ea-497f-a4ef-753eeb418c50".to_string()
+        )
     );
 }
 
@@ -22,7 +25,8 @@ fn test_predicate_object_line_parsing() {
     assert_eq!(
         parsed2,
         ParsedLine::PredObj(
-            "prop:k8p_metric_name".to_string(),
+            "prop".to_string(),
+            "k8p_metric_name".to_string(),
             "envoy_cluster_internal_upstream_rq_200".to_string()
         )
     );
@@ -37,7 +41,8 @@ fn test_predicate_object_line_parsing_term() {
     assert_eq!(
         parsed2,
         ParsedLine::PredObjTerm(
-            "prop:k8p_metric_name".to_string(),
+            "prop".to_string(),
+            "k8p_metric_name".to_string(),
             "envoy_cluster:internal upstream_rq_200".to_string()
         )
     );

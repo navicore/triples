@@ -4,18 +4,18 @@ use crate::ttl_data::ParsedLine;
 
 // Entry rule for each line
 pub Line: ParsedLine = {
-    <subject:RDFName> => ParsedLine::Subject(subject.to_string()),
-    <pair:PredicateObjectPair> => ParsedLine::PredObj(pair.0 , pair.1),
-    <pair:PredicateObjectPair> "." => ParsedLine::PredObjTerm(pair.0 , pair.1)
+    <subject:RDFName> => ParsedLine::Subject(subject.0, subject.1),
+    <pair:PredicateObjectPair> => ParsedLine::PredObj(pair.0.0, pair.0.1, pair.1),
+    <pair:PredicateObjectPair> "." => ParsedLine::PredObjTerm(pair.0.0, pair.0.1, pair.1)
 };
 
-PredicateObjectPair: (String, String) = {
+PredicateObjectPair: ((String, String), String) = {
     <predicate:RDFName> <object:Object> ";" => (predicate, object.to_string())
 };
 
 // RDF Name (like res:... or prop:...)
-RDFName: String = {
-    <name:Ident> ":" <rest:Ident> => format!("{}:{}", name, rest)
+RDFName: (String, String) = {
+    <ns:Ident> ":" <name:Ident> => (ns.to_string(), name.to_string())
 };
 
 // Definition of an identifier
