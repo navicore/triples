@@ -10,7 +10,7 @@ pub Line: ParsedLine = {
 };
 
 PredicateObjectPair: (String, String) = {
-    <predicate:RDFName> "\"" <object:Ident> "\"" ";" => (predicate, object.to_string())
+    <predicate:RDFName> <object:Object> ";" => (predicate, object.to_string())
 };
 
 // RDF Name (like res:... or prop:...)
@@ -26,3 +26,8 @@ Ident: &'input str = {
 
 UUID: &'input str = r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
 
+Object: String = {
+    <quoted:r#""[^"]*""#> => {
+        quoted.trim_matches('"').to_string()
+    }
+};

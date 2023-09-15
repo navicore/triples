@@ -31,14 +31,14 @@ fn test_predicate_object_line_parsing() {
 #[test]
 fn test_predicate_object_line_parsing_term() {
     let parser = LineParser::new();
-
-    let line2 = "    prop:k8p_metric_name \"envoy_cluster_internal_upstream_rq_200\"; .";
+    // add some white space and chars that mean something elsewhere in the grammar
+    let line2 = "    prop:k8p_metric_name \"envoy_cluster:internal upstream_rq_200\"; .";
     let parsed2 = parser.parse(line2).unwrap();
     assert_eq!(
         parsed2,
         ParsedLine::PredObjTerm(
             "prop:k8p_metric_name".to_string(),
-            "envoy_cluster_internal_upstream_rq_200".to_string()
+            "envoy_cluster:internal upstream_rq_200".to_string()
         )
     );
 }
