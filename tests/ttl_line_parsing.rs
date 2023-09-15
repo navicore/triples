@@ -6,16 +6,13 @@ use triples::ttl_data::ParsedLine;
 
 #[test]
 fn test_ttl_to_parsed_line() {
-    // Path to the test data file
     let path = Path::new("tests/data/k8p.ttl");
 
-    // Open the file for reading
     let file = File::open(&path).expect("Failed to open file");
     let reader = io::BufReader::new(file);
 
     let parser = LineParser::new();
 
-    // Process each line
     for line in reader.lines() {
         let line = line.expect("Failed to read a line");
         if line.len() == 0 {

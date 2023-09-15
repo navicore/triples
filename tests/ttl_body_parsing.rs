@@ -65,6 +65,21 @@ fn test_predicate_object_line_parsing_term() {
 }
 
 #[test]
+fn test_escaped_quotes_in_object() {
+    let parser = LineParser::new();
+    let line2 = r#"prop:k8p_description "The \"recent cpu usage\" of the system the application is running in" ;"#;
+    let parsed2 = parser.parse(line2).unwrap();
+    assert_eq!(
+        parsed2,
+        ParsedLine::PredObj(
+            Some("prop".to_string()),
+            "k8p_description".to_string(),
+            r#"The \"recent cpu usage\" of the system the application is running in"#.to_string()
+        )
+    );
+}
+
+#[test]
 fn test_parsing_error_handling() {
     let parser = LineParser::new();
     // add some white space and chars that mean something elsewhere in the grammar
