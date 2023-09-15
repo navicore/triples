@@ -3,15 +3,23 @@ use std::collections::HashMap;
 use std::fmt;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum RdfNameError {
+pub enum DataError {
     InvalidIRI,
+    UnresolvableURIPrefix,
+    NoSubjectDeclaired,
+    PreviousSubjectNotComplete,
+    NotImplemented,
     // Add more error variants here as needed.
 }
-impl std::error::Error for RdfNameError {}
-impl fmt::Display for RdfNameError {
+impl std::error::Error for DataError {}
+impl fmt::Display for DataError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Self::InvalidIRI => write!(f, "Invalid IRI"),
+            Self::UnresolvableURIPrefix => write!(f, "can not locate URI for prefix"),
+            Self::NoSubjectDeclaired => write!(f, "can not load prefix without a subject"),
+            Self::PreviousSubjectNotComplete => write!(f, "previous subject stanza not terminated"),
+            Self::NotImplemented => write!(f, "not implemented"),
         }
     }
 }
@@ -23,11 +31,11 @@ pub struct RdfName(String);
 impl RdfName {
     /// # Errors
     /// Will return `Err` if name is not a valid IRI
-    pub fn new(name: String) -> Result<Self, RdfNameError> {
+    pub fn new(name: String) -> Result<Self, DataError> {
         if Self::is_valid(&name) {
             Ok(Self(name))
         } else {
-            Err(RdfNameError::InvalidIRI)
+            Err(DataError::InvalidIRI)
         }
     }
 
