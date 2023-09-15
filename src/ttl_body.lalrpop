@@ -9,13 +9,14 @@ pub Line: ParsedLine = {
     <pair:PredicateObjectPair> "." => ParsedLine::PredObjTerm(pair.0.0, pair.0.1, pair.1)
 };
 
-PredicateObjectPair: ((String, String), String) = {
+PredicateObjectPair: ((Option<String>, String), String) = {
     <predicate:RDFName> <object:Object> ";" => (predicate, object.to_string())
 };
 
 // RDF Name (like res:... or prop:...)
-RDFName: (String, String) = {
-    <ns:Ident> ":" <name:Ident> => (ns.to_string(), name.to_string())
+RDFName: (Option<String>, String) = {
+    <ns:Ident> ":" <name:Ident> => (Some(ns.to_string()), name.to_string()),
+    <name:Ident> => (None, name.to_string()),
 };
 
 // Definition of an identifier

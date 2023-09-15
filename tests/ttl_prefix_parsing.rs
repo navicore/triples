@@ -17,6 +17,16 @@ fn test_prefix(input: &str) {
     );
 }
 
+fn test_bad_prefix(input: &str) {
+    let parser = PrefixParser::new();
+    let result = parser.parse(input);
+    assert!(
+        !result.is_ok(),
+        "Parse error handling failed with: {:?}",
+        result
+    );
+}
+
 #[test]
 fn test_prefix_basic() {
     let input = "@prefix myns: <http://example.com/myns#> .";
@@ -31,4 +41,10 @@ fn test_prefix_basic() {
     test_prefix(input);
     let input = "\t@prefix myns:<https://example.com/myns#>.";
     test_prefix(input);
+}
+
+#[test]
+fn test_error_handling() {
+    let input = "\t@pefix myns:<https://example.com/myns#>.";
+    test_bad_prefix(input);
 }
