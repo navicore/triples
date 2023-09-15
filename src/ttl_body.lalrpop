@@ -5,8 +5,12 @@ use crate::ttl_data::ParsedLine;
 // Entry rule for each line
 pub Line: ParsedLine = {
     <subject:RDFName> => ParsedLine::Subject(subject.to_string()),
-    <subject:RDFName> "\"" <object:Ident> "\"" ";" => ParsedLine::PredObj(subject.to_string() , object.to_string()),
-    <subject:RDFName> "\"" <object:Ident> "\"" ";" "." => ParsedLine::PredObjTerm(subject.to_string() , object.to_string())
+    <pair:PredicateObjectPair> => ParsedLine::PredObj(pair.0 , pair.1),
+    <pair:PredicateObjectPair> "." => ParsedLine::PredObjTerm(pair.0 , pair.1)
+};
+
+PredicateObjectPair: (String, String) = {
+    <predicate:RDFName> "\"" <object:Ident> "\"" ";" => (predicate, object.to_string())
 };
 
 // RDF Name (like res:... or prop:...)
@@ -21,3 +25,4 @@ Ident: &'input str = {
 };
 
 UUID: &'input str = r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
+
