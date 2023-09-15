@@ -7,4 +7,4 @@ pub mod ttl_data;
 
 lalrpop_mod!(#[allow(clippy::pedantic, clippy::restriction, clippy::nursery)] pub ttl_prefix);
 
-lalrpop_mod!(#[allow(clippy::pedantic, clippy::restriction, clippy::nursery)] pub ttl_body);
+lalrpop_mod!(#[allow(clippy::complexity, clippy::pedantic, clippy::restriction, clippy::nursery)] pub ttl_body);
