@@ -1,0 +1,398 @@
+@prefix res: <http://k8p.navicore.tech/resource/> .
+
+@prefix prop: <http://k8p.navicore.tech/property/> .
+
+res:84e296b9-af09-4921-ac4c-a9a8fae376a3 
+    prop:k8p_type "gauge" ;
+    prop:k8p_description "The number of processors available to the Java virtual machine" ;
+    prop:k8p_value "1.0" ;
+    prop:k8p_namespace "stag" ;
+    prop:k8p_metric_name "system_cpu_count" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ; .
+
+res:55a53692-a25f-456b-956f-d17a9124b234 
+    prop:k8p_value "1282048.0" ;
+    prop:k8p_type "gauge" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_metric_name "jvm_memory_used_bytes" ;
+    prop:id "CodeHeap 'non-nmethods'" ;
+    prop:k8p_namespace "stag" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:area "nonheap" ;
+    prop:k8p_description "The amount of used memory" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ; .
+
+res:6278dd73-66e8-4fd4-8141-33cc022e8e07 
+    prop:action "end of minor GC" ;
+    prop:k8p_value "31463.0" ;
+    prop:cause "Allocation Failure" ;
+    prop:gc "Copy" ;
+    prop:k8p_namespace "stag" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_type "summary" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_metric_name "jvm_gc_pause_seconds_count" ;
+    prop:k8p_description "Time spent in GC pause" ; .
+
+res:9b5d75eb-be39-4a81-a469-57a8fe2e444d 
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:id "mapped - 'non-volatile memory'" ;
+    prop:k8p_description "An estimate of the total capacity of the buffers in this pool" ;
+    prop:k8p_metric_name "jvm_buffer_total_capacity_bytes" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_type "gauge" ;
+    prop:k8p_namespace "stag" ;
+    prop:k8p_value "0.0" ; .
+
+res:4f85a7b0-24db-43c6-bb35-520b20ba0ab7 
+    prop:uri "/name/{src}" ;
+    prop:k8p_description "http server requests seconds max" ;
+    prop:k8p_type "gauge" ;
+    prop:error "none" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_namespace "stag" ;
+    prop:k8p_metric_name "http_server_requests_seconds_max" ;
+    prop:exception "none" ;
+    prop:method "GET" ;
+    prop:status "200" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:outcome "SUCCESS" ;
+    prop:k8p_value "0.001549778" ; .
+
+res:5deb0c41-720d-4bfb-a755-2735bd82dbf3 
+    prop:k8p_namespace "stag" ;
+    prop:exception "none" ;
+    prop:k8p_value "2.4576E-5" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_metric_name "name_get_time_seconds" ;
+    prop:k8p_type "summary" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_description "time to lookup name" ;
+    prop:quantile "0.5" ;
+    prop:class "tech.navicore.lotsofnamesj.NameController" ;
+    prop:method "name" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ; .
+
+res:13c7a8bb-57fa-4b54-82df-7e216b09036b 
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_namespace "stag" ;
+    prop:k8p_metric_name "jvm_threads_peak_threads" ;
+    prop:k8p_type "gauge" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_value "36.0" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_description "The peak live thread count since the Java virtual machine started or peak was reset" ; .
+
+res:a0d43c46-6d02-4e5c-84ca-dedec9be40dd 
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_value "0.0" ;
+    prop:exception "none" ;
+    prop:outcome "SUCCESS" ;
+    prop:k8p_namespace "stag" ;
+    prop:k8p_type "gauge" ;
+    prop:method "GET" ;
+    prop:k8p_description "http server requests active seconds max" ;
+    prop:status "200" ;
+    prop:uri "UNKNOWN" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_metric_name "http_server_requests_active_seconds_max" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ; .
+
+res:9fb0ebe4-c74d-4963-bba5-21fc005c866a 
+    prop:k8p_metric_name "jvm_memory_committed_bytes" ;
+    prop:area "heap" ;
+    prop:k8p_type "gauge" ;
+    prop:k8p_value "1966080.0" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_description "The amount of memory in bytes that is committed for the Java virtual machine to use" ;
+    prop:k8p_namespace "stag" ;
+    prop:id "Survivor Space" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ; .
+
+res:318d9a6c-035c-4a55-ade1-d29c634f0163 
+    prop:class "tech.navicore.lotsofnamesj.NameController" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_namespace "stag" ;
+    prop:method "name" ;
+    prop:k8p_metric_name "name_get_time_seconds" ;
+    prop:k8p_description "time to lookup name" ;
+    prop:k8p_value "4.1984E-5" ;
+    prop:exception "none" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:quantile "0.9" ;
+    prop:k8p_type "summary" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ; .
+
+res:ce94c1ff-4927-4526-9927-e71e9793c24b 
+    prop:k8p_metric_name "jvm_memory_max_bytes" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_description "The maximum amount of memory in bytes that can be used for memory management" ;
+    prop:id "Metaspace" ;
+    prop:k8p_namespace "stag" ;
+    prop:k8p_value "-1.0" ;
+    prop:k8p_type "gauge" ;
+    prop:area "nonheap" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ; .
+
+res:e98893a1-d686-436d-816b-b4e2e1b5a87c 
+    prop:k8p_metric_name "name_get_time_seconds_sum" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_description "time to lookup name" ;
+    prop:method "name" ;
+    prop:k8p_type "summary" ;
+    prop:exception "none" ;
+    prop:class "tech.navicore.lotsofnamesj.NameController" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_value "14.481532679" ;
+    prop:k8p_namespace "stag" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ; .
+
+res:26c30b9c-3561-4d43-b4ab-da37b3ac26d1 
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_type "gauge" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:id "mapped" ;
+    prop:k8p_description "An estimate of the number of buffers in the pool" ;
+    prop:k8p_metric_name "jvm_buffer_count_buffers" ;
+    prop:k8p_value "0.0" ;
+    prop:k8p_namespace "stag" ; .
+
+res:1bc88361-5cc7-4918-933b-88f15764cd72 
+    prop:k8p_metric_name "process_start_time_seconds" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_namespace "stag" ;
+    prop:k8p_type "gauge" ;
+    prop:k8p_value "1.689627579324E9" ;
+    prop:k8p_description "Start time of the process since unix epoch." ; .
+
+res:f11bc707-5e84-40da-af7a-f4bbd9dd0835 
+    prop:k8p_metric_name "process_uptime_seconds" ;
+    prop:k8p_value "5176417.009" ;
+    prop:k8p_description "The uptime of the Java virtual machine" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_type "gauge" ;
+    prop:k8p_namespace "stag" ; .
+
+res:16b723d5-797a-4eb0-bbeb-8880b785b8bb 
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_value "36.0" ;
+    prop:k8p_description "The current number of live threads including both daemon and non-daemon threads" ;
+    prop:k8p_namespace "stag" ;
+    prop:k8p_metric_name "jvm_threads_live_threads" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_type "gauge" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ; .
+
+res:f48545b9-f4b6-4bb1-b396-0c19ed0da57f 
+    prop:action "end of major GC" ;
+    prop:k8p_metric_name "jvm_gc_pause_seconds_count" ;
+    prop:cause "Allocation Failure" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_value "5.0" ;
+    prop:k8p_description "Time spent in GC pause" ;
+    prop:k8p_type "summary" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_namespace "stag" ;
+    prop:gc "MarkSweepCompact" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ; .
+
+res:2b3938e6-4704-4ee2-8507-57cc1e044e21 
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_namespace "stag" ;
+    prop:id "Metaspace" ;
+    prop:k8p_description "The amount of memory in bytes that is committed for the Java virtual machine to use" ;
+    prop:area "nonheap" ;
+    prop:k8p_metric_name "jvm_memory_committed_bytes" ;
+    prop:k8p_type "gauge" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_value "4.4040192E7" ; .
+
+res:402859d2-29c4-48a0-bced-66bf336a8e18 
+    prop:k8p_metric_name "jvm_memory_used_bytes" ;
+    prop:k8p_description "The amount of used memory" ;
+    prop:k8p_value "2217992.0" ;
+    prop:area "heap" ;
+    prop:k8p_type "gauge" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_namespace "stag" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:id "Eden Space" ; .
+
+res:bde33e88-945e-434d-bc79-e05da5602f8c 
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_type "gauge" ;
+    prop:name "applicationTaskExecutor" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_description "The core number of threads for the pool" ;
+    prop:k8p_metric_name "executor_pool_core_threads" ;
+    prop:k8p_namespace "stag" ;
+    prop:k8p_value "8.0" ; .
+
+res:da4b00a6-4fce-4204-8f70-59d9fe5799fd 
+    prop:k8p_value "2555904.0" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_description "The amount of memory in bytes that is committed for the Java virtual machine to use" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:area "nonheap" ;
+    prop:k8p_namespace "stag" ;
+    prop:id "CodeHeap 'non-nmethods'" ;
+    prop:k8p_type "gauge" ;
+    prop:k8p_metric_name "jvm_memory_committed_bytes" ; .
+
+res:ba80bf6e-0dbc-4bff-89c1-93bac71f73d4 
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_value "3.5537896E7" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:id "Tenured Gen" ;
+    prop:k8p_namespace "stag" ;
+    prop:area "heap" ;
+    prop:k8p_metric_name "jvm_memory_used_bytes" ;
+    prop:k8p_type "gauge" ;
+    prop:k8p_description "The amount of used memory" ; .
+
+res:84c7f68c-c7ef-4d36-b6a2-5625420b45d4 
+    prop:k8p_namespace "stag" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_value "163840.0" ;
+    prop:id "direct" ;
+    prop:k8p_metric_name "jvm_buffer_memory_used_bytes" ;
+    prop:k8p_type "gauge" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_description "An estimate of the memory that the Java virtual machine is using for this buffer pool" ; .
+
+res:8530a261-3741-417c-8ca3-1a7933e32ab1 
+    prop:k8p_value "22.0" ;
+    prop:k8p_metric_name "jvm_threads_states_threads" ;
+    prop:state "waiting" ;
+    prop:k8p_type "gauge" ;
+    prop:k8p_namespace "stag" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_description "The current number of threads" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ; .
+
+res:580da693-44e2-4f2d-836d-83ee832a2b92 
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:runtime "OpenJDK Runtime Environment" ;
+    prop:k8p_description "JVM version info" ;
+    prop:vendor "Eclipse Adoptium" ;
+    prop:version "17.0.7+7" ;
+    prop:k8p_value "1.0" ;
+    prop:k8p_metric_name "jvm_info" ;
+    prop:k8p_namespace "stag" ;
+    prop:k8p_type "gauge" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ; .
+
+res:9fb0687c-7794-4161-94c2-450f8d92b12f 
+    prop:k8p_description "The \"recent cpu usage\" of the system the application is running in" ;
+    prop:k8p_metric_name "system_cpu_usage" ;
+    prop:k8p_namespace "stag" ;
+    prop:k8p_value "0.09680555555555556" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_type "gauge" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ; .
+
+res:a31e9fb5-96d5-41bb-9273-7ef5bba30fbf 
+    prop:k8p_value "517632.0" ;
+    prop:method "GET" ;
+    prop:outcome "SUCCESS" ;
+    prop:uri "/name/{src}" ;
+    prop:k8p_description "http server requests seconds" ;
+    prop:k8p_type "summary" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:error "none" ;
+    prop:k8p_namespace "stag" ;
+    prop:status "200" ;
+    prop:k8p_metric_name "http_server_requests_seconds_count" ;
+    prop:exception "none" ; .
+
+res:bfbd5493-9caa-4bf8-8620-a8cb1a5d600e 
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:name "applicationTaskExecutor" ;
+    prop:k8p_metric_name "executor_queued_tasks" ;
+    prop:k8p_value "0.0" ;
+    prop:k8p_namespace "stag" ;
+    prop:k8p_description "The approximate number of tasks that are queued for execution" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_type "gauge" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ; .
+
+res:337d7d96-5b45-49aa-8fa1-3ea8254902d0 
+    prop:action "end of major GC" ;
+    prop:k8p_namespace "stag" ;
+    prop:k8p_type "summary" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_value "3.063" ;
+    prop:cause "Allocation Failure" ;
+    prop:k8p_description "Time spent in GC pause" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:gc "MarkSweepCompact" ;
+    prop:k8p_metric_name "jvm_gc_pause_seconds_sum" ; .
+
+res:9659774c-266a-4736-b567-f3f7ebbed720 
+    prop:k8p_description "The amount of used memory" ;
+    prop:k8p_value "5189576.0" ;
+    prop:k8p_metric_name "jvm_memory_used_bytes" ;
+    prop:id "Compressed Class Space" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_type "gauge" ;
+    prop:k8p_namespace "stag" ;
+    prop:area "nonheap" ; .
+
+res:0604c9f2-a656-4384-ab8d-7291ac60dd34 
+    prop:k8p_metric_name "jvm_gc_memory_promoted_bytes_total" ;
+    prop:k8p_type "counter" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_value "7.6706832E7" ;
+    prop:k8p_description "Count of positive increases in the size of the old generation memory pool before GC to after GC" ;
+    prop:k8p_namespace "stag" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ; .
+
+res:a3b9238d-98be-453f-add8-55b1f5d91b64 
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_metric_name "jvm_threads_states_threads" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_value "0.0" ;
+    prop:state "terminated" ;
+    prop:k8p_type "gauge" ;
+    prop:k8p_namespace "stag" ;
+    prop:k8p_description "The current number of threads" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ; .
+
+res:daa456ac-00c7-4280-81fc-3ed558eed337 
+    prop:k8p_value "0.0" ;
+    prop:name "applicationTaskExecutor" ;
+    prop:k8p_datetime "2023-09-15T18:53:17.312030+00:00" ;
+    prop:k8p_appname "stag-stag-sbjava-lotsofnames-server" ;
+    prop:k8p_podname "stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np" ;
+    prop:k8p_metric_name "executor_completed_tasks_total" ;
+    prop:k8p_description "The approximate total number of tasks that have completed execution" ;
+    prop:k8p_type "counter" ;
+    prop:k8p_namespace "stag" ; .
+

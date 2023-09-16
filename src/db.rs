@@ -3,7 +3,7 @@
 use sqlx::Pool;
 use sqlx::Sqlite;
 use std::fs::File;
-use tracing::{debug, info};
+use tracing::debug;
 
 /// # Errors
 ///
@@ -65,9 +65,9 @@ pub async fn init(db_location: String) -> Result<Pool<Sqlite>, Box<dyn std::erro
 
     let db_path = std::path::Path::new(&db_location);
     if db_path.exists() {
-        info!("adding to db {}", db_url);
+        debug!("adding to db {}", db_url);
     } else {
-        info!("creating db {}", db_url);
+        debug!("creating db {}", db_url);
         File::create(&db_location)?;
     }
 
