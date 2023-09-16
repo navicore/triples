@@ -11,7 +11,7 @@ fn test_ttl_to_subject() {
 
     let mut stream = TtlStream::new();
 
-    let max_lines_to_process: usize = 13;
+    let max_lines_to_process: usize = 38;
 
     let mut line_num = 0;
     for line in reader.lines().take(max_lines_to_process) {
@@ -27,6 +27,18 @@ fn test_ttl_to_subject() {
                         assert!(r.is_some());
                         assert_eq!(r.unwrap().name().to_string(), "http://k8p.navicore.tech/resource/84e296b9-af09-4921-ac4c-a9a8fae376a3");
                     }
+                    25 => {
+                        assert!(r.is_some());
+                        assert_eq!(r.unwrap().name().to_string(), "http://k8p.navicore.tech/resource/55a53692-a25f-456b-956f-d17a9124b234");
+                    }
+                    38 => {
+                        assert!(r.is_some());
+                        assert_eq!(
+                            r.unwrap().name().to_string(),
+                            "http://k8p.navicore.tech/resource/6278dd73-66e8-4fd4-8141-33cc022e8e07"
+                        );
+                    }
+
                     _ => {
                         assert!(r.is_none());
                     }
