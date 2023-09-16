@@ -14,10 +14,20 @@ Experimental Rust lib to store any data in triple format.
 ## Overview
 
 * main API / usage is embedded - ie rust API and crate dependency
+  * see [crate](https://crates.io/crates/triples)
 * stores only subject, predicate, and object where
   * subject is always an RDF name
   * predicate is always an RDF name
   * object is always a UTF string
+
+## Install
+
+```bash
+cargo install triples
+```
+or
+
+see [crate](https://crates.io/crates/triples)
 
 ## TODO
 
