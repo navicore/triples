@@ -72,42 +72,60 @@ fn split_last_slash(s: &str) -> Option<(&str, &str)> {
     s.rsplit_once('/')
 }
 
+// This utility function returns the prefix for a given namespace string.
+// It updates the prefixes map and unique_count if the namespace is not already present.
+fn get_or_insert_prefix<'a>(
+    ns: &'a str,
+    prefixes: &'a mut HashMap<String, String>,
+    unique_count: &mut u32,
+) -> &'a str {
+    if !prefixes.contains_key(ns) {
+        *unique_count += 1;
+        let alias = format!("ns{}", unique_count);
+        prefixes.insert(ns.to_string(), alias);
+    }
+    prefixes.get(ns).unwrap().as_str()
+}
+
+async fn handle_name_string<'a>(
+    name_string: &'a str,
+    prefixes: &mut HashMap<String, String>,
+    unique_ns_count: &mut u32,
+) -> Result<Option<&'a str>, Box<dyn std::error::Error>> {
+    match split_last_slash(name_string) {
+        Some((ns, _)) => {
+            get_or_insert_prefix(ns, prefixes, unique_ns_count);
+            Ok(Some(ns))
+        }
+        None => Err(Box::new(TriplesError::InvalidIRI)),
+    }
+}
+
 async fn export_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Error>> {
     let subject_names = db_api.query_all_subject_names().await?;
 
-    let mut prefixes = HashMap::new();
-    let mut unique_ns_count = 0; // Keep track of the number of unique namespace values
-    let mut unique_predicate_count = 0; // Keep track of the number of unique namespace values
+    let mut prefixes: HashMap<String, String> = HashMap::new();
+    let mut unique_ns_count = 0;
 
-    // look up each subject to calculate the prefixes used in ttl files
     for name in &subject_names {
         if let Some(subject) = db_api.query(&name).await? {
-            let name_string = subject.name().to_string();
-            match split_last_slash(&name_string) {
-                Some((ns, name)) => {
-                    // Check if the ns is already present in prefixes. If not, add it with a new alias.
-                    if !prefixes.contains_key(ns) {
-                        unique_ns_count += 1; // Increment the count
-                        let alias = format!("ns{}", unique_ns_count); // Generate the alias using the count
-                        prefixes.insert(ns.to_string(), alias); // Add the new ns and its alias to the map
-                    }
-                }
-                None => return Err(Box::new(TriplesError::InvalidIRI)),
-            };
-            // inspect each predicate/object pair to calculate the prefixes used in ttl files
+            if handle_name_string(
+                &subject.name().to_string(),
+                &mut prefixes,
+                &mut unique_ns_count,
+            )
+            .await?
+            .is_none()
+            {
+                return Err(Box::new(TriplesError::InvalidIRI));
+            }
             for pair in subject.predicate_object_pairs() {
-                let name_string = pair.0.to_string();
-                match split_last_slash(&name_string) {
-                    Some((ns, name)) => {
-                        // Check if the ns is already present in prefixes. If not, add it with a new alias.
-                        if !prefixes.contains_key(ns) {
-                            unique_predicate_count += 1; // Increment the count
-                            let alias = format!("ref{}", unique_predicate_count); // Generate the alias using the count
-                            prefixes.insert(ns.to_string(), alias); // Add the new ns and its alias to the map
-                        }
-                    }
-                    None => return Err(Box::new(TriplesError::InvalidIRI)),
-                };
+                if handle_name_string(&pair.0.to_string(), &mut prefixes, &mut unique_ns_count)
+                    .await?
+                    .is_none()
+                {
+                    return Err(Box::new(TriplesError::InvalidIRI));
+                }
             }
         }
     }
