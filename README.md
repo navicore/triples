@@ -1,19 +1,29 @@
 # triples
 
-Experimental Rust lib that will store any data in triple format.
+Experimental Rust lib to store any data in triple format.
 
 # UNDER CONSTRUCTION
 
 ## Features
 
-* main API / usage is embedded - ie via rust API and crate dependency via cargo.toml
-* stores only subject, predicate, and object where 
+* embedded
+* async
+* cli db maintenance tool
+* RDF / Turtle
+
+## Overview
+
+* main API / usage is embedded - ie rust API and crate dependency
+* stores only subject, predicate, and object where
   * subject is always an RDF name
   * predicate is always an RDF name
   * object is always a UTF string
-* append-only / intended for event-sourcing
-* supports quantitative and qualitative object values
-* bulk loading and exporting via cli
-* maintains verbose RDF names in a separate table for query efficiency for large datasets and storage efficiency
-* import / export of RDF Turtle `*.tll` format
+
+## TODO
+
+* ~~bulk loading and exporting via cli~~ (done)
+* ~~normalizes RDF names~~ (done)
+* considering the normalized object values
+* ~~import / export of RDF Turtle `*.tll` format~~ (done)
+* import / export of csv `*.csv` format
 * eventual support of SparkQL queries
