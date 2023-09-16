@@ -17,7 +17,7 @@ impl fmt::Display for DataError {
         match self {
             Self::InvalidIRI => write!(f, "Invalid IRI"),
             Self::UnresolvableURIPrefix => write!(f, "can not locate URI for prefix"),
-            Self::NoSubjectDeclaired => write!(f, "can not load prefix without a subject"),
+            Self::NoSubjectDeclaired => write!(f, "can not load predicate without a subject"),
             Self::PreviousSubjectNotComplete => write!(f, "previous subject stanza not terminated"),
             Self::NotImplemented => write!(f, "not implemented"),
         }

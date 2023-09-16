@@ -11,16 +11,26 @@ fn test_ttl_to_subject() {
 
     let mut stream = TtlStream::new();
 
-    let max_lines_to_process: usize = 5; // Change this value as your test gets better
+    let max_lines_to_process: usize = 13;
 
+    let mut line_num = 0;
     for line in reader.lines().take(max_lines_to_process) {
+        line_num += 1;
         let line = line.expect("Failed to read a line");
         if line.len() == 0 {
             continue;
         }
         match stream.load(&line) {
             Ok(r) => {
-                assert!(r.is_none());
+                match line_num {
+                    13 => {
+                        assert!(r.is_some());
+                        assert_eq!(r.unwrap().name().to_string(), "http://k8p.navicore.tech/resource/84e296b9-af09-4921-ac4c-a9a8fae376a3");
+                    }
+                    _ => {
+                        assert!(r.is_none());
+                    }
+                }
             }
             Err(e) => {
                 assert!(false, "error: {}", e)

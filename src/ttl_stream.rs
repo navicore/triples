@@ -43,7 +43,8 @@ impl TtlStream {
                         let subject_iri_text = match pre {
                             Some(n) => match self.prefixes.get(&n) {
                                 Some(ns) => {
-                                    let fullname = format!("{ns}/{name}");
+                                    let cleaned_ns = ns.trim_end_matches('/');
+                                    let fullname = format!("{}/{}", cleaned_ns, name);
                                     Ok(fullname)
                                 }
                                 _ => Err(DataError::UnresolvableURIPrefix),
@@ -63,7 +64,68 @@ impl TtlStream {
                 }
                 _ => Err(DataError::NoSubjectDeclaired),
             },
-            ParserState::PredicateLoading => Err(DataError::NotImplemented),
+            ParserState::PredicateLoading => match parsed {
+                // these are normally loaded at the top of a file / stream but could be in between
+                // subjects for readability
+                ParsedLine::Prefix(name, uri) => {
+                    if self.current_subject.is_some() {
+                        Err(DataError::PreviousSubjectNotComplete)
+                    } else {
+                        self.prefixes.insert(name, uri);
+                        Ok(None)
+                    }
+                }
+
+                ParsedLine::PredObj(pre, predicate, object) => {
+                    let predicate_iri_text = match pre {
+                        Some(n) => match self.prefixes.get(&n) {
+                            Some(ns) => {
+                                let cleaned_ns = ns.trim_end_matches('/');
+                                let fullname = format!("{}/{}", cleaned_ns, predicate);
+                                Ok(fullname)
+                            }
+                            _ => Err(DataError::UnresolvableURIPrefix),
+                        },
+                        _ => Ok(predicate),
+                    }?;
+                    match RdfName::new(predicate_iri_text) {
+                        Ok(predicate_iri) => {
+                            if let Some(ref mut subject) = self.current_subject {
+                                subject.add(predicate_iri, object);
+                                Ok(None)
+                            } else {
+                                Err(DataError::NoSubjectDeclaired)
+                            }
+                        }
+                        _ => Err(DataError::InvalidIRI),
+                    }
+                }
+                ParsedLine::PredObjTerm(pre, predicate, object) => {
+                    let predicate_iri_text = match pre {
+                        Some(n) => match self.prefixes.get(&n) {
+                            Some(ns) => {
+                                let fullname = format!("{ns}/{predicate}");
+                                Ok(fullname)
+                            }
+                            _ => Err(DataError::UnresolvableURIPrefix),
+                        },
+                        _ => Ok(predicate),
+                    }?;
+                    match RdfName::new(predicate_iri_text) {
+                        Ok(predicate_iri) => {
+                            if let Some(ref mut subject) = self.current_subject {
+                                subject.add(predicate_iri, object);
+                                Ok(Some(subject.clone()))
+                            } else {
+                                Err(DataError::NoSubjectDeclaired)
+                            }
+                        }
+                        _ => Err(DataError::InvalidIRI),
+                    }
+                }
+
+                _ => Err(DataError::NotImplemented),
+            },
         }
     }
 }
