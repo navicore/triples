@@ -145,6 +145,37 @@ impl DbApi {
 
         Ok(Some(subject))
     }
+
+    /// Queries all distinct subject names from the database.
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` if the data cannot be queried from the database or if any invalid IRI is encountered.
+    pub async fn query_all_subject_names(
+        &self,
+    ) -> Result<Vec<RdfName>, Box<dyn std::error::Error>> {
+        let pool = &self.pool;
+
+        let names_strings: Vec<String> = sqlx::query_scalar(
+            r#"
+            SELECT DISTINCT subjects.name
+            FROM triples
+            JOIN names AS subjects ON triples.subject = subjects.id
+            "#,
+        )
+        .fetch_all(pool)
+        .await?;
+
+        let mut names_rdf = Vec::new();
+
+        for name_str in names_strings {
+            let name = RdfName::new(name_str)?;
+
+            names_rdf.push(name);
+        }
+
+        Ok(names_rdf)
+    }
 }
 
 #[cfg(test)]

@@ -3,7 +3,8 @@ use std::collections::HashMap;
 use std::fmt;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum DataError {
+pub enum TriplesError {
+    ParseError { reason: String },
     InvalidIRI,
     UnresolvableURIPrefix,
     NoSubjectDeclaired,
@@ -11,10 +12,11 @@ pub enum DataError {
     NotImplemented,
     // Add more error variants here as needed.
 }
-impl std::error::Error for DataError {}
-impl fmt::Display for DataError {
+impl std::error::Error for TriplesError {}
+impl fmt::Display for TriplesError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
+            Self::ParseError { reason } => write!(f, "{reason}"),
             Self::InvalidIRI => write!(f, "Invalid IRI"),
             Self::UnresolvableURIPrefix => write!(f, "can not locate URI for prefix"),
             Self::NoSubjectDeclaired => write!(f, "can not load predicate without a subject"),
@@ -31,11 +33,11 @@ pub struct RdfName(String);
 impl RdfName {
     /// # Errors
     /// Will return `Err` if name is not a valid IRI
-    pub fn new(name: String) -> Result<Self, DataError> {
+    pub fn new(name: String) -> Result<Self, TriplesError> {
         if Self::is_valid(&name) {
             Ok(Self(name))
         } else {
-            Err(DataError::InvalidIRI)
+            Err(TriplesError::InvalidIRI)
         }
     }
 
