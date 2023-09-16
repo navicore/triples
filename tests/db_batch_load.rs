@@ -5,7 +5,7 @@ use triples::db_api::DbApi;
 use triples::ttl_stream::TtlStream;
 
 #[tokio::test]
-async fn test_ttl_to_subject() {
+async fn test_ttl_to_db() {
     let path = Path::new("tests/data/k8p_sm.ttl");
     let file = File::open(&path).expect("Failed to open file");
     let reader = io::BufReader::new(file);
