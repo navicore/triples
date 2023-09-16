@@ -1,6 +1,7 @@
 use clap::Parser;
 use std::collections::HashMap;
 use tokio::io::{stdin, AsyncBufReadExt, BufReader};
+use triples::data::RdfName;
 use triples::data::TriplesError;
 use triples::db_api::DbApi;
 use triples::ttl_stream::TtlStream;
@@ -101,13 +102,14 @@ async fn handle_name_string<'a>(
     }
 }
 
-async fn export_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Error>> {
-    let subject_names = db_api.query_all_subject_names().await?;
-
+async fn compute_prefixes(
+    subject_names: &Vec<RdfName>,
+    db_api: &DbApi,
+) -> Result<HashMap<String, String>, Box<dyn std::error::Error>> {
     let mut prefixes: HashMap<String, String> = HashMap::new();
     let mut unique_ns_count = 0;
 
-    for name in &subject_names {
+    for name in subject_names {
         if let Some(subject) = db_api.query(&name).await? {
             if handle_name_string(
                 &subject.name().to_string(),
@@ -130,57 +132,61 @@ async fn export_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Error>>
         }
     }
 
-    // print the prefixes
-    for (name, prefix) in &prefixes {
-        println!("@prefix {prefix}: <{name}/> .\n");
-    }
+    Ok(prefixes)
+}
 
-    // print the ttl
+fn print_prefixes(prefixes: &HashMap<String, String>) {
+    for (name, prefix) in prefixes {
+        println!("@prefix {}: <{}/> .\n", prefix, name);
+    }
+}
+
+fn print_predicate_object_pairs(
+    pairs: &Vec<(&RdfName, &String)>,
+    prefixes: &HashMap<String, String>,
+) -> Result<(), TriplesError> {
+    let mut pairs_iter = pairs.iter().peekable();
+    while let Some((predicate, object)) = pairs_iter.next() {
+        let name_string = predicate.to_string();
+        match split_last_slash(&name_string) {
+            Some((ns, name)) => match prefixes.get(ns) {
+                Some(prefix) => {
+                    if pairs_iter.peek().is_none() {
+                        println!("    {}:{} \"{}\" ; .\n", prefix, name, object);
+                    } else {
+                        println!("    {}:{} \"{}\" ;", prefix, name, object);
+                    }
+                }
+                _ => return Err(TriplesError::InvalidIRI),
+            },
+            None => return Err(TriplesError::InvalidIRI),
+        };
+    }
+    Ok(())
+}
+
+async fn export_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Error>> {
+    let subject_names = db_api.query_all_subject_names().await?;
+    let prefixes = compute_prefixes(&subject_names, &db_api).await?;
+
+    print_prefixes(&prefixes);
+
+    // print each subject with lines for each predicate / object pair
+    // terminating each subject block with a '.' and a newline.
     for name in &subject_names {
         if let Some(subject) = db_api.query(&name).await? {
             let name_string = subject.name().to_string();
             match split_last_slash(&name_string) {
                 Some((ns, name)) => match prefixes.get(ns) {
                     Some(prefix) => {
-                        println!("{prefix}:{name}");
+                        println!("{}:{}", prefix, name);
                     }
                     _ => return Err(Box::new(TriplesError::InvalidIRI)),
                 },
                 None => return Err(Box::new(TriplesError::InvalidIRI)),
             };
-            // inspect each predicate/object pair to calculate the prefixes used in ttl files
-
-            let mut pairs = subject.predicate_object_pairs().peekable();
-
-            while let Some(pair) = pairs.next() {
-                let name_string = pair.0.to_string();
-                match split_last_slash(&name_string) {
-                    Some((ns, name)) => {
-                        // print the predicate / object pair
-                        match prefixes.get(ns) {
-                            Some(prefix) => {
-                                if pairs.peek().is_none() {
-                                    println!(
-                                        "    {}:{} \"{}\" .\n",
-                                        prefix,
-                                        name,
-                                        pair.1.to_string()
-                                    );
-                                } else {
-                                    println!(
-                                        "    {}:{} \"{}\" ;",
-                                        prefix,
-                                        name,
-                                        pair.1.to_string()
-                                    );
-                                }
-                            }
-                            _ => return Err(Box::new(TriplesError::InvalidIRI)),
-                        }
-                    }
-                    None => return Err(Box::new(TriplesError::InvalidIRI)),
-                };
-            }
+            let pairs: Vec<_> = subject.predicate_object_pairs().collect();
+            print_predicate_object_pairs(&pairs, &prefixes)?;
         }
     }
 
