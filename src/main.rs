@@ -79,23 +79,23 @@ fn get_or_insert_prefix<'a>(
     ns: &'a str,
     prefixes: &'a mut HashMap<String, String>,
     unique_count: &mut u32,
-) -> &'a str {
+) -> Result<&'a str, TriplesError> {
     if !prefixes.contains_key(ns) {
         *unique_count += 1;
-        let alias = format!("ns{}", unique_count);
+        let alias = format!("ns{unique_count}");
         prefixes.insert(ns.to_string(), alias);
     }
-    prefixes.get(ns).unwrap().as_str()
+    Ok(prefixes.get(ns).ok_or(TriplesError::InvalidIRI)?.as_str())
 }
 
-async fn handle_name_string<'a>(
+fn handle_name_string<'a>(
     name_string: &'a str,
     prefixes: &mut HashMap<String, String>,
     unique_ns_count: &mut u32,
 ) -> Result<Option<&'a str>, Box<dyn std::error::Error>> {
     match split_last_slash(name_string) {
         Some((ns, _)) => {
-            get_or_insert_prefix(ns, prefixes, unique_ns_count);
+            get_or_insert_prefix(ns, prefixes, unique_ns_count)?;
             Ok(Some(ns))
         }
         None => Err(Box::new(TriplesError::InvalidIRI)),
@@ -110,20 +110,18 @@ async fn compute_prefixes(
     let mut unique_ns_count = 0;
 
     for name in subject_names {
-        if let Some(subject) = db_api.query(&name).await? {
+        if let Some(subject) = db_api.query(name).await? {
             if handle_name_string(
                 &subject.name().to_string(),
                 &mut prefixes,
                 &mut unique_ns_count,
-            )
-            .await?
+            )?
             .is_none()
             {
                 return Err(Box::new(TriplesError::InvalidIRI));
             }
             for pair in subject.predicate_object_pairs() {
-                if handle_name_string(&pair.0.to_string(), &mut prefixes, &mut unique_ns_count)
-                    .await?
+                if handle_name_string(&pair.0.to_string(), &mut prefixes, &mut unique_ns_count)?
                     .is_none()
                 {
                     return Err(Box::new(TriplesError::InvalidIRI));
@@ -137,12 +135,12 @@ async fn compute_prefixes(
 
 fn print_prefixes(prefixes: &HashMap<String, String>) {
     for (name, prefix) in prefixes {
-        println!("@prefix {}: <{}/> .\n", prefix, name);
+        println!("@prefix {prefix}: <{name}/> .\n");
     }
 }
 
 fn print_predicate_object_pairs(
-    pairs: &Vec<(&RdfName, &String)>,
+    pairs: &[(&RdfName, &String)],
     prefixes: &HashMap<String, String>,
 ) -> Result<(), TriplesError> {
     let mut pairs_iter = pairs.iter().peekable();
@@ -152,9 +150,9 @@ fn print_predicate_object_pairs(
             Some((ns, name)) => match prefixes.get(ns) {
                 Some(prefix) => {
                     if pairs_iter.peek().is_none() {
-                        println!("    {}:{} \"{}\" ; .\n", prefix, name, object);
+                        println!("    {prefix}:{name} \"{object}\" ; .\n");
                     } else {
-                        println!("    {}:{} \"{}\" ;", prefix, name, object);
+                        println!("    {prefix}:{name} \"{object}\" ;");
                     }
                 }
                 _ => return Err(TriplesError::InvalidIRI),
@@ -167,19 +165,19 @@ fn print_predicate_object_pairs(
 
 async fn export_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Error>> {
     let subject_names = db_api.query_all_subject_names().await?;
-    let prefixes = compute_prefixes(&subject_names, &db_api).await?;
+    let prefixes = compute_prefixes(&subject_names, db_api).await?;
 
     print_prefixes(&prefixes);
 
     // print each subject with lines for each predicate / object pair
     // terminating each subject block with a '.' and a newline.
     for name in &subject_names {
-        if let Some(subject) = db_api.query(&name).await? {
+        if let Some(subject) = db_api.query(name).await? {
             let name_string = subject.name().to_string();
             match split_last_slash(&name_string) {
                 Some((ns, name)) => match prefixes.get(ns) {
                     Some(prefix) => {
-                        println!("{}:{}", prefix, name);
+                        println!("{prefix}:{name}");
                     }
                     _ => return Err(Box::new(TriplesError::InvalidIRI)),
                 },
