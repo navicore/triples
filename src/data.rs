@@ -5,8 +5,8 @@ use std::fmt;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TriplesError {
     ParseError { reason: String },
-    InvalidIRI,
-    UnresolvableURIPrefix,
+    InvalidIRI { uri: String },
+    UnresolvableURIPrefix { prefix_name: String },
     NoSubjectDeclaired,
     PreviousSubjectNotComplete,
     NotImplemented,
@@ -17,8 +17,10 @@ impl fmt::Display for TriplesError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Self::ParseError { reason } => write!(f, "{reason}"),
-            Self::InvalidIRI => write!(f, "Invalid IRI"),
-            Self::UnresolvableURIPrefix => write!(f, "can not locate URI for prefix"),
+            Self::InvalidIRI { uri } => write!(f, "Invalid IRI: {uri}"),
+            Self::UnresolvableURIPrefix { prefix_name } => {
+                write!(f, "can not locate URI for {prefix_name}")
+            }
             Self::NoSubjectDeclaired => write!(f, "can not load predicate without a subject"),
             Self::PreviousSubjectNotComplete => write!(f, "previous subject stanza not terminated"),
             Self::NotImplemented => write!(f, "not implemented"),
@@ -37,7 +39,7 @@ impl RdfName {
         if Self::is_valid(&name) {
             Ok(Self(name))
         } else {
-            Err(TriplesError::InvalidIRI)
+            Err(TriplesError::InvalidIRI { uri: name })
         }
     }
 

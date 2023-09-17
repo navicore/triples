@@ -2,8 +2,16 @@ use crate::data::RdfName;
 use crate::data::Subject;
 use crate::data::TriplesError;
 use crate::ttl::LineParser;
-use crate::ttl_data::ParsedLine;
 use std::collections::HashMap;
+
+#[allow(dead_code)] // clippy can't see lalrpop
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub enum ParsedLine {
+    Prefix(String, String),
+    Subject(Option<String>, String),
+    PredObj(Option<String>, String, String),
+    PredObjTerm(Option<String>, String, String),
+}
 
 pub struct TtlStream {
     state: ParserState,
@@ -42,13 +50,18 @@ impl TtlStream {
     ) -> Result<String, TriplesError> {
         prefix.map_or_else(
             || Ok(local_name.to_string()),
-            |n| {
-                self.prefixes
-                    .get(n)
-                    .map_or(Err(TriplesError::UnresolvableURIPrefix), |ns| {
+            |ns| {
+                self.prefixes.get(ns).map_or_else(
+                    || {
+                        Err(TriplesError::UnresolvableURIPrefix {
+                            prefix_name: ns.to_string(),
+                        })
+                    },
+                    |ns| {
                         let cleaned_ns = ns.trim_end_matches('/');
                         Ok(format!("{cleaned_ns}/{local_name}"))
-                    })
+                    },
+                )
             },
         )
     }
@@ -62,7 +75,10 @@ impl TtlStream {
             return Err(TriplesError::PreviousSubjectNotComplete);
         }
         let subject_iri_text = self.resolve_iri(prefix.as_ref(), name)?;
-        let subject_iri = RdfName::new(subject_iri_text).map_err(|_| TriplesError::InvalidIRI)?;
+        let subject_iri =
+            RdfName::new(subject_iri_text.clone()).map_err(|_| TriplesError::InvalidIRI {
+                uri: subject_iri_text.to_string(),
+            })?;
         self.current_subject = Some(Subject::new(subject_iri));
         self.state = ParserState::PredicateLoading;
         Ok(None)
@@ -76,7 +92,9 @@ impl TtlStream {
     ) -> Result<Option<Subject>, TriplesError> {
         let predicate_iri_text = self.resolve_iri(prefix.as_ref(), predicate)?;
         let predicate_iri =
-            RdfName::new(predicate_iri_text).map_err(|_| TriplesError::InvalidIRI)?;
+            RdfName::new(predicate_iri_text.clone()).map_err(|_| TriplesError::InvalidIRI {
+                uri: predicate_iri_text.to_string(),
+            })?;
 
         self.current_subject
             .as_mut()
