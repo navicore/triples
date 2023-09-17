@@ -1,5 +1,5 @@
 use triples::ttl::LineParser;
-use triples::ttl_data::ParsedLine;
+use triples::ttl_stream::ParsedLine;
 
 fn test_prefix(input: &str) {
     let parser = LineParser::new();

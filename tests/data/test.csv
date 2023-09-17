@@ -1,0 +1,328 @@
+0604c9f2-a656-4384-ab8d-7291ac60dd34,k8p_namespace,stag
+0604c9f2-a656-4384-ab8d-7291ac60dd34,k8p_type,counter
+0604c9f2-a656-4384-ab8d-7291ac60dd34,k8p_metric_name,jvm_gc_memory_promoted_bytes_total
+0604c9f2-a656-4384-ab8d-7291ac60dd34,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+0604c9f2-a656-4384-ab8d-7291ac60dd34,k8p_appname,stag-stag-sbjava-lotsofnames-server
+0604c9f2-a656-4384-ab8d-7291ac60dd34,k8p_description,Count of positive increases in the size of the old generation memory pool before GC to after GC
+0604c9f2-a656-4384-ab8d-7291ac60dd34,k8p_value,7.6706832E7
+0604c9f2-a656-4384-ab8d-7291ac60dd34,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+13c7a8bb-57fa-4b54-82df-7e216b09036b,k8p_value,36.0
+13c7a8bb-57fa-4b54-82df-7e216b09036b,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+13c7a8bb-57fa-4b54-82df-7e216b09036b,k8p_namespace,stag
+13c7a8bb-57fa-4b54-82df-7e216b09036b,k8p_metric_name,jvm_threads_peak_threads
+13c7a8bb-57fa-4b54-82df-7e216b09036b,k8p_appname,stag-stag-sbjava-lotsofnames-server
+13c7a8bb-57fa-4b54-82df-7e216b09036b,k8p_type,gauge
+13c7a8bb-57fa-4b54-82df-7e216b09036b,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+13c7a8bb-57fa-4b54-82df-7e216b09036b,k8p_description,The peak live thread count since the Java virtual machine started or peak was reset
+16b723d5-797a-4eb0-bbeb-8880b785b8bb,k8p_value,36.0
+16b723d5-797a-4eb0-bbeb-8880b785b8bb,k8p_description,The current number of live threads including both daemon and non-daemon threads
+16b723d5-797a-4eb0-bbeb-8880b785b8bb,k8p_metric_name,jvm_threads_live_threads
+16b723d5-797a-4eb0-bbeb-8880b785b8bb,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+16b723d5-797a-4eb0-bbeb-8880b785b8bb,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+16b723d5-797a-4eb0-bbeb-8880b785b8bb,k8p_appname,stag-stag-sbjava-lotsofnames-server
+16b723d5-797a-4eb0-bbeb-8880b785b8bb,k8p_namespace,stag
+16b723d5-797a-4eb0-bbeb-8880b785b8bb,k8p_type,gauge
+1bc88361-5cc7-4918-933b-88f15764cd72,k8p_appname,stag-stag-sbjava-lotsofnames-server
+1bc88361-5cc7-4918-933b-88f15764cd72,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+1bc88361-5cc7-4918-933b-88f15764cd72,k8p_namespace,stag
+1bc88361-5cc7-4918-933b-88f15764cd72,k8p_value,1.689627579324E9
+1bc88361-5cc7-4918-933b-88f15764cd72,k8p_description,Start time of the process since unix epoch.
+1bc88361-5cc7-4918-933b-88f15764cd72,k8p_type,gauge
+1bc88361-5cc7-4918-933b-88f15764cd72,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+1bc88361-5cc7-4918-933b-88f15764cd72,k8p_metric_name,process_start_time_seconds
+26c30b9c-3561-4d43-b4ab-da37b3ac26d1,k8p_description,An estimate of the number of buffers in the pool
+26c30b9c-3561-4d43-b4ab-da37b3ac26d1,k8p_value,0.0
+26c30b9c-3561-4d43-b4ab-da37b3ac26d1,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+26c30b9c-3561-4d43-b4ab-da37b3ac26d1,id,mapped
+26c30b9c-3561-4d43-b4ab-da37b3ac26d1,k8p_metric_name,jvm_buffer_count_buffers
+26c30b9c-3561-4d43-b4ab-da37b3ac26d1,k8p_appname,stag-stag-sbjava-lotsofnames-server
+26c30b9c-3561-4d43-b4ab-da37b3ac26d1,k8p_type,gauge
+26c30b9c-3561-4d43-b4ab-da37b3ac26d1,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+26c30b9c-3561-4d43-b4ab-da37b3ac26d1,k8p_namespace,stag
+2b3938e6-4704-4ee2-8507-57cc1e044e21,k8p_value,4.4040192E7
+2b3938e6-4704-4ee2-8507-57cc1e044e21,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+2b3938e6-4704-4ee2-8507-57cc1e044e21,k8p_namespace,stag
+2b3938e6-4704-4ee2-8507-57cc1e044e21,k8p_appname,stag-stag-sbjava-lotsofnames-server
+2b3938e6-4704-4ee2-8507-57cc1e044e21,id,Metaspace
+2b3938e6-4704-4ee2-8507-57cc1e044e21,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+2b3938e6-4704-4ee2-8507-57cc1e044e21,k8p_type,gauge
+2b3938e6-4704-4ee2-8507-57cc1e044e21,k8p_metric_name,jvm_memory_committed_bytes
+2b3938e6-4704-4ee2-8507-57cc1e044e21,k8p_description,The amount of memory in bytes that is committed for the Java virtual machine to use
+2b3938e6-4704-4ee2-8507-57cc1e044e21,area,nonheap
+318d9a6c-035c-4a55-ade1-d29c634f0163,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+318d9a6c-035c-4a55-ade1-d29c634f0163,exception,none
+318d9a6c-035c-4a55-ade1-d29c634f0163,quantile,0.9
+318d9a6c-035c-4a55-ade1-d29c634f0163,k8p_value,4.1984E-5
+318d9a6c-035c-4a55-ade1-d29c634f0163,k8p_metric_name,name_get_time_seconds
+318d9a6c-035c-4a55-ade1-d29c634f0163,method,name
+318d9a6c-035c-4a55-ade1-d29c634f0163,k8p_description,time to lookup name
+318d9a6c-035c-4a55-ade1-d29c634f0163,k8p_namespace,stag
+318d9a6c-035c-4a55-ade1-d29c634f0163,k8p_appname,stag-stag-sbjava-lotsofnames-server
+318d9a6c-035c-4a55-ade1-d29c634f0163,k8p_type,summary
+318d9a6c-035c-4a55-ade1-d29c634f0163,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+318d9a6c-035c-4a55-ade1-d29c634f0163,class,tech.navicore.lotsofnamesj.NameController
+337d7d96-5b45-49aa-8fa1-3ea8254902d0,action,end of major GC
+337d7d96-5b45-49aa-8fa1-3ea8254902d0,k8p_value,3.063
+337d7d96-5b45-49aa-8fa1-3ea8254902d0,k8p_namespace,stag
+337d7d96-5b45-49aa-8fa1-3ea8254902d0,k8p_metric_name,jvm_gc_pause_seconds_sum
+337d7d96-5b45-49aa-8fa1-3ea8254902d0,gc,MarkSweepCompact
+337d7d96-5b45-49aa-8fa1-3ea8254902d0,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+337d7d96-5b45-49aa-8fa1-3ea8254902d0,k8p_appname,stag-stag-sbjava-lotsofnames-server
+337d7d96-5b45-49aa-8fa1-3ea8254902d0,k8p_description,Time spent in GC pause
+337d7d96-5b45-49aa-8fa1-3ea8254902d0,k8p_type,summary
+337d7d96-5b45-49aa-8fa1-3ea8254902d0,cause,Allocation Failure
+337d7d96-5b45-49aa-8fa1-3ea8254902d0,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+402859d2-29c4-48a0-bced-66bf336a8e18,k8p_appname,stag-stag-sbjava-lotsofnames-server
+402859d2-29c4-48a0-bced-66bf336a8e18,id,Eden Space
+402859d2-29c4-48a0-bced-66bf336a8e18,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+402859d2-29c4-48a0-bced-66bf336a8e18,k8p_namespace,stag
+402859d2-29c4-48a0-bced-66bf336a8e18,k8p_description,The amount of used memory
+402859d2-29c4-48a0-bced-66bf336a8e18,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+402859d2-29c4-48a0-bced-66bf336a8e18,k8p_type,gauge
+402859d2-29c4-48a0-bced-66bf336a8e18,k8p_value,2217992.0
+402859d2-29c4-48a0-bced-66bf336a8e18,k8p_metric_name,jvm_memory_used_bytes
+402859d2-29c4-48a0-bced-66bf336a8e18,area,heap
+4f85a7b0-24db-43c6-bb35-520b20ba0ab7,k8p_namespace,stag
+4f85a7b0-24db-43c6-bb35-520b20ba0ab7,status,200
+4f85a7b0-24db-43c6-bb35-520b20ba0ab7,k8p_type,gauge
+4f85a7b0-24db-43c6-bb35-520b20ba0ab7,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+4f85a7b0-24db-43c6-bb35-520b20ba0ab7,error,none
+4f85a7b0-24db-43c6-bb35-520b20ba0ab7,k8p_metric_name,http_server_requests_seconds_max
+4f85a7b0-24db-43c6-bb35-520b20ba0ab7,uri,/name/{src}
+4f85a7b0-24db-43c6-bb35-520b20ba0ab7,k8p_value,0.001549778
+4f85a7b0-24db-43c6-bb35-520b20ba0ab7,outcome,SUCCESS
+4f85a7b0-24db-43c6-bb35-520b20ba0ab7,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+4f85a7b0-24db-43c6-bb35-520b20ba0ab7,k8p_appname,stag-stag-sbjava-lotsofnames-server
+4f85a7b0-24db-43c6-bb35-520b20ba0ab7,k8p_description,http server requests seconds max
+4f85a7b0-24db-43c6-bb35-520b20ba0ab7,exception,none
+4f85a7b0-24db-43c6-bb35-520b20ba0ab7,method,GET
+55a53692-a25f-456b-956f-d17a9124b234,k8p_appname,stag-stag-sbjava-lotsofnames-server
+55a53692-a25f-456b-956f-d17a9124b234,id,CodeHeap 'non-nmethods'
+55a53692-a25f-456b-956f-d17a9124b234,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+55a53692-a25f-456b-956f-d17a9124b234,area,nonheap
+55a53692-a25f-456b-956f-d17a9124b234,k8p_metric_name,jvm_memory_used_bytes
+55a53692-a25f-456b-956f-d17a9124b234,k8p_description,The amount of used memory
+55a53692-a25f-456b-956f-d17a9124b234,k8p_type,gauge
+55a53692-a25f-456b-956f-d17a9124b234,k8p_value,1282048.0
+55a53692-a25f-456b-956f-d17a9124b234,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+55a53692-a25f-456b-956f-d17a9124b234,k8p_namespace,stag
+580da693-44e2-4f2d-836d-83ee832a2b92,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+580da693-44e2-4f2d-836d-83ee832a2b92,vendor,Eclipse Adoptium
+580da693-44e2-4f2d-836d-83ee832a2b92,k8p_value,1.0
+580da693-44e2-4f2d-836d-83ee832a2b92,k8p_namespace,stag
+580da693-44e2-4f2d-836d-83ee832a2b92,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+580da693-44e2-4f2d-836d-83ee832a2b92,runtime,OpenJDK Runtime Environment
+580da693-44e2-4f2d-836d-83ee832a2b92,k8p_type,gauge
+580da693-44e2-4f2d-836d-83ee832a2b92,k8p_description,JVM version info
+580da693-44e2-4f2d-836d-83ee832a2b92,k8p_appname,stag-stag-sbjava-lotsofnames-server
+580da693-44e2-4f2d-836d-83ee832a2b92,k8p_metric_name,jvm_info
+580da693-44e2-4f2d-836d-83ee832a2b92,version,17.0.7+7
+5deb0c41-720d-4bfb-a755-2735bd82dbf3,k8p_value,2.4576E-5
+5deb0c41-720d-4bfb-a755-2735bd82dbf3,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+5deb0c41-720d-4bfb-a755-2735bd82dbf3,class,tech.navicore.lotsofnamesj.NameController
+5deb0c41-720d-4bfb-a755-2735bd82dbf3,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+5deb0c41-720d-4bfb-a755-2735bd82dbf3,k8p_namespace,stag
+5deb0c41-720d-4bfb-a755-2735bd82dbf3,quantile,0.5
+5deb0c41-720d-4bfb-a755-2735bd82dbf3,k8p_appname,stag-stag-sbjava-lotsofnames-server
+5deb0c41-720d-4bfb-a755-2735bd82dbf3,k8p_description,time to lookup name
+5deb0c41-720d-4bfb-a755-2735bd82dbf3,k8p_metric_name,name_get_time_seconds
+5deb0c41-720d-4bfb-a755-2735bd82dbf3,method,name
+5deb0c41-720d-4bfb-a755-2735bd82dbf3,exception,none
+5deb0c41-720d-4bfb-a755-2735bd82dbf3,k8p_type,summary
+6278dd73-66e8-4fd4-8141-33cc022e8e07,k8p_appname,stag-stag-sbjava-lotsofnames-server
+6278dd73-66e8-4fd4-8141-33cc022e8e07,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+6278dd73-66e8-4fd4-8141-33cc022e8e07,cause,Allocation Failure
+6278dd73-66e8-4fd4-8141-33cc022e8e07,k8p_metric_name,jvm_gc_pause_seconds_count
+6278dd73-66e8-4fd4-8141-33cc022e8e07,action,end of minor GC
+6278dd73-66e8-4fd4-8141-33cc022e8e07,k8p_description,Time spent in GC pause
+6278dd73-66e8-4fd4-8141-33cc022e8e07,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+6278dd73-66e8-4fd4-8141-33cc022e8e07,k8p_namespace,stag
+6278dd73-66e8-4fd4-8141-33cc022e8e07,gc,Copy
+6278dd73-66e8-4fd4-8141-33cc022e8e07,k8p_value,31463.0
+6278dd73-66e8-4fd4-8141-33cc022e8e07,k8p_type,summary
+84c7f68c-c7ef-4d36-b6a2-5625420b45d4,k8p_description,An estimate of the memory that the Java virtual machine is using for this buffer pool
+84c7f68c-c7ef-4d36-b6a2-5625420b45d4,k8p_appname,stag-stag-sbjava-lotsofnames-server
+84c7f68c-c7ef-4d36-b6a2-5625420b45d4,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+84c7f68c-c7ef-4d36-b6a2-5625420b45d4,k8p_metric_name,jvm_buffer_memory_used_bytes
+84c7f68c-c7ef-4d36-b6a2-5625420b45d4,id,direct
+84c7f68c-c7ef-4d36-b6a2-5625420b45d4,k8p_value,163840.0
+84c7f68c-c7ef-4d36-b6a2-5625420b45d4,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+84c7f68c-c7ef-4d36-b6a2-5625420b45d4,k8p_namespace,stag
+84c7f68c-c7ef-4d36-b6a2-5625420b45d4,k8p_type,gauge
+84e296b9-af09-4921-ac4c-a9a8fae376a3,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+84e296b9-af09-4921-ac4c-a9a8fae376a3,k8p_metric_name,system_cpu_count
+84e296b9-af09-4921-ac4c-a9a8fae376a3,k8p_value,1.0
+84e296b9-af09-4921-ac4c-a9a8fae376a3,k8p_namespace,stag
+84e296b9-af09-4921-ac4c-a9a8fae376a3,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+84e296b9-af09-4921-ac4c-a9a8fae376a3,k8p_description,The number of processors available to the Java virtual machine
+84e296b9-af09-4921-ac4c-a9a8fae376a3,k8p_appname,stag-stag-sbjava-lotsofnames-server
+84e296b9-af09-4921-ac4c-a9a8fae376a3,k8p_type,gauge
+8530a261-3741-417c-8ca3-1a7933e32ab1,k8p_value,22.0
+8530a261-3741-417c-8ca3-1a7933e32ab1,k8p_type,gauge
+8530a261-3741-417c-8ca3-1a7933e32ab1,k8p_metric_name,jvm_threads_states_threads
+8530a261-3741-417c-8ca3-1a7933e32ab1,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+8530a261-3741-417c-8ca3-1a7933e32ab1,k8p_appname,stag-stag-sbjava-lotsofnames-server
+8530a261-3741-417c-8ca3-1a7933e32ab1,k8p_description,The current number of threads
+8530a261-3741-417c-8ca3-1a7933e32ab1,state,waiting
+8530a261-3741-417c-8ca3-1a7933e32ab1,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+8530a261-3741-417c-8ca3-1a7933e32ab1,k8p_namespace,stag
+9659774c-266a-4736-b567-f3f7ebbed720,id,Compressed Class Space
+9659774c-266a-4736-b567-f3f7ebbed720,k8p_metric_name,jvm_memory_used_bytes
+9659774c-266a-4736-b567-f3f7ebbed720,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+9659774c-266a-4736-b567-f3f7ebbed720,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+9659774c-266a-4736-b567-f3f7ebbed720,area,nonheap
+9659774c-266a-4736-b567-f3f7ebbed720,k8p_appname,stag-stag-sbjava-lotsofnames-server
+9659774c-266a-4736-b567-f3f7ebbed720,k8p_namespace,stag
+9659774c-266a-4736-b567-f3f7ebbed720,k8p_type,gauge
+9659774c-266a-4736-b567-f3f7ebbed720,k8p_value,5189576.0
+9659774c-266a-4736-b567-f3f7ebbed720,k8p_description,The amount of used memory
+9b5d75eb-be39-4a81-a469-57a8fe2e444d,k8p_type,gauge
+9b5d75eb-be39-4a81-a469-57a8fe2e444d,k8p_appname,stag-stag-sbjava-lotsofnames-server
+9b5d75eb-be39-4a81-a469-57a8fe2e444d,id,mapped - 'non-volatile memory'
+9b5d75eb-be39-4a81-a469-57a8fe2e444d,k8p_metric_name,jvm_buffer_total_capacity_bytes
+9b5d75eb-be39-4a81-a469-57a8fe2e444d,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+9b5d75eb-be39-4a81-a469-57a8fe2e444d,k8p_description,An estimate of the total capacity of the buffers in this pool
+9b5d75eb-be39-4a81-a469-57a8fe2e444d,k8p_value,0.0
+9b5d75eb-be39-4a81-a469-57a8fe2e444d,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+9b5d75eb-be39-4a81-a469-57a8fe2e444d,k8p_namespace,stag
+9fb0687c-7794-4161-94c2-450f8d92b12f,k8p_value,0.09680555555555556
+9fb0687c-7794-4161-94c2-450f8d92b12f,k8p_description,"The \""recent cpu usage\"" of the system the application is running in"
+9fb0687c-7794-4161-94c2-450f8d92b12f,k8p_type,gauge
+9fb0687c-7794-4161-94c2-450f8d92b12f,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+9fb0687c-7794-4161-94c2-450f8d92b12f,k8p_metric_name,system_cpu_usage
+9fb0687c-7794-4161-94c2-450f8d92b12f,k8p_appname,stag-stag-sbjava-lotsofnames-server
+9fb0687c-7794-4161-94c2-450f8d92b12f,k8p_namespace,stag
+9fb0687c-7794-4161-94c2-450f8d92b12f,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+9fb0ebe4-c74d-4963-bba5-21fc005c866a,k8p_namespace,stag
+9fb0ebe4-c74d-4963-bba5-21fc005c866a,k8p_appname,stag-stag-sbjava-lotsofnames-server
+9fb0ebe4-c74d-4963-bba5-21fc005c866a,area,heap
+9fb0ebe4-c74d-4963-bba5-21fc005c866a,k8p_metric_name,jvm_memory_committed_bytes
+9fb0ebe4-c74d-4963-bba5-21fc005c866a,k8p_value,1966080.0
+9fb0ebe4-c74d-4963-bba5-21fc005c866a,k8p_type,gauge
+9fb0ebe4-c74d-4963-bba5-21fc005c866a,id,Survivor Space
+9fb0ebe4-c74d-4963-bba5-21fc005c866a,k8p_description,The amount of memory in bytes that is committed for the Java virtual machine to use
+9fb0ebe4-c74d-4963-bba5-21fc005c866a,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+9fb0ebe4-c74d-4963-bba5-21fc005c866a,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+a0d43c46-6d02-4e5c-84ca-dedec9be40dd,status,200
+a0d43c46-6d02-4e5c-84ca-dedec9be40dd,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+a0d43c46-6d02-4e5c-84ca-dedec9be40dd,k8p_appname,stag-stag-sbjava-lotsofnames-server
+a0d43c46-6d02-4e5c-84ca-dedec9be40dd,outcome,SUCCESS
+a0d43c46-6d02-4e5c-84ca-dedec9be40dd,exception,none
+a0d43c46-6d02-4e5c-84ca-dedec9be40dd,k8p_description,http server requests active seconds max
+a0d43c46-6d02-4e5c-84ca-dedec9be40dd,k8p_type,gauge
+a0d43c46-6d02-4e5c-84ca-dedec9be40dd,uri,UNKNOWN
+a0d43c46-6d02-4e5c-84ca-dedec9be40dd,k8p_metric_name,http_server_requests_active_seconds_max
+a0d43c46-6d02-4e5c-84ca-dedec9be40dd,method,GET
+a0d43c46-6d02-4e5c-84ca-dedec9be40dd,k8p_namespace,stag
+a0d43c46-6d02-4e5c-84ca-dedec9be40dd,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+a0d43c46-6d02-4e5c-84ca-dedec9be40dd,k8p_value,0.0
+a31e9fb5-96d5-41bb-9273-7ef5bba30fbf,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+a31e9fb5-96d5-41bb-9273-7ef5bba30fbf,k8p_value,517632.0
+a31e9fb5-96d5-41bb-9273-7ef5bba30fbf,error,none
+a31e9fb5-96d5-41bb-9273-7ef5bba30fbf,k8p_namespace,stag
+a31e9fb5-96d5-41bb-9273-7ef5bba30fbf,exception,none
+a31e9fb5-96d5-41bb-9273-7ef5bba30fbf,k8p_type,summary
+a31e9fb5-96d5-41bb-9273-7ef5bba30fbf,status,200
+a31e9fb5-96d5-41bb-9273-7ef5bba30fbf,uri,/name/{src}
+a31e9fb5-96d5-41bb-9273-7ef5bba30fbf,k8p_metric_name,http_server_requests_seconds_count
+a31e9fb5-96d5-41bb-9273-7ef5bba30fbf,method,GET
+a31e9fb5-96d5-41bb-9273-7ef5bba30fbf,k8p_appname,stag-stag-sbjava-lotsofnames-server
+a31e9fb5-96d5-41bb-9273-7ef5bba30fbf,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+a31e9fb5-96d5-41bb-9273-7ef5bba30fbf,outcome,SUCCESS
+a31e9fb5-96d5-41bb-9273-7ef5bba30fbf,k8p_description,http server requests seconds
+a3b9238d-98be-453f-add8-55b1f5d91b64,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+a3b9238d-98be-453f-add8-55b1f5d91b64,k8p_appname,stag-stag-sbjava-lotsofnames-server
+a3b9238d-98be-453f-add8-55b1f5d91b64,k8p_namespace,stag
+a3b9238d-98be-453f-add8-55b1f5d91b64,state,terminated
+a3b9238d-98be-453f-add8-55b1f5d91b64,k8p_value,0.0
+a3b9238d-98be-453f-add8-55b1f5d91b64,k8p_metric_name,jvm_threads_states_threads
+a3b9238d-98be-453f-add8-55b1f5d91b64,k8p_description,The current number of threads
+a3b9238d-98be-453f-add8-55b1f5d91b64,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+a3b9238d-98be-453f-add8-55b1f5d91b64,k8p_type,gauge
+ba80bf6e-0dbc-4bff-89c1-93bac71f73d4,k8p_namespace,stag
+ba80bf6e-0dbc-4bff-89c1-93bac71f73d4,k8p_metric_name,jvm_memory_used_bytes
+ba80bf6e-0dbc-4bff-89c1-93bac71f73d4,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+ba80bf6e-0dbc-4bff-89c1-93bac71f73d4,k8p_description,The amount of used memory
+ba80bf6e-0dbc-4bff-89c1-93bac71f73d4,k8p_type,gauge
+ba80bf6e-0dbc-4bff-89c1-93bac71f73d4,area,heap
+ba80bf6e-0dbc-4bff-89c1-93bac71f73d4,id,Tenured Gen
+ba80bf6e-0dbc-4bff-89c1-93bac71f73d4,k8p_appname,stag-stag-sbjava-lotsofnames-server
+ba80bf6e-0dbc-4bff-89c1-93bac71f73d4,k8p_value,3.5537896E7
+ba80bf6e-0dbc-4bff-89c1-93bac71f73d4,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+bde33e88-945e-434d-bc79-e05da5602f8c,k8p_appname,stag-stag-sbjava-lotsofnames-server
+bde33e88-945e-434d-bc79-e05da5602f8c,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+bde33e88-945e-434d-bc79-e05da5602f8c,k8p_type,gauge
+bde33e88-945e-434d-bc79-e05da5602f8c,k8p_namespace,stag
+bde33e88-945e-434d-bc79-e05da5602f8c,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+bde33e88-945e-434d-bc79-e05da5602f8c,k8p_value,8.0
+bde33e88-945e-434d-bc79-e05da5602f8c,name,applicationTaskExecutor
+bde33e88-945e-434d-bc79-e05da5602f8c,k8p_description,The core number of threads for the pool
+bde33e88-945e-434d-bc79-e05da5602f8c,k8p_metric_name,executor_pool_core_threads
+bfbd5493-9caa-4bf8-8620-a8cb1a5d600e,k8p_value,0.0
+bfbd5493-9caa-4bf8-8620-a8cb1a5d600e,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+bfbd5493-9caa-4bf8-8620-a8cb1a5d600e,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+bfbd5493-9caa-4bf8-8620-a8cb1a5d600e,name,applicationTaskExecutor
+bfbd5493-9caa-4bf8-8620-a8cb1a5d600e,k8p_metric_name,executor_queued_tasks
+bfbd5493-9caa-4bf8-8620-a8cb1a5d600e,k8p_type,gauge
+bfbd5493-9caa-4bf8-8620-a8cb1a5d600e,k8p_description,The approximate number of tasks that are queued for execution
+bfbd5493-9caa-4bf8-8620-a8cb1a5d600e,k8p_appname,stag-stag-sbjava-lotsofnames-server
+bfbd5493-9caa-4bf8-8620-a8cb1a5d600e,k8p_namespace,stag
+ce94c1ff-4927-4526-9927-e71e9793c24b,k8p_description,The maximum amount of memory in bytes that can be used for memory management
+ce94c1ff-4927-4526-9927-e71e9793c24b,k8p_metric_name,jvm_memory_max_bytes
+ce94c1ff-4927-4526-9927-e71e9793c24b,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+ce94c1ff-4927-4526-9927-e71e9793c24b,area,nonheap
+ce94c1ff-4927-4526-9927-e71e9793c24b,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+ce94c1ff-4927-4526-9927-e71e9793c24b,k8p_value,-1.0
+ce94c1ff-4927-4526-9927-e71e9793c24b,k8p_appname,stag-stag-sbjava-lotsofnames-server
+ce94c1ff-4927-4526-9927-e71e9793c24b,k8p_namespace,stag
+ce94c1ff-4927-4526-9927-e71e9793c24b,k8p_type,gauge
+ce94c1ff-4927-4526-9927-e71e9793c24b,id,Metaspace
+da4b00a6-4fce-4204-8f70-59d9fe5799fd,id,CodeHeap 'non-nmethods'
+da4b00a6-4fce-4204-8f70-59d9fe5799fd,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+da4b00a6-4fce-4204-8f70-59d9fe5799fd,k8p_metric_name,jvm_memory_committed_bytes
+da4b00a6-4fce-4204-8f70-59d9fe5799fd,k8p_description,The amount of memory in bytes that is committed for the Java virtual machine to use
+da4b00a6-4fce-4204-8f70-59d9fe5799fd,k8p_appname,stag-stag-sbjava-lotsofnames-server
+da4b00a6-4fce-4204-8f70-59d9fe5799fd,k8p_type,gauge
+da4b00a6-4fce-4204-8f70-59d9fe5799fd,k8p_namespace,stag
+da4b00a6-4fce-4204-8f70-59d9fe5799fd,k8p_value,2555904.0
+da4b00a6-4fce-4204-8f70-59d9fe5799fd,area,nonheap
+da4b00a6-4fce-4204-8f70-59d9fe5799fd,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+daa456ac-00c7-4280-81fc-3ed558eed337,k8p_appname,stag-stag-sbjava-lotsofnames-server
+daa456ac-00c7-4280-81fc-3ed558eed337,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+daa456ac-00c7-4280-81fc-3ed558eed337,k8p_description,The approximate total number of tasks that have completed execution
+daa456ac-00c7-4280-81fc-3ed558eed337,name,applicationTaskExecutor
+daa456ac-00c7-4280-81fc-3ed558eed337,k8p_namespace,stag
+daa456ac-00c7-4280-81fc-3ed558eed337,k8p_metric_name,executor_completed_tasks_total
+daa456ac-00c7-4280-81fc-3ed558eed337,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+daa456ac-00c7-4280-81fc-3ed558eed337,k8p_type,counter
+daa456ac-00c7-4280-81fc-3ed558eed337,k8p_value,0.0
+e98893a1-d686-436d-816b-b4e2e1b5a87c,exception,none
+e98893a1-d686-436d-816b-b4e2e1b5a87c,class,tech.navicore.lotsofnamesj.NameController
+e98893a1-d686-436d-816b-b4e2e1b5a87c,k8p_namespace,stag
+e98893a1-d686-436d-816b-b4e2e1b5a87c,k8p_appname,stag-stag-sbjava-lotsofnames-server
+e98893a1-d686-436d-816b-b4e2e1b5a87c,k8p_description,time to lookup name
+e98893a1-d686-436d-816b-b4e2e1b5a87c,k8p_type,summary
+e98893a1-d686-436d-816b-b4e2e1b5a87c,k8p_metric_name,name_get_time_seconds_sum
+e98893a1-d686-436d-816b-b4e2e1b5a87c,k8p_value,14.481532679
+e98893a1-d686-436d-816b-b4e2e1b5a87c,method,name
+e98893a1-d686-436d-816b-b4e2e1b5a87c,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+e98893a1-d686-436d-816b-b4e2e1b5a87c,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+f11bc707-5e84-40da-af7a-f4bbd9dd0835,k8p_value,5176417.009
+f11bc707-5e84-40da-af7a-f4bbd9dd0835,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+f11bc707-5e84-40da-af7a-f4bbd9dd0835,k8p_metric_name,process_uptime_seconds
+f11bc707-5e84-40da-af7a-f4bbd9dd0835,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np
+f11bc707-5e84-40da-af7a-f4bbd9dd0835,k8p_description,The uptime of the Java virtual machine
+f11bc707-5e84-40da-af7a-f4bbd9dd0835,k8p_appname,stag-stag-sbjava-lotsofnames-server
+f11bc707-5e84-40da-af7a-f4bbd9dd0835,k8p_namespace,stag
+f11bc707-5e84-40da-af7a-f4bbd9dd0835,k8p_type,gauge
+f48545b9-f4b6-4bb1-b396-0c19ed0da57f,gc,MarkSweepCompact
+f48545b9-f4b6-4bb1-b396-0c19ed0da57f,k8p_metric_name,jvm_gc_pause_seconds_count
+f48545b9-f4b6-4bb1-b396-0c19ed0da57f,k8p_appname,stag-stag-sbjava-lotsofnames-server
+f48545b9-f4b6-4bb1-b396-0c19ed0da57f,k8p_namespace,stag
+f48545b9-f4b6-4bb1-b396-0c19ed0da57f,k8p_description,Time spent in GC pause
+f48545b9-f4b6-4bb1-b396-0c19ed0da57f,k8p_datetime,2023-09-15T18:53:17.312030+00:00
+f48545b9-f4b6-4bb1-b396-0c19ed0da57f,k8p_value,5.0
+f48545b9-f4b6-4bb1-b396-0c19ed0da57f,action,end of major GC
+f48545b9-f4b6-4bb1-b396-0c19ed0da57f,cause,Allocation Failure
+f48545b9-f4b6-4bb1-b396-0c19ed0da57f,k8p_type,summary
+f48545b9-f4b6-4bb1-b396-0c19ed0da57f,k8p_podname,stag-stag-sbjava-lotsofnames-server-5768784fb9-bs2np

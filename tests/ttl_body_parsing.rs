@@ -1,5 +1,5 @@
 use triples::ttl::LineParser;
-use triples::ttl_data::ParsedLine;
+use triples::ttl_stream::ParsedLine;
 
 #[test]
 fn test_subject_line_parsing() {

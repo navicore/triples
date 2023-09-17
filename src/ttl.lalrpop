@@ -1,6 +1,6 @@
 grammar;
 
-use crate::ttl_data::ParsedLine;
+use crate::ttl_stream::ParsedLine;
 
 // Entry rule for each line
 pub Line: ParsedLine = {

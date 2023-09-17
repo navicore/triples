@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
 use triples::ttl::LineParser;
-use triples::ttl_data::ParsedLine;
+use triples::ttl_stream::ParsedLine;
 
 #[test]
 fn test_ttl_to_parsed_line() {
