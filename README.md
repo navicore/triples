@@ -10,12 +10,13 @@ Experimental Rust lib to store any data in triple format.
 * async
 * cli db maintenance tool
 * RDF / Turtle
+* import / export of non-RDF data
 
 ## Overview
 
-* main API / usage is embedded - ie rust API and crate dependency
+* Rust API
   * see [crate](https://crates.io/crates/triples)
-* stores only subject, predicate, and object where
+* stores subject, predicate, and object where
   * subject is always an RDF name
   * predicate is always an RDF name
   * object is always a UTF string
@@ -31,9 +32,12 @@ see [crate](https://crates.io/crates/triples)
 
 ## TODO
 
-* ~~bulk loading and exporting via cli~~ (done)
-* ~~normalizes RDF names~~ (done)
+* ~~bulk loading and exporting via cli~~
+* ~~normalizes RDF names~~
 * considering the normalized object values
-* ~~import / export of RDF Turtle `*.tll` format~~ (done)
-* import / export of csv `*.csv` format
-* eventual support of SparkQL queries
+* ~~import / export of RDF Turtle `*.tll` format~~
+* ~~import / export of csv `*.csv` format~~
+* support of SparkQL queries
+
+----------
+__PRs welcome__
