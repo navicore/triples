@@ -2,8 +2,6 @@
 
 Experimental Rust lib to store any data in triple format.
 
-# UNDER CONSTRUCTION
-
 ## Features
 
 * embedded
