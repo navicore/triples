@@ -65,7 +65,7 @@ cat ../vssgen/vss_sm.csv | triples -d /tmp/vss.db import-csv --subject-default-n
 export ttl
 
 ```bash
-triples --db-location /tmp/vss.db export-turtle | more
+triples --db-location /tmp/vss.db export-turtle
 ```
 
 ```bash
