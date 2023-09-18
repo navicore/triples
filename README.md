@@ -28,6 +28,34 @@ or
 
 see [crate](https://crates.io/crates/triples)
 
+## Usage
+
+For API usage, see the unit tests in [db_api]("./src/db_api.rs") for now.
+
+For cli usage:
+
+```bash
+triples -h
+```
+
+```bash
+A lib and cli for storing data triples
+
+Usage: triples [OPTIONS] <COMMAND>
+
+Commands:
+  import-turtle
+  export-turtle
+  import-csv
+  export-csv
+  help           Print this message or the help of the given subcommand(s)
+
+Options:
+  -d, --db-location <DB_LOCATION>  [default: /tmp/triples.db]
+  -h, --help                       Print help
+  -V, --version                    Print version
+```
+
 ## TODO
 
 * ~~bulk loading and exporting via cli~~
