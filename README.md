@@ -34,9 +34,11 @@ see [crate](https://crates.io/crates/triples)
 
 * ~~bulk loading and exporting via cli~~
 * ~~normalizes RDF names~~
-* considering normalizing object values
+* ~~normalizing object values~~
 * ~~import / export of RDF Turtle `*.tll` format~~
 * ~~import / export of csv `*.csv` format~~
+* txn control via api
+* insert performance
 * SparkQL
 
 ----------

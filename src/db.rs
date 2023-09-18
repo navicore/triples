@@ -9,6 +9,28 @@ use tracing::debug;
 ///
 /// Will return `Err` if function cannot create db table
 #[cfg(all(feature = "sqlite", not(feature = "disable-sqlite")))]
+async fn create_objects_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::error::Error>> {
+    sqlx::query(
+        r#"
+        CREATE TABLE IF NOT EXISTS objects (
+            id INTEGER PRIMARY KEY,
+            object TEXT UNIQUE NOT NULL
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_objects ON objects (object);
+        "#,
+    )
+    .execute(pool)
+    .await?;
+
+    debug!("db objects table initialized");
+    Ok(())
+}
+
+/// # Errors
+///
+/// Will return `Err` if function cannot create db table
+#[cfg(all(feature = "sqlite", not(feature = "disable-sqlite")))]
 async fn create_names_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::error::Error>> {
     sqlx::query(
         r#"
@@ -39,9 +61,10 @@ async fn create_triples_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::er
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             subject INTEGER NOT NULL,
             predicate INTEGER NOT NULL,
-            object TEXT NOT NULL,
+            object INTEGER NOT NULL,
             FOREIGN KEY (subject) REFERENCES names(id),
             FOREIGN KEY (predicate) REFERENCES names(id)
+            FOREIGN KEY (object) REFERENCES objects(id)
         );
 
         CREATE INDEX IF NOT EXISTS idx_subject ON triples (subject);
@@ -73,7 +96,20 @@ pub async fn init(db_location: String) -> Result<Pool<Sqlite>, Box<dyn std::erro
 
     let pool = Pool::connect(&db_url).await?;
 
+    sqlx::query(
+        r#"
+        PRAGMA journal_mode=WAL;
+        PRAGMA temp_store=MEMORY;
+        PRAGMA cache_size=10000;
+        PRAGMA page_size=8192;
+        "#,
+    )
+    .execute(&pool)
+    .await?;
+
     create_names_table(&pool).await?;
+
+    create_objects_table(&pool).await?;
 
     create_triples_table(&pool).await?;
 
@@ -119,6 +155,13 @@ mod tests {
 
             // Check if the names table has been created
             let row: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM names")
+                .fetch_one(&pool)
+                .await
+                .unwrap();
+            assert_eq!(row.0, 0);
+
+            // Check if the objects table has been created
+            let row: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM objects")
                 .fetch_one(&pool)
                 .await
                 .unwrap();

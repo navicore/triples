@@ -15,16 +15,20 @@ use tokio::io::{stdin, AsyncBufReadExt, BufReader};
 /// # Errors
 ///
 /// return `Err` if any entry can not be loaded
-pub async fn import_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn import_turtle(db_api: &mut DbApi) -> Result<(), Box<dyn std::error::Error>> {
     let mut stream = TtlStream::new();
     let stdin = stdin();
     let mut reader = BufReader::new(stdin);
+
+    //db_api.begin_txn().await?;
 
     let mut line = String::new();
     while reader.read_line(&mut line).await? != 0 {
         import_line(&line, &mut stream, db_api).await?;
         line.clear();
     }
+
+    //db_api.commit_txn().await?;
 
     Ok(())
 }
@@ -80,7 +84,7 @@ pub async fn export_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Err
 async fn import_line(
     line: &str,
     stream: &mut TtlStream,
-    db_api: &DbApi,
+    db_api: &mut DbApi,
 ) -> Result<(), Box<dyn std::error::Error>> {
     if line.trim().is_empty() {
         return Ok(());
