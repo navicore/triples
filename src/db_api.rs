@@ -18,7 +18,7 @@ pub struct DbApi {
     pool: Pool<Sqlite>,
 }
 
-impl DbApi {
+impl<'a> DbApi {
     /// Constructs a new instance of `DbApi` and initializes the pool.
     ///
     /// # Errors
@@ -30,50 +30,81 @@ impl DbApi {
         Ok(Self { pool })
     }
 
-    async fn insert_name_and_get_id(&self, name: &str) -> Result<i64, Box<dyn std::error::Error>> {
+    /// # Errors
+    ///
+    /// Will return `Err` if db cannot start a transaction
+    #[cfg(all(feature = "sqlite", not(feature = "disable-sqlite")))]
+    pub fn begin_txn(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        //let pool = &self.pool;
+
+        // let tx: Transaction<Sqlite> = pool.begin().await?;
+        // self.tx = Some(tx);
+
+        Ok(())
+    }
+
+    /// # Errors
+    ///
+    /// Will return `Err` if db cannot commit a transaction
+    #[cfg(all(feature = "sqlite", not(feature = "disable-sqlite")))]
+    pub fn commit_txn(&self) -> Result<(), Box<dyn std::error::Error>> {
+        //tx.commit().await?;
+        Ok(())
+    }
+
+    async fn get_or_insert_name(&self, name: &str) -> Result<i64, sqlx::Error> {
         let pool = &self.pool;
+        let query = "
+        -- Try to insert the item
+        INSERT OR IGNORE INTO names (name) VALUES (?);
+        
+        -- Get the ID of the item, either the one just inserted or the existing one
+        SELECT id FROM names WHERE name = ?;
+    ";
 
-        // Insert the name if it doesn't exist
-        sqlx::query(
-            r#"
-            INSERT INTO names (name) VALUES (?1)
-            ON CONFLICT(name) DO NOTHING
-            "#,
-        )
-        .bind(name)
-        .execute(pool)
-        .await?;
+        let row: (i64,) = sqlx::query_as(query)
+            .bind(name)
+            .bind(name)
+            .fetch_one(pool)
+            .await?;
 
-        // Fetch and return the ID of the name
-        let id: i64 = sqlx::query_scalar(
-            r#"
-            SELECT id FROM names WHERE name = ?1
-            "#,
-        )
-        .bind(name)
-        .fetch_one(pool)
-        .await?;
+        Ok(row.0)
+    }
 
-        Ok(id)
+    async fn get_or_insert_object(&self, object: &str) -> Result<i64, sqlx::Error> {
+        let pool = &self.pool;
+        let query = "
+        -- Try to insert the item
+        INSERT OR IGNORE INTO objects (object) VALUES (?);
+        
+        -- Get the ID of the item, either the one just inserted or the existing one
+        SELECT id FROM objects WHERE object = ?;
+    ";
+
+        let row: (i64,) = sqlx::query_as(query)
+            .bind(object)
+            .bind(object)
+            .fetch_one(pool)
+            .await?;
+
+        Ok(row.0)
     }
 
     async fn insert_triple(
-        &self,
+        &mut self,
         subject_id: i64,
         predicate_id: i64,
-        object: &str,
+        object_id: i64,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        let pool = &self.pool;
-
         sqlx::query(
             r#"
-            INSERT INTO triples (subject, predicate, object) VALUES (?1, ?2, ?3)
-            "#,
+        INSERT INTO triples (subject, predicate, object) VALUES (?1, ?2, ?3)
+        "#,
         )
         .bind(subject_id)
         .bind(predicate_id)
-        .bind(object)
-        .execute(pool)
+        .bind(object_id)
+        .execute(&self.pool)
         .await?;
 
         Ok(())
@@ -84,22 +115,15 @@ impl DbApi {
     /// # Errors
     ///
     /// Will return `Err` if insertion cannot be performed.
-    pub async fn insert(&self, subject: &Subject) -> Result<(), Box<dyn std::error::Error>> {
-        let pool = &self.pool;
-
-        let tx = pool.begin().await?;
-
-        let fetched_subject_id = self
-            .insert_name_and_get_id(&subject.name().to_string())
-            .await?;
+    pub async fn insert(&mut self, subject: &Subject) -> Result<(), Box<dyn std::error::Error>> {
+        let fetched_subject_id = self.get_or_insert_name(&subject.name().to_string()).await?;
 
         for (predicate, object) in subject.predicate_object_pairs() {
-            let fetched_predicate_id = self.insert_name_and_get_id(&predicate.to_string()).await?;
-            self.insert_triple(fetched_subject_id, fetched_predicate_id, object)
+            let fetched_predicate_id = self.get_or_insert_name(&predicate.to_string()).await?;
+            let fetched_object_id = self.get_or_insert_object(&object.to_string()).await?;
+            self.insert_triple(fetched_subject_id, fetched_predicate_id, fetched_object_id)
                 .await?;
         }
-
-        tx.commit().await?;
 
         Ok(())
     }
@@ -118,10 +142,11 @@ impl DbApi {
         // Use the provided subject name to query the database for all predicate/object pairs
         let results: Vec<(String, String)> = sqlx::query_as(
             r#"
-        SELECT predicates.name, triples.object
+        SELECT predicates.name, objects.object
         FROM triples
         JOIN names AS subjects ON triples.subject = subjects.id
         JOIN names AS predicates ON triples.predicate = predicates.id
+        JOIN objects AS objects ON triples.object = objects.id
         WHERE subjects.name = ?1
         "#,
         )
@@ -218,7 +243,7 @@ mod tests {
     async fn test_insert() {
         delete_test_db(TEST_DB_FILE);
         // Create an in-memory SQLite database for testing purposes
-        let db_api = DbApi::new(TEST_DB_FILE.to_string()).await.unwrap();
+        let mut db_api = DbApi::new(TEST_DB_FILE.to_string()).await.unwrap();
         let subject = create_test_subject();
 
         // Use the insert function
@@ -227,10 +252,11 @@ mod tests {
         // Fetch all matching rows
         let results: Vec<(String, String, String)> = sqlx::query_as(
             r#"
-            SELECT subjects.name, predicates.name, triples.object
+            SELECT subjects.name, predicates.name, objects.object
             FROM triples
             JOIN names AS subjects ON triples.subject = subjects.id
             JOIN names AS predicates ON triples.predicate = predicates.id
+            JOIN objects AS objects ON triples.object = objects.id
             WHERE subjects.name = ?1
             ORDER BY predicates.name
             "#,
@@ -248,7 +274,7 @@ mod tests {
     async fn test_query() {
         delete_test_db(TEST_DB_FILE_2);
         // Create an in-memory SQLite database for testing purposes
-        let db_api = DbApi::new(TEST_DB_FILE_2.to_string()).await.unwrap();
+        let mut db_api = DbApi::new(TEST_DB_FILE_2.to_string()).await.unwrap();
         let subject = create_test_subject();
 
         // Use the insert function

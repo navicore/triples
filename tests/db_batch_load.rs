@@ -13,7 +13,7 @@ async fn test_ttl_to_db() {
     let mut stream = TtlStream::new();
 
     const TEST_DB_FILE: &str = "/tmp/triples_batch_load_test.db";
-    let db_api = DbApi::new(TEST_DB_FILE.to_string()).await.unwrap();
+    let mut db_api = DbApi::new(TEST_DB_FILE.to_string()).await.unwrap();
 
     for line in reader.lines() {
         let line = line.expect("Failed to read a line");

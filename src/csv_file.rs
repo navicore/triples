@@ -106,7 +106,7 @@ pub async fn import_csv(
     default_subject_ns: Option<String>,
     default_predicate_ns: Option<String>,
     skip_headers: bool,
-    db_api: &DbApi,
+    db_api: &mut DbApi,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let stdin = stdin();
     let mut reader = BufReader::new(stdin);
@@ -115,6 +115,8 @@ pub async fn import_csv(
     if skip_headers {
         reader.read_line(&mut discard).await?;
     };
+
+    //db_api.begin_txn().await?;
 
     let mut line = String::new();
     while reader.read_line(&mut line).await? != 0 {
@@ -136,6 +138,7 @@ pub async fn import_csv(
         db_api.insert(&subject_entry).await?;
         line.clear();
     }
+    //db_api.commit_txn().await?;
 
     Ok(())
 }
