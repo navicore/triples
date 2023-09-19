@@ -1,10 +1,10 @@
-use crate::data::RdfName;
-use crate::data::Subject;
 /// Functions in support of csv file handling.
 ///
 /// Prefer to process data via stdin and stdout to enable *nix style
 /// command pipelining.
 ///
+use crate::data::RdfName;
+use crate::data::Subject;
 use crate::data::TriplesError;
 use crate::db_api::DbApi;
 use tokio::io::{stdin, AsyncBufReadExt, BufReader};
@@ -116,7 +116,7 @@ pub async fn import_csv(
         reader.read_line(&mut discard).await?;
     };
 
-    //db_api.begin_txn().await?;
+    let tx = db_api.begin_txn().await?;
 
     let mut line = String::new();
     while reader.read_line(&mut line).await? != 0 {
@@ -138,7 +138,7 @@ pub async fn import_csv(
         db_api.insert(&subject_entry).await?;
         line.clear();
     }
-    //db_api.commit_txn().await?;
+    tx.commit().await?;
 
     Ok(())
 }

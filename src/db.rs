@@ -144,7 +144,7 @@ mod tests {
 
     #[test]
     fn test_init() {
-        let db_location = "/tmp/test_triples.db";
+        let db_location = "/tmp/test_init.db";
 
         // Ensure there's no db file before the test
         let _ = fs::remove_file(db_location);
@@ -173,6 +173,55 @@ mod tests {
                 .await
                 .unwrap();
             assert_eq!(row.0, 0);
+        });
+
+        // Clean up after the test
+        let _ = fs::remove_file(db_location);
+    }
+
+    // TODO: trying to get the tx obj to
+    #[test]
+    fn test_txns() {
+        let db_location = "/tmp/test_txns.db";
+
+        // Ensure there's no db file before the test
+        let _ = fs::remove_file(db_location);
+
+        let rt = Runtime::new().unwrap();
+        rt.block_on(async {
+            let pool = init(db_location.to_string()).await.unwrap();
+            //let conn = pool.acquire().await.unwrap();
+            //let tx = conn.begin();
+            // there is an issue with associating the tx with operations. lots
+            // of support discussions show getting a tx from a conn and passing
+            // it to query or insert as "&mut *db_conn" but that won't work with
+            // recent versions and pool.
+
+            //let tx = pool.begin().await.unwrap();
+            let query = "
+            -- Try to insert the item
+            INSERT OR IGNORE INTO names (name) VALUES (?);
+
+            -- Get the ID of the item, either the one just inserted or the existing one
+            SELECT id FROM names WHERE name = ?;
+            ";
+
+            let name = "haho";
+
+            let _: (i64,) = sqlx::query_as(query)
+                .bind(name)
+                .bind(name)
+                .fetch_one(&pool)
+                //.fetch_one(&tx)
+                .await
+                .unwrap();
+
+            // Check if the names table has been created
+            let row: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM names")
+                .fetch_one(&pool)
+                .await
+                .unwrap();
+            assert_eq!(row.0, 1);
         });
 
         // Clean up after the test

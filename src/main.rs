@@ -23,10 +23,10 @@ struct Args {
 
 #[derive(Parser, Debug, Clone)]
 struct ImportCsvArgs {
-    #[arg(long, default_value = "https:://example.com/id")]
+    #[arg(long)]
     subject_default_ns: Option<String>,
 
-    #[arg(long, default_value = "https:://example.com/prop")]
+    #[arg(long)]
     predicate_default_ns: Option<String>,
 
     #[arg(long, default_value = "false")]
