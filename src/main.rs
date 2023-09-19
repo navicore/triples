@@ -23,10 +23,10 @@ struct Args {
 
 #[derive(Parser, Debug, Clone)]
 struct ImportCsvArgs {
-    #[arg(long, default_value = "https:://example.com/id")]
+    #[arg(long)]
     subject_default_ns: Option<String>,
 
-    #[arg(long, default_value = "https:://example.com/prop")]
+    #[arg(long)]
     predicate_default_ns: Option<String>,
 
     #[arg(long, default_value = "false")]
@@ -47,17 +47,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing_subscriber::fmt::init();
     let args = Args::parse();
 
-    let mut db_api = DbApi::new(args.db_location).await?;
+    let db_api = DbApi::new(args.db_location).await?;
 
     match args.command {
-        Command::ImportTurtle => ttl_file::import_turtle(&mut db_api).await?,
+        Command::ImportTurtle => ttl_file::import_turtle(&db_api).await?,
         Command::ExportTurtle => ttl_file::export_turtle(&db_api).await?,
         Command::ImportCSV(import_csv_args) => {
             csv_file::import_csv(
                 import_csv_args.subject_default_ns,
                 import_csv_args.predicate_default_ns,
                 import_csv_args.skip_headers,
-                &mut db_api,
+                &db_api,
             )
             .await?;
         }

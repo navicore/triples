@@ -2,6 +2,7 @@ use crate::data::RdfName;
 use crate::data::Subject;
 use sqlx::Pool;
 use sqlx::Sqlite;
+use sqlx::Transaction;
 use tracing::debug;
 
 // #[cfg(feature = "postgres")]
@@ -34,22 +35,12 @@ impl<'a> DbApi {
     ///
     /// Will return `Err` if db cannot start a transaction
     #[cfg(all(feature = "sqlite", not(feature = "disable-sqlite")))]
-    pub fn begin_txn(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        //let pool = &self.pool;
+    pub async fn begin_txn(&self) -> Result<Transaction<Sqlite>, Box<dyn std::error::Error>> {
+        let pool = &self.pool;
 
-        // let tx: Transaction<Sqlite> = pool.begin().await?;
-        // self.tx = Some(tx);
+        let tx: Transaction<Sqlite> = pool.begin().await?;
 
-        Ok(())
-    }
-
-    /// # Errors
-    ///
-    /// Will return `Err` if db cannot commit a transaction
-    #[cfg(all(feature = "sqlite", not(feature = "disable-sqlite")))]
-    pub fn commit_txn(&self) -> Result<(), Box<dyn std::error::Error>> {
-        //tx.commit().await?;
-        Ok(())
+        Ok(tx)
     }
 
     async fn get_or_insert_name(&self, name: &str) -> Result<i64, sqlx::Error> {
@@ -60,7 +51,7 @@ impl<'a> DbApi {
         
         -- Get the ID of the item, either the one just inserted or the existing one
         SELECT id FROM names WHERE name = ?;
-    ";
+        ";
 
         let row: (i64,) = sqlx::query_as(query)
             .bind(name)
@@ -91,7 +82,7 @@ impl<'a> DbApi {
     }
 
     async fn insert_triple(
-        &mut self,
+        &self,
         subject_id: i64,
         predicate_id: i64,
         object_id: i64,
@@ -115,7 +106,7 @@ impl<'a> DbApi {
     /// # Errors
     ///
     /// Will return `Err` if insertion cannot be performed.
-    pub async fn insert(&mut self, subject: &Subject) -> Result<(), Box<dyn std::error::Error>> {
+    pub async fn insert(&self, subject: &Subject) -> Result<(), Box<dyn std::error::Error>> {
         let fetched_subject_id = self.get_or_insert_name(&subject.name().to_string()).await?;
 
         for (predicate, object) in subject.predicate_object_pairs() {
@@ -243,7 +234,7 @@ mod tests {
     async fn test_insert() {
         delete_test_db(TEST_DB_FILE);
         // Create an in-memory SQLite database for testing purposes
-        let mut db_api = DbApi::new(TEST_DB_FILE.to_string()).await.unwrap();
+        let db_api = DbApi::new(TEST_DB_FILE.to_string()).await.unwrap();
         let subject = create_test_subject();
 
         // Use the insert function
@@ -274,7 +265,7 @@ mod tests {
     async fn test_query() {
         delete_test_db(TEST_DB_FILE_2);
         // Create an in-memory SQLite database for testing purposes
-        let mut db_api = DbApi::new(TEST_DB_FILE_2.to_string()).await.unwrap();
+        let db_api = DbApi::new(TEST_DB_FILE_2.to_string()).await.unwrap();
         let subject = create_test_subject();
 
         // Use the insert function
