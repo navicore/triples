@@ -47,7 +47,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing_subscriber::fmt::init();
     let args = Args::parse();
 
-    let mut db_api = DbApi::new(args.db_location).await?;
+    let db_api = DbApi::new(args.db_location).await?;
 
     match args.command {
         Command::ImportTurtle => ttl_file::import_turtle(&db_api).await?,
@@ -57,7 +57,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 import_csv_args.subject_default_ns,
                 import_csv_args.predicate_default_ns,
                 import_csv_args.skip_headers,
-                &mut db_api,
+                &db_api,
             )
             .await?;
         }

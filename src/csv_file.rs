@@ -106,7 +106,7 @@ pub async fn import_csv(
     default_subject_ns: Option<String>,
     default_predicate_ns: Option<String>,
     skip_headers: bool,
-    db_api: &mut DbApi,
+    db_api: &DbApi,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let stdin = stdin();
     let mut reader = BufReader::new(stdin);
