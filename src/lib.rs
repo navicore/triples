@@ -4,6 +4,7 @@ pub mod csv_file;
 pub mod data;
 pub mod db;
 pub mod db_api;
+pub mod sparql_data;
 pub mod ttl_file;
 pub mod ttl_stream;
 

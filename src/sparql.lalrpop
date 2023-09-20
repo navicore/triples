@@ -1,29 +1,36 @@
 grammar;
 
-// This is the root non-terminal for our grammar
-pub Query: String = {
-    "SELECT" <select_cl:SelectClause> "WHERE" "{" <triples_bl:TriplesBlock> "}" => format!("SELECT {} WHERE {}", select_cl, triples_bl),
+use crate::sparql_data::SelectClause;
+use crate::sparql_data::SparqlQuery;
+use crate::sparql_data::TriplePattern;
+use crate::sparql_data::Variable;
+
+pub Query: SparqlQuery = {
+    "SELECT" <select_cl:SelectClause> "WHERE" "{" <triples_bl:TriplesBlock> "}" =>
+        SparqlQuery { select_clause: select_cl, triples_block: triples_bl },
 };
 
-SelectClause: String = {
-    "DISTINCT" <vars:Variables> => format!("DISTINCT ?{}", vars),
+SelectClause: SelectClause = {
+    "DISTINCT" <vars:Variables> =>
+        SelectClause { distinct: true, variables: vars },
 };
 
-Variables: String = {
-    "<" <sparql_iri:SPARQL_IRI> ">" => sparql_iri.to_string(),
-    "?" <sparql_var:SPARQL_VAR> => sparql_var.to_string(),
+Variables: Vec<Variable> = {
+    <v:Variable+> => v,
 };
 
-TriplesBlock: String = {
-    <pat:TriplePattern+> => format!("{{ {} }}", pat.join(" . ")),
+Variable: Variable = {
+    "<" <sparql_iri:SPARQL_IRI> ">" => Variable::IRI(sparql_iri),
+    "?" <sparql_var:SPARQL_VAR> => Variable::Var(sparql_var),
 };
 
+TriplesBlock: Vec<TriplePattern> = {
+    <pat:TriplePattern+> => pat,
+};
 
-TriplePattern: String = {
-    "?" <subject:SPARQL_VAR> <predicate:SPARQL_IRI> "?" <object:SPARQL_VAR> ("."?) =>
-        format!("?{} <{}> ?{}", subject, predicate, object),
-    "?" <subject:SPARQL_VAR> <predicate:SPARQL_IRI> "<" <object:SPARQL_IRI> ">" ("."?) =>
-        format!("?{} <{}> ?{}", subject, predicate, object),
+TriplePattern: TriplePattern = {
+    <s:Variable> <p:SPARQL_IRI> <o:Variable> ("."?) =>
+        TriplePattern { subject: s, predicate: p, object: o },
 };
 
 // This will parse SPARQL variables like "?s", "?metric", "?appname"
