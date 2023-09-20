@@ -1,0 +1,33 @@
+grammar;
+
+// This is the root non-terminal for our grammar
+pub Query: String = {
+    "SELECT" <select_cl:SelectClause> "WHERE" "{" <triples_bl:TriplesBlock> "}" => format!("SELECT {} WHERE {}", select_cl, triples_bl),
+};
+
+SelectClause: String = {
+    "DISTINCT" <vars:Variables> => format!("DISTINCT ?{}", vars),
+};
+
+Variables: String = {
+    "<" <sparql_iri:SPARQL_IRI> ">" => sparql_iri.to_string(),
+    "?" <sparql_var:SPARQL_VAR> => sparql_var.to_string(),
+};
+
+TriplesBlock: String = {
+    <pat:TriplePattern+> => format!("{{ {} }}", pat.join(" . ")),
+};
+
+
+TriplePattern: String = {
+    "?" <subject:SPARQL_VAR> <predicate:SPARQL_IRI> "?" <object:SPARQL_VAR> ("."?) =>
+        format!("?{} <{}> ?{}", subject, predicate, object),
+    "?" <subject:SPARQL_VAR> <predicate:SPARQL_IRI> "<" <object:SPARQL_IRI> ">" ("."?) =>
+        format!("?{} <{}> ?{}", subject, predicate, object),
+};
+
+// This will parse SPARQL variables like "?s", "?metric", "?appname"
+SPARQL_VAR: String = <v:r"[a-zA-Z_][a-zA-Z0-9_]*"> => v.to_string();
+
+// This will parse SPARQL IRI references enclosed in angle brackets
+SPARQL_IRI: String = <i:r"<http://[^\s<>]+>"> => i[1..i.len()-1].to_string();
