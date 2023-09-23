@@ -1,0 +1,17 @@
+@prefix bacnet: <http://data.ashrae.org/bacnet/2020#> .
+@prefix brick: <https://brickschema.org/schema/1.1/Brick#> .
+@prefix brickFuture: <https://doesNotExistYet.brickschema.org/Brick#> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+@prefix ex: <example#> .
+
+ex:device1000 bacnet:device-identifier 1000 .
+
+ex:obj1 
+    bacnet:object-type "analog-input" ;
+    bacnet:object-name "temp-sensor" ;
+    bacnet:object-identifier "analog-input,1" ;
+    bacnet:isPartOf ex:device1000 .
+
+ex:TempSensor   a   brick:Air_Temperature_Sensor .
+ex:TempSensor   brick:hasUnit   unit:DEG_C  .
+ex:TempSensor   brickFuture:BACnetRepresentation ex:obj1 .

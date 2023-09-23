@@ -49,6 +49,9 @@ fn test_ttl_to_parsed_line() {
                     parsed1
                 );
             }
+            ParsedLine::SubjectPredObjTerm(_, _, _, _, _) => {
+                assert!(false);
+            }
         }
     }
 }

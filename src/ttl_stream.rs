@@ -11,6 +11,7 @@ pub enum ParsedLine {
     Subject(Option<String>, String),
     PredObj(Option<String>, String, String),
     PredObjTerm(Option<String>, String, String),
+    SubjectPredObjTerm(Option<String>, String, Option<String>, String, String),
 }
 
 pub struct TtlStream {
@@ -149,6 +150,11 @@ impl TtlStream {
                 ParsedLine::PredObj(_, _, _) | ParsedLine::PredObjTerm(_, _, _) => {
                     Err(TriplesError::NotImplemented)
                 }
+
+                ParsedLine::SubjectPredObjTerm(name_prefix, name, prefix, predicate, object) => {
+                    self.handle_subject(&name_prefix, &name)?;
+                    self.handle_predicate_term(&prefix, &predicate, &object)
+                }
             },
             ParserState::PredicateLoading => match parsed {
                 // you can load prefixes later in the file but only in-between subject blocks
@@ -166,6 +172,7 @@ impl TtlStream {
                     self.handle_predicate_term(&prefix, &predicate, &object)
                 }
                 ParsedLine::Subject(_, _) => Err(TriplesError::NotImplemented),
+                ParsedLine::SubjectPredObjTerm(_, _, _, _, _) => Err(TriplesError::NotImplemented),
             },
         }
     }
