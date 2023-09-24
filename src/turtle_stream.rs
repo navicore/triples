@@ -6,10 +6,10 @@ use std::collections::HashMap;
 #[derive(Debug, Eq, PartialEq, Clone)]
 pub enum ParsedLine {
     Prefix(Pre, RdfName),
-    Subject(Option<Pre>, String),
-    PredObj(Option<Pre>, String, String),
-    PredObjTerm(Option<Pre>, String, String),
-    SubjectPredObjTerm(Option<Pre>, String, Option<Pre>, String, String),
+    Subject(Option<Pre>, RdfName),
+    PredObj(Option<Pre>, RdfName, String),
+    PredObjTerm(Option<Pre>, RdfName, String),
+    SubjectPredObjTerm(Option<Pre>, RdfName, Option<Pre>, RdfName, String),
 }
 
 pub struct TurtleStream {
@@ -42,7 +42,11 @@ impl TurtleStream {
         }
     }
 
-    fn resolve_iri(&self, prefix: Option<&Pre>, local_name: &str) -> Result<String, TriplesError> {
+    fn resolve_iri(
+        &self,
+        prefix: Option<&Pre>,
+        local_name: RdfName,
+    ) -> Result<String, TriplesError> {
         prefix.map_or_else(
             || Ok(local_name.to_string()),
             |ns| {
@@ -65,7 +69,7 @@ impl TurtleStream {
     fn handle_subject(
         &mut self,
         prefix: &Option<Pre>,
-        name: &str,
+        name: RdfName,
     ) -> Result<Option<Subject>, TriplesError> {
         if self.current_subject.is_some() {
             return Err(TriplesError::PreviousSubjectNotComplete);
@@ -80,7 +84,7 @@ impl TurtleStream {
     fn handle_predicate(
         &mut self,
         prefix: &Option<Pre>,
-        predicate: &str,
+        predicate: RdfName,
         object: &str,
     ) -> Result<Option<Subject>, TriplesError> {
         let predicate_iri_text = self.resolve_iri(prefix.as_ref(), predicate)?;
@@ -97,7 +101,7 @@ impl TurtleStream {
     fn handle_predicate_term(
         &mut self,
         prefix: &Option<Pre>,
-        predicate: &str,
+        predicate: RdfName,
         object: &str,
     ) -> Result<Option<Subject>, TriplesError> {
         // Since the logic is same as handle_predicate for now, reuse it
@@ -135,14 +139,14 @@ impl TurtleStream {
                     self.prefixes.insert(pre, uri);
                     Ok(None)
                 }
-                ParsedLine::Subject(prefix, name) => self.handle_subject(&prefix, &name),
+                ParsedLine::Subject(prefix, name) => self.handle_subject(&prefix, name),
                 ParsedLine::PredObj(_, _, _) | ParsedLine::PredObjTerm(_, _, _) => {
                     Err(TriplesError::NotImplemented)
                 }
 
                 ParsedLine::SubjectPredObjTerm(name_prefix, name, prefix, predicate, object) => {
-                    self.handle_subject(&name_prefix, &name)?;
-                    self.handle_predicate_term(&prefix, &predicate, &object)
+                    self.handle_subject(&name_prefix, name)?;
+                    self.handle_predicate_term(&prefix, predicate, &object)
                 }
             },
             ParserState::PredicateLoading => match parsed {
@@ -155,10 +159,10 @@ impl TurtleStream {
                     Ok(None)
                 }
                 ParsedLine::PredObj(prefix, predicate, object) => {
-                    self.handle_predicate(&prefix, &predicate, &object)
+                    self.handle_predicate(&prefix, predicate, &object)
                 }
                 ParsedLine::PredObjTerm(prefix, predicate, object) => {
-                    self.handle_predicate_term(&prefix, &predicate, &object)
+                    self.handle_predicate_term(&prefix, predicate, &object)
                 }
                 ParsedLine::Subject(_, _) => Err(TriplesError::NotImplemented),
                 ParsedLine::SubjectPredObjTerm(_, _, _, _, _) => Err(TriplesError::NotImplemented),
