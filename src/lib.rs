@@ -11,3 +11,5 @@ pub mod ttl_stream;
 lalrpop_mod!(#[allow(clippy::complexity, clippy::pedantic, clippy::restriction, clippy::nursery)] pub ttl);
 
 lalrpop_mod!(#[allow(clippy::complexity, clippy::pedantic, clippy::restriction, clippy::nursery)] pub sparql);
+
+lalrpop_mod!(#[allow(clippy::complexity, clippy::pedantic, clippy::restriction, clippy::nursery)] pub turtle);

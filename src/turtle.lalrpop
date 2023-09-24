@@ -1,0 +1,58 @@
+grammar;
+
+pub Prefix: (String, String) = {
+    "@prefix" <ns:Namespace>":" <uri:Uri> End => (ns.to_string(), uri.to_string())
+};
+
+// Captures the namespace (like "myns:")
+Namespace: &'input str = {
+    <n:Ident> => n
+};
+
+// Captures the URI enclosed in angle brackets (like "<http://example.com/myns#>")
+Uri: &'input str = {
+    "<" <u:UriContent> ">" => u
+};
+
+UriContent: &'input str = r"https?://[^>]+";
+
+pub Object: (Option<String>, String) = {
+    <quoted:EscapedString> => {
+        (None, quoted.trim_matches('"').to_string())
+    },
+    <name:RDFName> => {
+        (name.0, name.1)
+    }
+};
+
+// RDF Name (like res:... or prop:...)
+pub RDFName: (Option<String>, String) = {
+    <ns:Ident> ":" <name:Ident> => (Some(ns.to_string()), name.to_string()),
+    <name:Ident> => (None, name.to_string()),
+    <uri:Uri> => (None, uri.to_string()),
+};
+
+// Definition of an identifier
+Ident: &'input str = {
+    r"[a-zA-Z_][a-zA-Z0-9_]*" => <>,
+    UUID => <>
+};
+
+UUID: &'input str = r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
+
+EscapedString: &'input str = {
+    r#""([^"\\]|\\.)*""# => <>
+};
+
+End: &'input str = {
+    r"\." => <>,
+};
+
+Sep: &'input str = {
+    r";" => <>,
+};
+
+IsA: &'input str = {
+    r" a " => <>,
+};
+
