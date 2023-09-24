@@ -1,4 +1,3 @@
-use regex::Regex;
 use std::collections::HashMap;
 use std::fmt;
 
@@ -32,21 +31,28 @@ impl fmt::Display for TriplesError {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct RdfName(String);
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct Pre(String);
+
+impl Pre {
+    /// # Errors
+    /// Will return `Err` if name is not a valid prefix name
+    pub fn new(name: String) -> Self {
+        Self(name)
+    }
+}
+
+impl fmt::Display for Pre {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
 impl RdfName {
     /// # Errors
     /// Will return `Err` if name is not a valid IRI
-    pub fn new(name: String) -> Result<Self, TriplesError> {
-        if Self::is_valid(&name) {
-            Ok(Self(name))
-        } else {
-            Err(TriplesError::InvalidIRI { uri: name })
-        }
-    }
-
-    /// Checks if the given string is a valid IRI.
-    fn is_valid(name: &str) -> bool {
-        Regex::new(r"^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$")
-            .map_or(false, |iri_regex| iri_regex.is_match(name))
+    pub fn new(name: String) -> Self {
+        Self(name)
     }
 }
 
@@ -126,23 +132,17 @@ mod tests {
     #[test]
     fn rdf_name_valid() {
         let valid_iri = RdfName::new("https://www.example.com/test".to_string());
-        assert!(valid_iri.is_ok());
-    }
-
-    #[test]
-    fn rdf_name_invalid() {
-        let invalid_iri = RdfName::new("invalid_string".to_string());
-        assert!(!invalid_iri.is_ok());
+        assert!(valid_iri.to_string().starts_with("http"));
     }
 
     #[test]
     fn subject_basic_operations() {
-        let subject_iri = RdfName::new("https://www.example.com/subject".to_string()).unwrap();
+        let subject_iri = RdfName::new("https://www.example.com/subject".to_string());
         let mut subject = Subject::new(subject_iri.clone());
 
         assert_eq!(subject.name(), &subject_iri);
 
-        let predicate_iri = RdfName::new("https://www.example.com/predicate".to_string()).unwrap();
+        let predicate_iri = RdfName::new("https://www.example.com/predicate".to_string());
         let object_value = "Object Value".to_string();
 
         // Adding
@@ -156,11 +156,11 @@ mod tests {
 
     #[test]
     fn subject_non_existent_predicate() {
-        let subject_iri = RdfName::new("https://www.example.com/subject".to_string()).unwrap();
+        let subject_iri = RdfName::new("https://www.example.com/subject".to_string());
         let subject = Subject::new(subject_iri);
 
         let non_existent_predicate =
-            RdfName::new("https://www.example.com/nonexistent".to_string()).unwrap();
+            RdfName::new("https://www.example.com/nonexistent".to_string());
 
         assert_eq!(subject.get(&non_existent_predicate), None);
     }

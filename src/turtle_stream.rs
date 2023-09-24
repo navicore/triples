@@ -1,23 +1,21 @@
-use crate::data::RdfName;
-use crate::data::Subject;
-use crate::data::TriplesError;
+use crate::data::{Pre, RdfName, Subject, TriplesError};
 use crate::turtle::LineParser;
 use std::collections::HashMap;
 
 #[allow(dead_code)] // clippy can't see lalrpop
 #[derive(Debug, Eq, PartialEq, Clone)]
 pub enum ParsedLine {
-    Prefix(String, String),
-    Subject(Option<String>, String),
-    PredObj(Option<String>, String, String),
-    PredObjTerm(Option<String>, String, String),
-    SubjectPredObjTerm(Option<String>, String, Option<String>, String, String),
+    Prefix(Pre, RdfName),
+    Subject(Option<Pre>, String),
+    PredObj(Option<Pre>, String, String),
+    PredObjTerm(Option<Pre>, String, String),
+    SubjectPredObjTerm(Option<Pre>, String, Option<Pre>, String, String),
 }
 
 pub struct TurtleStream {
     state: ParserState,
     parser: LineParser,
-    prefixes: HashMap<String, String>,
+    prefixes: HashMap<Pre, RdfName>,
     current_subject: Option<Subject>,
 }
 
@@ -44,11 +42,7 @@ impl TurtleStream {
         }
     }
 
-    fn resolve_iri(
-        &self,
-        prefix: Option<&String>,
-        local_name: &str,
-    ) -> Result<String, TriplesError> {
+    fn resolve_iri(&self, prefix: Option<&Pre>, local_name: &str) -> Result<String, TriplesError> {
         prefix.map_or_else(
             || Ok(local_name.to_string()),
             |ns| {
@@ -59,7 +53,8 @@ impl TurtleStream {
                         })
                     },
                     |ns| {
-                        let cleaned_ns = ns.trim_end_matches('/');
+                        //let cleaned_ns = &ns.to_string().trim_end_matches('/');
+                        let cleaned_ns = &ns.to_string();
                         Ok(format!("{cleaned_ns}/{local_name}"))
                     },
                 )
@@ -69,17 +64,14 @@ impl TurtleStream {
 
     fn handle_subject(
         &mut self,
-        prefix: &Option<String>,
+        prefix: &Option<Pre>,
         name: &str,
     ) -> Result<Option<Subject>, TriplesError> {
         if self.current_subject.is_some() {
             return Err(TriplesError::PreviousSubjectNotComplete);
         }
         let subject_iri_text = self.resolve_iri(prefix.as_ref(), name)?;
-        let subject_iri =
-            RdfName::new(subject_iri_text.clone()).map_err(|_| TriplesError::InvalidIRI {
-                uri: subject_iri_text.to_string(),
-            })?;
+        let subject_iri = RdfName::new(subject_iri_text.clone());
         self.current_subject = Some(Subject::new(subject_iri));
         self.state = ParserState::PredicateLoading;
         Ok(None)
@@ -87,15 +79,12 @@ impl TurtleStream {
 
     fn handle_predicate(
         &mut self,
-        prefix: &Option<String>,
+        prefix: &Option<Pre>,
         predicate: &str,
         object: &str,
     ) -> Result<Option<Subject>, TriplesError> {
         let predicate_iri_text = self.resolve_iri(prefix.as_ref(), predicate)?;
-        let predicate_iri =
-            RdfName::new(predicate_iri_text.clone()).map_err(|_| TriplesError::InvalidIRI {
-                uri: predicate_iri_text.to_string(),
-            })?;
+        let predicate_iri = RdfName::new(predicate_iri_text.clone());
 
         self.current_subject
             .as_mut()
@@ -107,7 +96,7 @@ impl TurtleStream {
 
     fn handle_predicate_term(
         &mut self,
-        prefix: &Option<String>,
+        prefix: &Option<Pre>,
         predicate: &str,
         object: &str,
     ) -> Result<Option<Subject>, TriplesError> {
@@ -142,8 +131,8 @@ impl TurtleStream {
             })?;
         match self.state {
             ParserState::SubjectLoading => match parsed {
-                ParsedLine::Prefix(name, uri) => {
-                    self.prefixes.insert(name, uri);
+                ParsedLine::Prefix(pre, uri) => {
+                    self.prefixes.insert(pre, uri);
                     Ok(None)
                 }
                 ParsedLine::Subject(prefix, name) => self.handle_subject(&prefix, &name),

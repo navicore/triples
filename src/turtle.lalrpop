@@ -1,5 +1,7 @@
 grammar;
 use crate::turtle_stream::ParsedLine;
+use crate::data::Pre;
+use crate::data::RdfName;
 
 // Entry rule for each line
 pub Line: ParsedLine = {
@@ -10,8 +12,8 @@ pub Line: ParsedLine = {
 };
 
 
-pub Prefix: (String, String) = {
-    "@prefix" <ns:Namespace>":" <uri:Uri> End => (ns.to_string(), uri.to_string())
+pub Prefix: (Pre, RdfName) = {
+    "@prefix" <ns:Namespace>":" <uri:Uri> End => (Pre::new ( ns.to_string() ), RdfName::new(uri.to_string()))
 };
 
 // Captures the namespace (like "myns:")

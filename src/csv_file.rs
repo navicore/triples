@@ -132,8 +132,8 @@ pub async fn import_csv(
             predicate
         };
 
-        let mut subject_entry = Subject::new(RdfName::new(rdf_sub_name.to_string())?);
-        subject_entry.add(RdfName::new(rdf_predicate_name)?, object);
+        let mut subject_entry = Subject::new(RdfName::new(rdf_sub_name.to_string()));
+        subject_entry.add(RdfName::new(rdf_predicate_name), object);
 
         db_api.insert(&subject_entry).await?;
         line.clear();

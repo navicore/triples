@@ -1,3 +1,4 @@
+use triples::data::Pre;
 use triples::turtle::PrefixParser;
 
 fn test_prefix(input: &str) {
@@ -11,8 +12,8 @@ fn test_prefix(input: &str) {
     );
     match result {
         Ok((ns, name)) => {
-            assert_eq!(ns, "myns");
-            assert!(name.ends_with("://example.com/myns#"));
+            assert_eq!(ns, Pre::new("myns".to_string()));
+            assert!(name.to_string().ends_with("://example.com/myns#"));
         }
         _ => {}
     };

@@ -76,10 +76,7 @@ impl TtlStream {
             return Err(TriplesError::PreviousSubjectNotComplete);
         }
         let subject_iri_text = self.resolve_iri(prefix.as_ref(), name)?;
-        let subject_iri =
-            RdfName::new(subject_iri_text.clone()).map_err(|_| TriplesError::InvalidIRI {
-                uri: subject_iri_text.to_string(),
-            })?;
+        let subject_iri = RdfName::new(subject_iri_text.clone());
         self.current_subject = Some(Subject::new(subject_iri));
         self.state = ParserState::PredicateLoading;
         Ok(None)
@@ -92,10 +89,7 @@ impl TtlStream {
         object: &str,
     ) -> Result<Option<Subject>, TriplesError> {
         let predicate_iri_text = self.resolve_iri(prefix.as_ref(), predicate)?;
-        let predicate_iri =
-            RdfName::new(predicate_iri_text.clone()).map_err(|_| TriplesError::InvalidIRI {
-                uri: predicate_iri_text.to_string(),
-            })?;
+        let predicate_iri = RdfName::new(predicate_iri_text.clone());
 
         self.current_subject
             .as_mut()

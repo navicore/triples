@@ -155,7 +155,7 @@ impl<'a> DbApi {
 
         // Add all the predicate/object pairs to the Subject object
         for (predicate_iri, object_value) in results {
-            let predicate_name = crate::data::RdfName::new(predicate_iri)?;
+            let predicate_name = crate::data::RdfName::new(predicate_iri);
             subject.add(predicate_name, object_value);
         }
 
@@ -185,7 +185,7 @@ impl<'a> DbApi {
         let mut names_rdf = Vec::new();
 
         for name_str in names_strings {
-            let name = RdfName::new(name_str)?;
+            let name = RdfName::new(name_str);
 
             names_rdf.push(name);
         }
@@ -213,14 +213,14 @@ mod tests {
 
     fn create_test_subject() -> Subject {
         let subject_iri = "https://www.example.com/subject".to_string();
-        let subject_name = crate::data::RdfName::new(subject_iri.clone()).unwrap();
+        let subject_name = crate::data::RdfName::new(subject_iri.clone());
 
         let predicate_1_iri = "https://www.example.com/predicate1".to_string();
-        let predicate_1_name = crate::data::RdfName::new(predicate_1_iri.clone()).unwrap();
+        let predicate_1_name = crate::data::RdfName::new(predicate_1_iri.clone());
         let object_1_value = "Object Value 1".to_string();
 
         let predicate_2_iri = "https://www.example.com/predicate2".to_string();
-        let predicate_2_name = crate::data::RdfName::new(predicate_2_iri.clone()).unwrap();
+        let predicate_2_name = crate::data::RdfName::new(predicate_2_iri.clone());
         let object_2_value = "Object Value 2".to_string();
 
         let mut subject = crate::data::Subject::new(subject_name);
