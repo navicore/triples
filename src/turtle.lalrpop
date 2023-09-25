@@ -7,15 +7,27 @@ use crate::data::RdfName;
 pub Line: ParsedLine = {
     <prefix:Prefix> => ParsedLine::Prefix(prefix.0, prefix.1),
     <isa:IsaStmt> => ParsedLine::SubjectPredObjTerm( isa.0.0,
-    RdfName::new(isa.0.1), Some(Pre::new("rdf".to_string())), RdfName::new("type".to_string()), isa.1.0, isa.1.1),
-    <subject:RDFName> => ParsedLine::Subject(subject.0, RdfName::new(subject.1)),
-    //<pair:PredicateObjectPair> => ParsedLine::PredObj(pair.0.0, pair.0.1, pair.1),
-    //<pair:PredicateObjectPair> "." => ParsedLine::PredObjTerm(pair.0.0, pair.0.1, pair.1)
+        RdfName::new(isa.0.1), Some(Pre::new("rdf".to_string())),
+        RdfName::new("type".to_string()), isa.1.0, isa.1.1),
+    <subject:RDFName> => ParsedLine::Subject(subject.0,
+        RdfName::new(subject.1)),
+    <pair:PredicateObjectPair> Sep End => ParsedLine::PredObjTerm(pair.0.0,
+        RdfName::new(pair.0.1), pair.1.0, pair.1.1),
+    <pair:PredicateObjectPair> Sep => ParsedLine::PredObj(pair.0.0,
+        RdfName::new(pair.0.1), pair.1.0, pair.1.1),
+    <pair:PredicateObjectPair> End => ParsedLine::PredObjTerm(pair.0.0,
+        RdfName::new(pair.0.1), pair.1.0, pair.1.1),
+
 };
 
 IsaStmt: ((Option<Pre>, String), (Option<Pre>, String)) = {
     <subject:RDFName> IsA <object:Object> End => (subject, object)
 };
+
+PredicateObjectPair: ((Option<Pre>, String), (Option<Pre>, String)) = {
+    <predicate:RDFName> <object:Object> => (predicate, object)
+};
+
 
 pub Prefix: (Pre, RdfName) = {
     "@prefix" <ns:Namespace>":" <uri:Uri> End => (Pre::new ( ns.to_string() ), RdfName::new(uri.to_string()))

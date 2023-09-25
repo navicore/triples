@@ -7,8 +7,8 @@ use std::collections::HashMap;
 pub enum ParsedLine {
     Prefix(Pre, RdfName),
     Subject(Option<Pre>, RdfName),
-    PredObj(Option<Pre>, RdfName, String),
-    PredObjTerm(Option<Pre>, RdfName, String),
+    PredObj(Option<Pre>, RdfName, Option<Pre>, String),
+    PredObjTerm(Option<Pre>, RdfName, Option<Pre>, String),
     SubjectPredObjTerm(
         Option<Pre>,
         RdfName,
@@ -147,10 +147,9 @@ impl TurtleStream {
                     Ok(None)
                 }
                 ParsedLine::Subject(prefix, name) => self.handle_subject(&prefix, name),
-                ParsedLine::PredObj(_, _, _) | ParsedLine::PredObjTerm(_, _, _) => {
+                ParsedLine::PredObj(_, _, _, _) | ParsedLine::PredObjTerm(_, _, _, _) => {
                     Err(TriplesError::NotImplemented)
                 }
-
                 ParsedLine::SubjectPredObjTerm(
                     name_prefix,
                     name,
@@ -172,10 +171,10 @@ impl TurtleStream {
                     self.prefixes.insert(name, uri);
                     Ok(None)
                 }
-                ParsedLine::PredObj(prefix, predicate, object) => {
+                ParsedLine::PredObj(prefix, predicate, opre, object) => {
                     self.handle_predicate(&prefix, predicate, &object)
                 }
-                ParsedLine::PredObjTerm(prefix, predicate, object) => {
+                ParsedLine::PredObjTerm(prefix, predicate, opre, object) => {
                     self.handle_predicate_term(&prefix, predicate, &object)
                 }
                 ParsedLine::Subject(_, _) => Err(TriplesError::NotImplemented),
