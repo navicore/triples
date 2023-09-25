@@ -9,7 +9,14 @@ pub enum ParsedLine {
     Subject(Option<Pre>, RdfName),
     PredObj(Option<Pre>, RdfName, String),
     PredObjTerm(Option<Pre>, RdfName, String),
-    SubjectPredObjTerm(Option<Pre>, RdfName, Option<Pre>, RdfName, String),
+    SubjectPredObjTerm(
+        Option<Pre>,
+        RdfName,
+        Option<Pre>,
+        RdfName,
+        Option<Pre>,
+        String,
+    ),
 }
 
 pub struct TurtleStream {
@@ -144,7 +151,14 @@ impl TurtleStream {
                     Err(TriplesError::NotImplemented)
                 }
 
-                ParsedLine::SubjectPredObjTerm(name_prefix, name, prefix, predicate, object) => {
+                ParsedLine::SubjectPredObjTerm(
+                    name_prefix,
+                    name,
+                    prefix,
+                    predicate,
+                    _, // todo ejs what if the subject is a prefixed rdfname ?
+                    object,
+                ) => {
                     self.handle_subject(&name_prefix, name)?;
                     self.handle_predicate_term(&prefix, predicate, &object)
                 }
@@ -165,7 +179,9 @@ impl TurtleStream {
                     self.handle_predicate_term(&prefix, predicate, &object)
                 }
                 ParsedLine::Subject(_, _) => Err(TriplesError::NotImplemented),
-                ParsedLine::SubjectPredObjTerm(_, _, _, _, _) => Err(TriplesError::NotImplemented),
+                ParsedLine::SubjectPredObjTerm(_, _, _, _, _, _) => {
+                    Err(TriplesError::NotImplemented)
+                }
             },
         }
     }

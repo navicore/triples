@@ -6,11 +6,15 @@ use crate::data::RdfName;
 // Entry rule for each line
 pub Line: ParsedLine = {
     <prefix:Prefix> => ParsedLine::Prefix(prefix.0, prefix.1),
-    //<subject:RDFName> => ParsedLine::Subject(subject.0, subject.1),
+    <isa:IsaStmt> => ParsedLine::SubjectPredObjTerm( isa.0.0, RdfName::new(isa.0.1), None, RdfName::new("rdf:type".to_string()), isa.1.0, isa.1.1),
+    <subject:RDFName> => ParsedLine::Subject(subject.0, RdfName::new(subject.1)),
     //<pair:PredicateObjectPair> => ParsedLine::PredObj(pair.0.0, pair.0.1, pair.1),
     //<pair:PredicateObjectPair> "." => ParsedLine::PredObjTerm(pair.0.0, pair.0.1, pair.1)
 };
 
+IsaStmt: ((Option<Pre>, String), (Option<Pre>, String)) = {
+    <subject:RDFName> IsA <object:Object> End => (subject, object)
+};
 
 pub Prefix: (Pre, RdfName) = {
     "@prefix" <ns:Namespace>":" <uri:Uri> End => (Pre::new ( ns.to_string() ), RdfName::new(uri.to_string()))
@@ -28,7 +32,7 @@ Uri: &'input str = {
 
 UriContent: &'input str = r"https?://[^>]+";
 
-pub Object: (Option<String>, String) = {
+pub Object: (Option<Pre>, String) = {
     <quoted:EscapedString> => {
         (None, quoted.trim_matches('"').to_string())
     },
@@ -38,10 +42,10 @@ pub Object: (Option<String>, String) = {
 };
 
 // RDF Name (like res:... or prop:...)
-pub RDFName: (Option<String>, String) = {
-    <ns:Ident> ":" <name:Ident> => (Some(ns.to_string()), name.to_string()),
-    <name:Ident> => (None, name.to_string()),
+pub RDFName: (Option<Pre>, String) = {
     <uri:Uri> => (None, uri.to_string()),
+    <ns:Ident> ":" <name:Ident> => (Some(Pre::new(ns.to_string())), name.to_string()),
+    <name:Ident> => (None, name.to_string()),
 };
 
 // Definition of an identifier
@@ -56,15 +60,15 @@ EscapedString: &'input str = {
     r#""([^"\\]|\\.)*""# => <>
 };
 
-End: &'input str = {
-    r"\." => <>,
+End: () = {
+    r"\." => (),
 };
 
-Sep: &'input str = {
-    r";" => <>,
+Sep: () = {
+    r";" => (),
 };
 
-IsA: &'input str = {
-    r" a " => <>,
+IsA: () = {
+    r" a" => (),
 };
 
