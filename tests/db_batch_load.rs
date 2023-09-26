@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
 use triples::db_api::DbApi;
-use triples::ttl_stream::TtlStream;
+use triples::turtle_stream::TurtleStream;
 
 #[tokio::test]
 async fn test_ttl_to_db() {
@@ -10,7 +10,7 @@ async fn test_ttl_to_db() {
     let file = File::open(&path).expect("Failed to open file");
     let reader = io::BufReader::new(file);
 
-    let mut stream = TtlStream::new();
+    let mut stream = TurtleStream::new();
 
     const TEST_DB_FILE: &str = "/tmp/triples_batch_load_test.db";
     let db_api = DbApi::new(TEST_DB_FILE.to_string()).await.unwrap();

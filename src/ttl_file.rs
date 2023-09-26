@@ -6,7 +6,7 @@
 use crate::data::RdfName;
 use crate::data::TriplesError;
 use crate::db_api::DbApi;
-use crate::ttl_stream::TtlStream;
+use crate::turtle_stream::TurtleStream;
 use std::collections::HashMap;
 use tokio::io::{stdin, AsyncBufReadExt, BufReader};
 
@@ -16,7 +16,7 @@ use tokio::io::{stdin, AsyncBufReadExt, BufReader};
 ///
 /// return `Err` if any entry can not be loaded
 pub async fn import_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Error>> {
-    let mut stream = TtlStream::new();
+    let mut stream = TurtleStream::new();
     let stdin = stdin();
     let mut reader = BufReader::new(stdin);
 
@@ -83,7 +83,7 @@ pub async fn export_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Err
 /// return `Err` if any entry can not be loaded
 async fn import_line(
     line: &str,
-    stream: &mut TtlStream,
+    stream: &mut TurtleStream,
     db_api: &DbApi,
 ) -> Result<(), Box<dyn std::error::Error>> {
     if line.trim().is_empty() {

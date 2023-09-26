@@ -40,7 +40,7 @@ Namespace: &'input str = {
 
 // Captures the URI enclosed in angle brackets (like "<http://example.com/myns#>")
 Uri: &'input str = {
-    "<" <u:UriContent> ">" => u
+    "<" <u:UriContent> ">" => u.trim_end_matches('/')
 };
 
 UriContent: &'input str = r"https?://[^>]+";
