@@ -18,6 +18,11 @@ pub Line: ParsedLine = {
     <pair:PredicateObjectPair> End => ParsedLine::PredObjTerm(pair.0.0,
         RdfName::new(pair.0.1), pair.1.0, pair.1.1),
 
+// todo: isa statements as well as any statements can have comma-separated
+// lists of objects.  need to have a new state that has current predicate to add
+// objects to and return all objects as lists so any one line can have a list of
+// objects
+
 };
 
 IsaStmt: ((Option<Pre>, String), (Option<Pre>, String)) = {
@@ -79,6 +84,10 @@ End: () = {
 
 Sep: () = {
     r";" => (),
+};
+
+ObjSep: () = {
+    r"," => (),
 };
 
 IsA: () = {
