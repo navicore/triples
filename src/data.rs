@@ -8,7 +8,7 @@ pub enum TriplesError {
     UnresolvableURIPrefix { prefix_name: String },
     NoSubjectDeclaired,
     PreviousSubjectNotComplete,
-    NotImplemented,
+    NotImplemented { trace: String },
     // Add more error variants here as needed.
 }
 impl std::error::Error for TriplesError {}
@@ -22,7 +22,7 @@ impl fmt::Display for TriplesError {
             }
             Self::NoSubjectDeclaired => write!(f, "can not load predicate without a subject"),
             Self::PreviousSubjectNotComplete => write!(f, "previous subject stanza not terminated"),
-            Self::NotImplemented => write!(f, "not implemented"),
+            Self::NotImplemented { trace } => write!(f, "{trace} not implemented"),
         }
     }
 }
@@ -37,7 +37,8 @@ pub struct Pre(String);
 impl Pre {
     /// # Errors
     /// Will return `Err` if name is not a valid prefix name
-    pub fn new(name: String) -> Self {
+    #[must_use]
+    pub const fn new(name: String) -> Self {
         Self(name)
     }
 }
@@ -51,7 +52,8 @@ impl fmt::Display for Pre {
 impl RdfName {
     /// # Errors
     /// Will return `Err` if name is not a valid IRI
-    pub fn new(name: String) -> Self {
+    #[must_use]
+    pub const fn new(name: String) -> Self {
         Self(name)
     }
 }

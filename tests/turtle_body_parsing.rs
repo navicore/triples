@@ -35,7 +35,7 @@ fn test_isa_parsing() {
     let parser = LineParser::new();
     let input = "<http://cmu.edu/building/ontology/ghc#8Floor> a brick:Floor .";
     let parsed1 = parser.parse(input).unwrap();
-    if let ParsedLine::SubjectPredObjTerm(spre, subj, predpre, pred, opre, obj) = parsed1 {
+    if let ParsedLine::SubjectPredObj(spre, subj, predpre, pred, opre, obj, has_more) = parsed1 {
         assert!(spre.is_none());
         assert_eq!(
             subj,
@@ -77,7 +77,8 @@ fn test_predicate_object_no_ns_parsing() {
             None,
             RdfName::new("k8p_metric_name".to_string()),
             None,
-            "envoy_cluster_internal_upstream_rq_200".to_string()
+            "envoy_cluster_internal_upstream_rq_200".to_string(),
+            true
         )
     );
 }
@@ -94,7 +95,8 @@ fn test_predicate_object_line_parsing() {
             Some(Pre::new("prop".to_string())),
             RdfName::new("k8p_metric_name".to_string()),
             None,
-            "envoy_cluster_internal_upstream_rq_200".to_string()
+            "envoy_cluster_internal_upstream_rq_200".to_string(),
+            true
         )
     );
 }
@@ -127,7 +129,8 @@ fn test_escaped_quotes_in_object() {
             Some(Pre::new("prop".to_string())),
             RdfName::new("k8p_description".to_string()),
             None,
-            r#"The \"recent cpu usage\" of the system the application is running in"#.to_string()
+            r#"The \"recent cpu usage\" of the system the application is running in"#.to_string(),
+            true
         )
     );
 }
@@ -136,7 +139,7 @@ fn test_escaped_quotes_in_object() {
 fn test_parsing_error_handling() {
     let parser = LineParser::new();
     // add some white space and chars that mean something elsewhere in the grammar
-    let line2 = "    prop-k8p_metric_name \"envoy_cluster:internal upstream_rq_200\"; .";
+    let line2 = "    -prop-k8p_metric_name \"envoy_cluster:internal upstream_rq_200\"; .";
     let parsed2 = parser.parse(line2);
     assert!(!parsed2.is_ok());
 }

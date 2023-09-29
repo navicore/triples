@@ -32,7 +32,13 @@ async fn test_ttl_to_db() {
                 };
             }
             Err(e) => {
-                assert!(false, "error: {}", e)
+                assert!(
+                    false,
+                    "error: {} for state {} for input: {}",
+                    e,
+                    stream.get_state(),
+                    line
+                )
             }
         }
     }
@@ -42,7 +48,7 @@ async fn test_ttl_to_db() {
     tx.commit().await.unwrap();
 }
 
-//#[tokio::test]
+#[tokio::test]
 async fn test_bricks_to_db() {
     let path = Path::new("tests/data/bricks_ex1.ttl");
     let file = File::open(&path).expect("Failed to open file");
@@ -76,6 +82,6 @@ async fn test_bricks_to_db() {
     }
 
     let subject_names = db_api.query_all_subject_names().await.unwrap();
-    assert_eq!(subject_names.len(), 42);
+    assert_eq!(subject_names.len(), 119);
     tx.commit().await.unwrap();
 }

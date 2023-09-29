@@ -45,7 +45,7 @@ fn test_ttl_to_subject() {
                 }
             }
             Err(e) => {
-                assert!(false, "error: {}", e)
+                assert!(false, "error: {} for input: {}", e, line)
             }
         }
     }

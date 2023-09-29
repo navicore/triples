@@ -6,36 +6,44 @@ use crate::data::RdfName;
 // Entry rule for each line
 pub Line: ParsedLine = {
     <prefix:Prefix> => ParsedLine::Prefix(prefix.0, prefix.1),
-    <isa:IsaStmt> => ParsedLine::SubjectPredObjTerm( isa.0.0,
+    <subject:RDFName> => ParsedLine::Subject(subject.0, RdfName::new(subject.1)),
+    <isa:IsaStmt> => ParsedLine::SubjectPredObj( isa.0.0,
         RdfName::new(isa.0.1), Some(Pre::new("rdf".to_string())),
-        RdfName::new("type".to_string()), isa.1.0, isa.1.1),
-    <subject:RDFName> => ParsedLine::Subject(subject.0,
-        RdfName::new(subject.1)),
+        RdfName::new("type".to_string()), isa.1.0, isa.1.1, isa.2),
+    <triple:Triple> => ParsedLine::SubjectPredObj( triple.0.0,
+        RdfName::new(triple.0.1), triple.1.0,
+        RdfName::new(triple.1.1), triple.2.0, triple.2.1, triple.3),
+    <object:RDFName> End => ParsedLine::ContinueObj(object.0, RdfName::new(object.1), false),
+    <object:RDFName> Sep => ParsedLine::ContinueObj(object.0, RdfName::new(object.1), true),
+    <object:RDFName> ObjSep => ParsedLine::ContinueObj(object.0, RdfName::new(object.1), true),
     <pair:PredicateObjectPair> Sep End => ParsedLine::PredObjTerm(pair.0.0,
-        RdfName::new(pair.0.1), pair.1.0, pair.1.1),
-    <pair:PredicateObjectPair> Sep => ParsedLine::PredObj(pair.0.0,
         RdfName::new(pair.0.1), pair.1.0, pair.1.1),
     <pair:PredicateObjectPair> End => ParsedLine::PredObjTerm(pair.0.0,
         RdfName::new(pair.0.1), pair.1.0, pair.1.1),
-
-// todo: isa statements as well as any statements can have comma-separated
-// lists of objects.  need to have a new state that has current predicate to add
-// objects to and return all objects as lists so any one line can have a list of
-// objects
+    <pair:PredicateObjectPair> ObjSep => ParsedLine::PredObj(pair.0.0,
+        RdfName::new(pair.0.1), pair.1.0, pair.1.1, true),
+    <pair:PredicateObjectPair> Sep => ParsedLine::PredObj(pair.0.0,
+        RdfName::new(pair.0.1), pair.1.0, pair.1.1, true),
 
 };
 
-IsaStmt: ((Option<Pre>, String), (Option<Pre>, String)) = {
-    <subject:RDFName> IsA <object:Object> End => (subject, object)
+IsaStmt: ((Option<Pre>, String), (Option<Pre>, String), bool) = {
+    <subject:RDFName> IsA <object:Object> End => (subject, object, false),
+    <subject:RDFName> IsA <object:Object> ObjSep => (subject, object, true)
 };
 
-PredicateObjectPair: ((Option<Pre>, String), (Option<Pre>, String)) = {
-    <predicate:RDFName> <object:Object> => (predicate, object)
+Triple: ((Option<Pre>, String), (Option<Pre>, String), (Option<Pre>, String), bool) = {
+    <subject:RDFName> <predicate:RDFName> <object:Object> End => (subject, predicate, object, false),
+    <subject:RDFName> <predicate:RDFName> <object:Object> ObjSep => (subject, predicate, object, true),
+};
+
+PredicateObjectPair: ((Option<Pre>, String), (Option<Pre>, String), bool) = {
+    <predicate:RDFName> <object:Object> => (predicate, object, false)
 };
 
 
 pub Prefix: (Pre, RdfName) = {
-    "@prefix" <ns:Namespace>":" <uri:Uri> End => (Pre::new ( ns.to_string() ), RdfName::new(uri.to_string()))
+    "@prefix" <ns:Namespace> PrefixSep <uri:Uri> End => (Pre::new ( ns.to_string() ), RdfName::new(uri.to_string()))
 };
 
 // Captures the namespace (like "myns:")
@@ -61,18 +69,15 @@ pub Object: (Option<Pre>, String) = {
 
 // RDF Name (like res:... or prop:...)
 pub RDFName: (Option<Pre>, String) = {
-    <uri:Uri> => (None, uri.to_string()),
-    <ns:Ident> ":" <name:Ident> => (Some(Pre::new(ns.to_string())), name.to_string()),
+    <ns:Ident> PrefixSep <name:Ident> => (Some(Pre::new(ns.to_string())), name.to_string()),
     <name:Ident> => (None, name.to_string()),
+    <uri:Uri> => (None, uri.to_string()),
 };
 
 // Definition of an identifier
 Ident: &'input str = {
-    r"[a-zA-Z_][a-zA-Z0-9_]*" => <>,
-    UUID => <>
+    r"[a-zA-Z0-9_][a-zA-Z0-9_-]*" => <>
 };
-
-UUID: &'input str = r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
 
 EscapedString: &'input str = {
     r#""([^"\\]|\\.)*""# => <>
@@ -94,3 +99,6 @@ IsA: () = {
     r" a" => (),
 };
 
+PrefixSep: () = {
+    r":" => (),
+};

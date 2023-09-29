@@ -2,7 +2,7 @@
 
 @prefix prop: <http://k8p.navicore.tech/property/> .
 
-res:84e296b9-af09-4921-ac4c-a9a8fae376a3 
+res:84e296b9-af09-4921-ac4c-a9a8fae376a3
     prop:k8p_type "gauge" ;
     prop:k8p_description "The number of processors available to the Java virtual machine" ;
     prop:k8p_value "1.0" ;
