@@ -48,7 +48,7 @@ impl<'a> DbApi {
         let query = "
         -- Try to insert the item
         INSERT OR IGNORE INTO names (name) VALUES (?);
-        
+
         -- Get the ID of the item, either the one just inserted or the existing one
         SELECT id FROM names WHERE name = ?;
         ";
@@ -67,7 +67,7 @@ impl<'a> DbApi {
         let query = "
         -- Try to insert the item
         INSERT OR IGNORE INTO objects (object) VALUES (?);
-        
+
         -- Get the ID of the item, either the one just inserted or the existing one
         SELECT id FROM objects WHERE object = ?;
     ";
@@ -109,16 +109,18 @@ impl<'a> DbApi {
     pub async fn insert(&self, subject: &Subject) -> Result<(), Box<dyn std::error::Error>> {
         let fetched_subject_id = self.get_or_insert_name(&subject.name().to_string()).await?;
 
-        for (predicate, object) in subject.predicate_object_pairs() {
+        for (predicate, objects) in subject.predicate_object_pairs() {
             let fetched_predicate_id = self.get_or_insert_name(&predicate.to_string()).await?;
-            let fetched_object_id = self.get_or_insert_object(&object.to_string()).await?;
-            self.insert_triple(fetched_subject_id, fetched_predicate_id, fetched_object_id)
-                .await?;
+
+            for object in objects {
+                let fetched_object_id = self.get_or_insert_object(&object).await?;
+                self.insert_triple(fetched_subject_id, fetched_predicate_id, fetched_object_id)
+                    .await?;
+            }
         }
 
         Ok(())
     }
-
     /// Queries data from the database.
     ///
     /// # Errors

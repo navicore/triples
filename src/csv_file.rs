@@ -58,19 +58,20 @@ pub async fn export_csv(
             let subject_str = subject.name().to_string();
             let rdf_sub_name = get_display_name(&subject_str, export_ns_name)?;
 
-            for pair in subject.predicate_object_pairs() {
-                let predicate_str = pair.0.to_string();
+            for (predicate, objects) in subject.predicate_object_pairs() {
+                let predicate_str = predicate.to_string();
                 let rdf_predicate_name = get_display_name(&predicate_str, export_ns_name)?;
 
-                // Print the CSV line
-                print_csv(rdf_sub_name, rdf_predicate_name, pair.1);
+                for object in objects {
+                    // Print the CSV line for each object associated with the subject-predicate pair
+                    print_csv(rdf_sub_name, rdf_predicate_name, object);
+                }
             }
         }
     }
 
     Ok(())
 }
-
 fn parse_csv_line(line: &str) -> Result<(String, String, String), &'static str> {
     let mut components = line.splitn(3, ',');
 

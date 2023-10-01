@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fmt;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -64,11 +64,10 @@ impl fmt::Display for RdfName {
     }
 }
 
-/// Encapsulates a single subject that has multiple predicate/object pairs.
 #[derive(Debug, Clone)]
 pub struct Subject {
     subject: RdfName,
-    predicate_object_pairs: HashMap<RdfName, String>,
+    predicate_object_pairs: HashMap<RdfName, HashSet<String>>,
 }
 
 impl fmt::Display for Subject {
@@ -83,8 +82,6 @@ impl fmt::Display for Subject {
 }
 
 impl Subject {
-    /// Creates a new `Subject` with the given subject.
-    #[must_use]
     pub fn new(subject: RdfName) -> Self {
         Self {
             subject,
@@ -92,37 +89,42 @@ impl Subject {
         }
     }
 
-    #[must_use]
     pub const fn name(&self) -> &RdfName {
         &self.subject
     }
 
-    pub fn predicate_object_pairs(&self) -> impl Iterator<Item = (&RdfName, &String)> {
+    pub fn predicate_object_pairs(&self) -> impl Iterator<Item = (&RdfName, &HashSet<String>)> {
         self.predicate_object_pairs.iter()
     }
-    /// Adds or updates a predicate/object pair for the subject.
+
     pub fn add(&mut self, predicate: RdfName, object: String) {
-        self.predicate_object_pairs.insert(predicate, object);
+        self.predicate_object_pairs
+            .entry(predicate)
+            .or_insert_with(HashSet::new)
+            .insert(object);
     }
 
-    /// Removes a predicate/object pair given the predicate. Returns true if the predicate was present.
-    pub fn remove(&mut self, predicate: &RdfName) -> bool {
-        self.predicate_object_pairs.remove(predicate).is_some()
+    pub fn remove(&mut self, predicate: &RdfName, object: &str) -> bool {
+        if let Some(objects) = self.predicate_object_pairs.get_mut(predicate) {
+            let removed = objects.remove(object);
+            if objects.is_empty() {
+                self.predicate_object_pairs.remove(predicate);
+            }
+            removed
+        } else {
+            false
+        }
     }
 
-    /// Fetches the object for a given predicate, if it exists.
-    #[must_use]
-    pub fn get(&self, predicate: &RdfName) -> Option<&String> {
+    pub fn get(&self, predicate: &RdfName) -> Option<&HashSet<String>> {
         self.predicate_object_pairs.get(predicate)
     }
 
-    /// Returns an iterator over all predicates.
     pub fn all_predicates(&self) -> impl Iterator<Item = &RdfName> {
         self.predicate_object_pairs.keys()
     }
 
-    /// Returns an iterator over all objects.
-    pub fn all_objects(&self) -> impl Iterator<Item = &String> {
+    pub fn all_objects(&self) -> impl Iterator<Item = &HashSet<String>> {
         self.predicate_object_pairs.values()
     }
 }
@@ -149,10 +151,16 @@ mod tests {
 
         // Adding
         subject.add(predicate_iri.clone(), object_value.clone());
-        assert_eq!(subject.get(&predicate_iri), Some(&object_value));
+        assert_eq!(subject.get(&predicate_iri).map(|x| x.len()), Some(1));
+        assert_eq!(
+            subject
+                .get(&predicate_iri)
+                .map(|x| x.iter().next().unwrap()),
+            Some(&"Object Value".to_string())
+        );
 
         // Removing
-        assert!(subject.remove(&predicate_iri));
+        assert!(subject.remove(&predicate_iri, &object_value.clone()));
         assert_eq!(subject.get(&predicate_iri), None);
     }
 

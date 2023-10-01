@@ -7,9 +7,8 @@ use crate::data::RdfName;
 use crate::data::TriplesError;
 use crate::db_api::DbApi;
 use crate::turtle_stream::TurtleStream;
-use std::collections::HashMap;
-use tokio::io::{stdin, AsyncBufReadExt, BufReader};
-
+use std::collections::{HashMap, HashSet};
+use tokio::io::{stdin, AsyncBufReadExt, BufReader}; // assuming you have a Result type alias, adjust as necessary
 /// read ttl from stdin and load db
 ///
 /// # Errors
@@ -124,15 +123,20 @@ fn handle_name_string<'a>(
     prefixes: &mut HashMap<String, String>,
     unique_ns_count: &mut u32,
 ) -> Result<Option<&'a str>, Box<dyn std::error::Error>> {
-    match name_string.rsplit_once('/') {
-        Some((ns, _)) => {
-            get_or_insert_prefix(ns, prefixes, unique_ns_count)?;
-            Ok(Some(ns))
-        }
-        None => Err(Box::new(TriplesError::InvalidIRI {
+    let (ns, _) = if let Some(idx) = name_string.rfind('#') {
+        let (ns, _) = name_string.split_at(idx + 1); // +1 to include '#' in ns
+        (ns, &name_string[idx + 1..])
+    } else if let Some(idx) = name_string.rfind('/') {
+        let (ns, _) = name_string.split_at(idx + 1); // +1 to include '/' in ns if needed
+        (ns, &name_string[idx + 1..]) // remove '/' from the start of name
+    } else {
+        return Err(Box::new(TriplesError::InvalidIRI {
             uri: name_string.to_string(),
-        })),
-    }
+        }));
+    };
+
+    get_or_insert_prefix(ns, prefixes, unique_ns_count)?;
+    Ok(Some(ns))
 }
 
 async fn compute_prefixes(
@@ -177,31 +181,37 @@ fn print_prefixes(prefixes: &HashMap<String, String>) {
 }
 
 fn print_predicate_object_pairs(
-    pairs: &[(&RdfName, &String)],
+    pairs: &[(&RdfName, &HashSet<String>)],
     prefixes: &HashMap<String, String>,
 ) -> Result<(), TriplesError> {
-    let mut pairs_iter = pairs.iter().peekable();
-    while let Some((predicate, object)) = pairs_iter.next() {
+    for (predicate, objects) in pairs.iter() {
         let name_string = predicate.to_string();
 
-        match name_string.rsplit_once('/') {
-            Some((ns, name)) => match prefixes.get(ns) {
-                Some(prefix) => {
-                    if pairs_iter.peek().is_none() {
-                        println!("    {prefix}:{name} \"{object}\" ; .\n");
+        let (ns, name) = if let Some(idx) = name_string.rfind('#') {
+            let (ns, name) = name_string.split_at(idx + 1); // +1 to include '#' in ns
+            (ns, name)
+        } else if let Some(idx) = name_string.rfind('/') {
+            let (ns, name) = name_string.split_at(idx + 1); // +1 to include '/' in ns if needed
+            (ns, &name[1..]) // remove '/' from the start of name
+        } else {
+            return Err(TriplesError::InvalidIRI {
+                uri: name_string.to_string(),
+            });
+        };
+
+        match prefixes.get(ns) {
+            Some(prefix) => {
+                for (idx, object) in objects.iter().enumerate() {
+                    if idx == objects.len() - 1 {
+                        println!("    {}:{} \"{}\" ; .\n", prefix, name, object);
                     } else {
-                        println!("    {prefix}:{name} \"{object}\" ;");
+                        println!("    {}:{} \"{}\" ;", prefix, name, object);
                     }
                 }
-                _ => {
-                    return Err(TriplesError::UnresolvableURIPrefix {
-                        prefix_name: ns.to_string(),
-                    })
-                }
-            },
-            None => {
-                return Err(TriplesError::InvalidIRI {
-                    uri: name_string.to_string(),
+            }
+            _ => {
+                return Err(TriplesError::UnresolvableURIPrefix {
+                    prefix_name: ns.to_string(),
                 })
             }
         };

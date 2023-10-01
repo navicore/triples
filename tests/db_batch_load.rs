@@ -50,6 +50,7 @@ async fn test_ttl_to_db() {
 
 #[tokio::test]
 async fn test_bricks_to_db() {
+    tracing_subscriber::fmt::init();
     let path = Path::new("tests/data/bricks_ex1.ttl");
     let file = File::open(&path).expect("Failed to open file");
     let reader = io::BufReader::new(file);
@@ -82,6 +83,6 @@ async fn test_bricks_to_db() {
     }
 
     let subject_names = db_api.query_all_subject_names().await.unwrap();
-    assert_eq!(subject_names.len(), 119);
+    assert_eq!(subject_names.len(), 136);
     tx.commit().await.unwrap();
 }
