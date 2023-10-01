@@ -1,21 +1,26 @@
-use triples::ttl::LineParser;
-use triples::ttl_stream::ParsedLine;
+use triples::data::Pre;
+use triples::turtle::PrefixParser;
 
 fn test_prefix(input: &str) {
-    let parser = LineParser::new();
+    let parser = PrefixParser::new();
     let result = parser.parse(input);
-    assert!(result.is_ok(), "Parse failed with: {:?}", result);
+    assert!(
+        result.is_ok(),
+        "Parse failed with: {:?} on input: {}",
+        result,
+        input
+    );
     match result {
-        Ok(ParsedLine::Prefix(ns, name)) => {
-            assert_eq!(ns, "myns");
-            assert!(name.ends_with("://example.com/myns#"));
+        Ok((ns, name)) => {
+            assert_eq!(ns, Pre::new("myns".to_string()));
+            assert!(name.to_string().ends_with("://example.com/myns#"));
         }
         _ => {}
     };
 }
 
 fn test_bad_prefix(input: &str) {
-    let parser = LineParser::new();
+    let parser = PrefixParser::new();
     let result = parser.parse(input);
     assert!(
         !result.is_ok(),

@@ -48,7 +48,7 @@ impl<'a> DbApi {
         let query = "
         -- Try to insert the item
         INSERT OR IGNORE INTO names (name) VALUES (?);
-        
+
         -- Get the ID of the item, either the one just inserted or the existing one
         SELECT id FROM names WHERE name = ?;
         ";
@@ -67,7 +67,7 @@ impl<'a> DbApi {
         let query = "
         -- Try to insert the item
         INSERT OR IGNORE INTO objects (object) VALUES (?);
-        
+
         -- Get the ID of the item, either the one just inserted or the existing one
         SELECT id FROM objects WHERE object = ?;
     ";
@@ -109,16 +109,18 @@ impl<'a> DbApi {
     pub async fn insert(&self, subject: &Subject) -> Result<(), Box<dyn std::error::Error>> {
         let fetched_subject_id = self.get_or_insert_name(&subject.name().to_string()).await?;
 
-        for (predicate, object) in subject.predicate_object_pairs() {
+        for (predicate, objects) in subject.predicate_object_pairs() {
             let fetched_predicate_id = self.get_or_insert_name(&predicate.to_string()).await?;
-            let fetched_object_id = self.get_or_insert_object(&object.to_string()).await?;
-            self.insert_triple(fetched_subject_id, fetched_predicate_id, fetched_object_id)
-                .await?;
+
+            for object in objects {
+                let fetched_object_id = self.get_or_insert_object(object).await?;
+                self.insert_triple(fetched_subject_id, fetched_predicate_id, fetched_object_id)
+                    .await?;
+            }
         }
 
         Ok(())
     }
-
     /// Queries data from the database.
     ///
     /// # Errors
@@ -155,7 +157,7 @@ impl<'a> DbApi {
 
         // Add all the predicate/object pairs to the Subject object
         for (predicate_iri, object_value) in results {
-            let predicate_name = crate::data::RdfName::new(predicate_iri)?;
+            let predicate_name = crate::data::RdfName::new(predicate_iri);
             subject.add(predicate_name, object_value);
         }
 
@@ -185,7 +187,7 @@ impl<'a> DbApi {
         let mut names_rdf = Vec::new();
 
         for name_str in names_strings {
-            let name = RdfName::new(name_str)?;
+            let name = RdfName::new(name_str);
 
             names_rdf.push(name);
         }
@@ -213,14 +215,14 @@ mod tests {
 
     fn create_test_subject() -> Subject {
         let subject_iri = "https://www.example.com/subject".to_string();
-        let subject_name = crate::data::RdfName::new(subject_iri.clone()).unwrap();
+        let subject_name = crate::data::RdfName::new(subject_iri.clone());
 
         let predicate_1_iri = "https://www.example.com/predicate1".to_string();
-        let predicate_1_name = crate::data::RdfName::new(predicate_1_iri.clone()).unwrap();
+        let predicate_1_name = crate::data::RdfName::new(predicate_1_iri.clone());
         let object_1_value = "Object Value 1".to_string();
 
         let predicate_2_iri = "https://www.example.com/predicate2".to_string();
-        let predicate_2_name = crate::data::RdfName::new(predicate_2_iri.clone()).unwrap();
+        let predicate_2_name = crate::data::RdfName::new(predicate_2_iri.clone());
         let object_2_value = "Object Value 2".to_string();
 
         let mut subject = crate::data::Subject::new(subject_name);

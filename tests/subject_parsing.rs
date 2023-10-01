@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
-use triples::ttl_stream::TtlStream;
+use triples::turtle_stream::TurtleStream;
 
 #[test]
 fn test_ttl_to_subject() {
@@ -9,7 +9,7 @@ fn test_ttl_to_subject() {
     let file = File::open(&path).expect("Failed to open file");
     let reader = io::BufReader::new(file);
 
-    let mut stream = TtlStream::new();
+    let mut stream = TurtleStream::new();
 
     let max_lines_to_process: usize = 38;
 
@@ -45,7 +45,7 @@ fn test_ttl_to_subject() {
                 }
             }
             Err(e) => {
-                assert!(false, "error: {}", e)
+                assert!(false, "error: {} for input: {}", e, line)
             }
         }
     }

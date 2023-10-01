@@ -1,0 +1,498 @@
+@prefix GHC: <http://cmu.edu/building/ontology/ghc#> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix brick_v_1_0_2: <https://brickschema.org/schema/1.0.2/Brick#> .
+@prefix brickframe: <https://brickschema.org/schema/1.0.2/BrickFrame#> .
+@prefix btag: <https://brickschema.org/schema/1.0.2/BrickTag#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix tag: <https://brickschema.org/schema/BrickTag#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://cmu.edu/building/ontology/ghc#1Floor> a brick:Floor .
+
+<http://cmu.edu/building/ontology/ghc#2Floor> a brick:Floor .
+
+<http://cmu.edu/building/ontology/ghc#3Floor> a brick:Floor .
+
+<http://cmu.edu/building/ontology/ghc#4Floor> a brick:Floor .
+
+<http://cmu.edu/building/ontology/ghc#5Floor> a brick:Floor .
+
+<http://cmu.edu/building/ontology/ghc#6Floor> a brick:Floor .
+
+<http://cmu.edu/building/ontology/ghc#7Floor> a brick:Floor .
+
+<http://cmu.edu/building/ontology/ghc#8Floor> a brick:Floor .
+
+<http://cmu.edu/building/ontology/ghc#9Floor> a brick:Floor .
+
+GHC:CMUSCSC_GatesEighth_Floor a owl:NamedIndividual,
+        brick:Location .
+
+GHC:CMUSCSC_GatesFifth_Floor a owl:NamedIndividual,
+        brick:Location .
+
+GHC:CMUSCSC_GatesFourth_Floor a owl:NamedIndividual,
+        brick:Location .
+
+GHC:CMUSCSC_GatesNinth_Floor a owl:NamedIndividual,
+        brick:Location .
+
+GHC:CMUSCSC_GatesParking_LevelsLevel_1 a owl:NamedIndividual,
+        brick:Location .
+
+GHC:CMUSCSC_GatesParking_LevelsLevel_2 a owl:NamedIndividual,
+        brick:Location .
+
+GHC:CMUSCSC_GatesRoof a owl:NamedIndividual,
+        brick:Location .
+
+GHC:CMUSCSC_GatesSeventh_Floor a owl:NamedIndividual,
+        brick:Location .
+
+GHC:CMUSCSC_GatesSixth_Floor a owl:NamedIndividual,
+        brick:Location .
+
+GHC:CMUSCSC_GatesThird_Floor a owl:NamedIndividual,
+        brick:Location .
+
+GHC:CMUSCSC_HillmanFifth_Floor a owl:NamedIndividual,
+        brick:Location .
+
+GHC:CMUSCSC_HillmanFourth_Floor a owl:NamedIndividual,
+        brick:Location .
+
+GHC:CMUSCSC_HillmanRoof a owl:NamedIndividual,
+        brick:Location .
+
+GHC:CMUSCSC_HillmanSeventh_Floor a owl:NamedIndividual,
+        brick:Location .
+
+GHC:CMUSCSC_HillmanSixth_Floor a owl:NamedIndividual,
+        brick:Location .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1000_Corridor/Airflow> a owl:NamedIndividual,
+        brick:Discharge_Air_Flow_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1000_Corridor/Airflow_Request> a owl:NamedIndividual,
+        brick:Discharge_Air_Flow_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1000_Corridor/Airflow_Setpoint> a owl:NamedIndividual,
+        brick:Discharge_Air_Flow_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1000_Corridor/Cool_Request> a owl:NamedIndividual,
+        brick:Cooling_Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1000_Corridor/Damper_Position> a owl:NamedIndividual,
+        brick:Damper_Position_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1000_Corridor/Discharge_Temp> a owl:NamedIndividual,
+        brick:Discharge_Air_Temperature_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1000_Corridor/HWV_Command> a owl:NamedIndividual,
+        brick:Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1000_Corridor/Heat_Request> a owl:NamedIndividual,
+        brick:Heating_Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1000_Corridor/OA_Temp> a owl:NamedIndividual,
+        brick:Outside_Air_Temperature_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1000_Corridor/Run> a owl:NamedIndividual,
+        brick:Run_Time_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1000_Corridor/Run_Request> a owl:NamedIndividual,
+        brick:Run_Request_Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1000_Corridor/Schedule> a owl:NamedIndividual,
+        brick_v_1_0_2:Schedule_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1000_Corridor/ZTMP_HI> a owl:NamedIndividual,
+        brick:Cooling_Temperature_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1000_Corridor/ZTMP_LO> a owl:NamedIndividual,
+        brick:Heating_Temperature_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1100_Corridor/Airflow> a owl:NamedIndividual,
+        brick:Discharge_Air_Flow_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1100_Corridor/Airflow_Request> a owl:NamedIndividual,
+        brick:Discharge_Air_Flow_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1100_Corridor/Airflow_Setpoint> a owl:NamedIndividual,
+        brick:Discharge_Air_Flow_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1100_Corridor/Cool_Request> a owl:NamedIndividual,
+        brick:Cooling_Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1100_Corridor/Damper_Position> a owl:NamedIndividual,
+        brick:Damper_Position_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1100_Corridor/Discharge_Temp> a owl:NamedIndividual,
+        brick:Discharge_Air_Temperature_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1100_Corridor/HWV_Command> a owl:NamedIndividual,
+        brick:Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1100_Corridor/Heat_Request> a owl:NamedIndividual,
+        brick:Heating_Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1100_Corridor/OA_Temp> a owl:NamedIndividual,
+        brick:Outside_Air_Temperature_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1100_Corridor/Run> a owl:NamedIndividual,
+        brick:Run_Time_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1100_Corridor/Run_Request> a owl:NamedIndividual,
+        brick:Run_Request_Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1100_Corridor/Schedule> a owl:NamedIndividual,
+        brick_v_1_0_2:Schedule_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1100_Corridor/ZTMP_HI> a owl:NamedIndividual,
+        brick:Cooling_Temperature_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/1100_Corridor/ZTMP_LO> a owl:NamedIndividual,
+        brick:Heating_Temperature_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_N_Corridor/Airflow> a owl:NamedIndividual,
+        brick:Discharge_Air_Flow_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_N_Corridor/Airflow_Request> a owl:NamedIndividual,
+        brick:Discharge_Air_Flow_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_N_Corridor/Airflow_Setpoint> a owl:NamedIndividual,
+        brick:Discharge_Air_Flow_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_N_Corridor/Cool_Request> a owl:NamedIndividual,
+        brick:Cooling_Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_N_Corridor/Damper_Position> a owl:NamedIndividual,
+        brick:Damper_Position_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_N_Corridor/Discharge_Temp> a owl:NamedIndividual,
+        brick:Discharge_Air_Temperature_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_N_Corridor/HWV_Command> a owl:NamedIndividual,
+        brick:Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_N_Corridor/Heat_Request> a owl:NamedIndividual,
+        brick:Heating_Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_N_Corridor/OA_Temp> a owl:NamedIndividual,
+        brick:Outside_Air_Temperature_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_N_Corridor/Run> a owl:NamedIndividual,
+        brick:Run_Time_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_N_Corridor/Run_Request> a owl:NamedIndividual,
+        brick:Run_Request_Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_N_Corridor/Schedule> a owl:NamedIndividual,
+        brick_v_1_0_2:Schedule_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_N_Corridor/ZTMP_HI> a owl:NamedIndividual,
+        brick:Cooling_Temperature_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_N_Corridor/ZTMP_LO> a owl:NamedIndividual,
+        brick:Heating_Temperature_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_W_Corridor/Airflow> a owl:NamedIndividual,
+        brick:Discharge_Air_Flow_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_W_Corridor/Airflow_Request> a owl:NamedIndividual,
+        brick:Discharge_Air_Flow_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_W_Corridor/Airflow_Setpoint> a owl:NamedIndividual,
+        brick:Discharge_Air_Flow_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_W_Corridor/Cool_Request> a owl:NamedIndividual,
+        brick:Cooling_Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_W_Corridor/Damper_Position> a owl:NamedIndividual,
+        brick:Damper_Position_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_W_Corridor/Discharge_Temp> a owl:NamedIndividual,
+        brick:Discharge_Air_Temperature_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_W_Corridor/HWV_Command> a owl:NamedIndividual,
+        brick:Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_W_Corridor/Heat_Request> a owl:NamedIndividual,
+        brick:Heating_Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_W_Corridor/OA_Temp> a owl:NamedIndividual,
+        brick:Outside_Air_Temperature_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_W_Corridor/Run> a owl:NamedIndividual,
+        brick:Run_Time_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_W_Corridor/Run_Request> a owl:NamedIndividual,
+        brick:Run_Request_Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_W_Corridor/Schedule> a owl:NamedIndividual,
+        brick_v_1_0_2:Schedule_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_W_Corridor/ZTMP_HI> a owl:NamedIndividual,
+        brick:Cooling_Temperature_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/2100_W_Corridor/ZTMP_LO> a owl:NamedIndividual,
+        brick:Heating_Temperature_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/EF-3/Schedule> a owl:NamedIndividual,
+        brick_v_1_0_2:Schedule_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/EF-4/Schedule> a owl:NamedIndividual,
+        brick_v_1_0_2:Schedule_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/EF-7/Schedule> a owl:NamedIndividual,
+        brick_v_1_0_2:Schedule_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/EF-8/Run> a owl:NamedIndividual,
+        brick:Run_Time_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/EF-8/Schedule> a owl:NamedIndividual,
+        brick_v_1_0_2:Schedule_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/EF-8/Zone_Temp___Zone_Temp> a owl:NamedIndividual,
+        brick:Zone_Air_Temperature_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/EF-9/Run> a owl:NamedIndividual,
+        brick:Run_Time_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/EF-9/Schedule> a owl:NamedIndividual,
+        brick_v_1_0_2:Schedule_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/EF-9/Zone_Temp___Zone_Temp> a owl:NamedIndividual,
+        brick:Zone_Air_Temperature_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/Elevator_1&2_Vent/Schedule> a owl:NamedIndividual,
+        brick_v_1_0_2:Schedule_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/Emergency_Generator/Schedule> a owl:NamedIndividual,
+        brick_v_1_0_2:Schedule_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/Garage_Fan-3_Interface/OA_Temp> a owl:NamedIndividual,
+        brick:Outside_Air_Temperature_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/Garage_Fan-5_Interface/OA_Temp> a owl:NamedIndividual,
+        brick:Outside_Air_Temperature_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/Hot_Water_BTU_Meter/Instant_Demand> a owl:NamedIndividual,
+        brick:Hot_Water_Usage_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/Rainwater_System/Schedule> a owl:NamedIndividual,
+        brick_v_1_0_2:Schedule_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Gates/Steam_Flow_Meter_Interface/Instant_Demand> a owl:NamedIndividual,
+        brick:Steam_Usage_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_N_Corridor/Airflow> a owl:NamedIndividual,
+        brick:Discharge_Air_Flow_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_N_Corridor/Airflow_Request> a owl:NamedIndividual,
+        brick:Discharge_Air_Flow_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_N_Corridor/Airflow_Setpoint> a owl:NamedIndividual,
+        brick:Discharge_Air_Flow_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_N_Corridor/Cool_Request> a owl:NamedIndividual,
+        brick:Cooling_Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_N_Corridor/Damper_Position> a owl:NamedIndividual,
+        brick:Damper_Position_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_N_Corridor/Discharge_Temp> a owl:NamedIndividual,
+        brick:Discharge_Air_Temperature_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_N_Corridor/HWV_Command> a owl:NamedIndividual,
+        brick:Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_N_Corridor/Heat_Request> a owl:NamedIndividual,
+        brick:Heating_Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_N_Corridor/OA_Temp> a owl:NamedIndividual,
+        brick:Outside_Air_Temperature_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_N_Corridor/Run> a owl:NamedIndividual,
+        brick:Run_Time_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_N_Corridor/Run_Request> a owl:NamedIndividual,
+        brick:Run_Request_Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_N_Corridor/Schedule> a owl:NamedIndividual,
+        brick_v_1_0_2:Schedule_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_N_Corridor/ZTMP_HI> a owl:NamedIndividual,
+        brick:Cooling_Temperature_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_N_Corridor/ZTMP_LO> a owl:NamedIndividual,
+        brick:Heating_Temperature_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_S_Corridor/Airflow> a owl:NamedIndividual,
+        brick:Discharge_Air_Flow_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_S_Corridor/Airflow_Request> a owl:NamedIndividual,
+        brick:Discharge_Air_Flow_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_S_Corridor/Airflow_Setpoint> a owl:NamedIndividual,
+        brick:Discharge_Air_Flow_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_S_Corridor/Cool_Request> a owl:NamedIndividual,
+        brick:Cooling_Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_S_Corridor/Damper_Position> a owl:NamedIndividual,
+        brick:Damper_Position_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_S_Corridor/Discharge_Temp> a owl:NamedIndividual,
+        brick:Discharge_Air_Temperature_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_S_Corridor/HWV_Command> a owl:NamedIndividual,
+        brick:Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_S_Corridor/Heat_Request> a owl:NamedIndividual,
+        brick:Heating_Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_S_Corridor/OA_Temp> a owl:NamedIndividual,
+        brick:Outside_Air_Temperature_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_S_Corridor/PRV_Command> a owl:NamedIndividual,
+        brick:Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_S_Corridor/RH_Valve_%> a owl:NamedIndividual,
+        brick:Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_S_Corridor/Run> a owl:NamedIndividual,
+        brick:Run_Time_Sensor .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_S_Corridor/Run_Request> a owl:NamedIndividual,
+        brick:Run_Request_Command .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_S_Corridor/Schedule> a owl:NamedIndividual,
+        brick_v_1_0_2:Schedule_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_S_Corridor/ZTMP_HI> a owl:NamedIndividual,
+        brick:Cooling_Temperature_Setpoint .
+
+<http://cmu.edu/building/ontology/ghc#SCSC_Hillman/4400_S_Corridor/ZTMP_LO> a owl:NamedIndividual,
+        brick:Heating_Temperature_Setpoint .
+
+GHC:AHU-2_I a owl:NamedIndividual,
+        brick:AHU ;
+    brick:hasPoint <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/CHW_Valve_VDC>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/Cool_Request>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/Cooling_demand_%>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/EA_damper>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/EF_piezo>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/EW_DP>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/EW_sup_temp>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/Heat_Request>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/OA_damper>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/OA_dmpr_fb>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/Outside_Airflow_CFM>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/Preheating_demand_%>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/RA_CO2>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/Run>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/Run_Request>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/SA_Duct_Press>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/SF_piezo>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/Supply_Air_Temp>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/ZTMP_HI>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/ZTMP_LO>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/auto_cc_sp>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/bypass_CFM>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/chw_vlv>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/current_cc_sp>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/current_exhaust_CFM_SP>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/current_max_RA_CO2_setpt>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/enth_wheel_RPM>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/enth_wheel_Volts>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/enth_whl_vfd>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/exh_fan_vfd>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/exhaust_CFM>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/exhaust_demand>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/exhaust_temp>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/exhaust_vfd_volts>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/htg_demand>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/oa_dewpoint>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/oa_enthalpy>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/oa_grains>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/outdoor_CO2>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/outdoor_RH>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/outdoor_temp>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/preheat_sup_t>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/preheat_valve_VDC>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/ra_dewpoint>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/ra_enthalpy>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/ra_grains>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/recirc_damper>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/recirc_dmpr_fb>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/return_CFM>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/return_rh>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/return_temp>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/sup_fan_vfd>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/supply_CFM>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/supply_demand>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/supply_temp>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/supply_vfd_volts> .
+
+GHC:AHU-2_IRoom brick:hasPoint <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/CHW_Valve_VDC>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/Cool_Request>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/Cooling_demand_%>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/EA_damper>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/EF_piezo>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/EW_DP>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/EW_sup_temp>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/Heat_Request>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/OA_damper>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/OA_dmpr_fb>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/Outside_Airflow_CFM>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/Preheating_demand_%>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/RA_CO2>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/Run>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/Run_Request>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/SA_Duct_Press>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/SF_piezo>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/Supply_Air_Temp>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/ZTMP_HI>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/ZTMP_LO>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/auto_cc_sp>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/bypass_CFM>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/chw_vlv>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/current_cc_sp>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/current_exhaust_CFM_SP>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/current_max_RA_CO2_setpt>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/enth_wheel_RPM>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/enth_wheel_Volts>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/enth_whl_vfd>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/exh_fan_vfd>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/exhaust_CFM>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/exhaust_demand>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/exhaust_temp>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/exhaust_vfd_volts>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/htg_demand>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/oa_dewpoint>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/oa_enthalpy>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/oa_grains>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/outdoor_CO2>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/outdoor_RH>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/outdoor_temp>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/preheat_sup_t>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/preheat_valve_VDC>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/ra_dewpoint>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/ra_enthalpy>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/ra_grains>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/recirc_damper>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/recirc_dmpr_fb>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/return_CFM>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/return_rh>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/return_temp>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/sup_fan_vfd>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/supply_CFM>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/supply_demand>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/supply_temp>,
+        <http://cmu.edu/building/ontology/ghc#SCSC_Gates/AHU-2_I/supply_vfd_volts> .
+
+brick_v_1_0_2:Schedule_Setpoint brick:hasTag tag:Command .

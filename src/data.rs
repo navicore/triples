@@ -1,15 +1,14 @@
-use regex::Regex;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fmt;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TriplesError {
     ParseError { reason: String },
     InvalidIRI { uri: String },
-    UnresolvableURIPrefix { prefix_name: String },
+    UnresolvableURIPrefix { prefix_name: String, name: String },
     NoSubjectDeclaired,
     PreviousSubjectNotComplete,
-    NotImplemented,
+    NotImplemented { trace: String },
     // Add more error variants here as needed.
 }
 impl std::error::Error for TriplesError {}
@@ -18,12 +17,12 @@ impl fmt::Display for TriplesError {
         match self {
             Self::ParseError { reason } => write!(f, "{reason}"),
             Self::InvalidIRI { uri } => write!(f, "Invalid IRI: {uri}"),
-            Self::UnresolvableURIPrefix { prefix_name } => {
-                write!(f, "can not locate URI for {prefix_name}")
+            Self::UnresolvableURIPrefix { prefix_name, name } => {
+                write!(f, "can not locate URI for {prefix_name} for name {name}")
             }
             Self::NoSubjectDeclaired => write!(f, "can not load predicate without a subject"),
             Self::PreviousSubjectNotComplete => write!(f, "previous subject stanza not terminated"),
-            Self::NotImplemented => write!(f, "not implemented"),
+            Self::NotImplemented { trace } => write!(f, "{trace} not implemented"),
         }
     }
 }
@@ -32,21 +31,30 @@ impl fmt::Display for TriplesError {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct RdfName(String);
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct Pre(String);
+
+impl Pre {
+    /// # Errors
+    /// Will return `Err` if name is not a valid prefix name
+    #[must_use]
+    pub const fn new(name: String) -> Self {
+        Self(name)
+    }
+}
+
+impl fmt::Display for Pre {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
 impl RdfName {
     /// # Errors
     /// Will return `Err` if name is not a valid IRI
-    pub fn new(name: String) -> Result<Self, TriplesError> {
-        if Self::is_valid(&name) {
-            Ok(Self(name))
-        } else {
-            Err(TriplesError::InvalidIRI { uri: name })
-        }
-    }
-
-    /// Checks if the given string is a valid IRI.
-    fn is_valid(name: &str) -> bool {
-        Regex::new(r"^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$")
-            .map_or(false, |iri_regex| iri_regex.is_match(name))
+    #[must_use]
+    pub const fn new(name: String) -> Self {
+        Self(name)
     }
 }
 
@@ -56,11 +64,10 @@ impl fmt::Display for RdfName {
     }
 }
 
-/// Encapsulates a single subject that has multiple predicate/object pairs.
 #[derive(Debug, Clone)]
 pub struct Subject {
     subject: RdfName,
-    predicate_object_pairs: HashMap<RdfName, String>,
+    predicate_object_pairs: HashMap<RdfName, HashSet<String>>,
 }
 
 impl fmt::Display for Subject {
@@ -75,7 +82,6 @@ impl fmt::Display for Subject {
 }
 
 impl Subject {
-    /// Creates a new `Subject` with the given subject.
     #[must_use]
     pub fn new(subject: RdfName) -> Self {
         Self {
@@ -89,32 +95,39 @@ impl Subject {
         &self.subject
     }
 
-    pub fn predicate_object_pairs(&self) -> impl Iterator<Item = (&RdfName, &String)> {
+    pub fn predicate_object_pairs(&self) -> impl Iterator<Item = (&RdfName, &HashSet<String>)> {
         self.predicate_object_pairs.iter()
     }
-    /// Adds or updates a predicate/object pair for the subject.
+
     pub fn add(&mut self, predicate: RdfName, object: String) {
-        self.predicate_object_pairs.insert(predicate, object);
+        self.predicate_object_pairs
+            .entry(predicate)
+            .or_insert_with(HashSet::new)
+            .insert(object);
     }
 
-    /// Removes a predicate/object pair given the predicate. Returns true if the predicate was present.
-    pub fn remove(&mut self, predicate: &RdfName) -> bool {
-        self.predicate_object_pairs.remove(predicate).is_some()
+    pub fn remove(&mut self, predicate: &RdfName, object: &str) -> bool {
+        if let Some(objects) = self.predicate_object_pairs.get_mut(predicate) {
+            let removed = objects.remove(object);
+            if objects.is_empty() {
+                self.predicate_object_pairs.remove(predicate);
+            }
+            removed
+        } else {
+            false
+        }
     }
 
-    /// Fetches the object for a given predicate, if it exists.
     #[must_use]
-    pub fn get(&self, predicate: &RdfName) -> Option<&String> {
+    pub fn get(&self, predicate: &RdfName) -> Option<&HashSet<String>> {
         self.predicate_object_pairs.get(predicate)
     }
 
-    /// Returns an iterator over all predicates.
     pub fn all_predicates(&self) -> impl Iterator<Item = &RdfName> {
         self.predicate_object_pairs.keys()
     }
 
-    /// Returns an iterator over all objects.
-    pub fn all_objects(&self) -> impl Iterator<Item = &String> {
+    pub fn all_objects(&self) -> impl Iterator<Item = &HashSet<String>> {
         self.predicate_object_pairs.values()
     }
 }
@@ -126,41 +139,41 @@ mod tests {
     #[test]
     fn rdf_name_valid() {
         let valid_iri = RdfName::new("https://www.example.com/test".to_string());
-        assert!(valid_iri.is_ok());
-    }
-
-    #[test]
-    fn rdf_name_invalid() {
-        let invalid_iri = RdfName::new("invalid_string".to_string());
-        assert!(!invalid_iri.is_ok());
+        assert!(valid_iri.to_string().starts_with("http"));
     }
 
     #[test]
     fn subject_basic_operations() {
-        let subject_iri = RdfName::new("https://www.example.com/subject".to_string()).unwrap();
+        let subject_iri = RdfName::new("https://www.example.com/subject".to_string());
         let mut subject = Subject::new(subject_iri.clone());
 
         assert_eq!(subject.name(), &subject_iri);
 
-        let predicate_iri = RdfName::new("https://www.example.com/predicate".to_string()).unwrap();
+        let predicate_iri = RdfName::new("https://www.example.com/predicate".to_string());
         let object_value = "Object Value".to_string();
 
         // Adding
         subject.add(predicate_iri.clone(), object_value.clone());
-        assert_eq!(subject.get(&predicate_iri), Some(&object_value));
+        assert_eq!(subject.get(&predicate_iri).map(|x| x.len()), Some(1));
+        assert_eq!(
+            subject
+                .get(&predicate_iri)
+                .map(|x| x.iter().next().unwrap()),
+            Some(&"Object Value".to_string())
+        );
 
         // Removing
-        assert!(subject.remove(&predicate_iri));
+        assert!(subject.remove(&predicate_iri, &object_value.clone()));
         assert_eq!(subject.get(&predicate_iri), None);
     }
 
     #[test]
     fn subject_non_existent_predicate() {
-        let subject_iri = RdfName::new("https://www.example.com/subject".to_string()).unwrap();
+        let subject_iri = RdfName::new("https://www.example.com/subject".to_string());
         let subject = Subject::new(subject_iri);
 
         let non_existent_predicate =
-            RdfName::new("https://www.example.com/nonexistent".to_string()).unwrap();
+            RdfName::new("https://www.example.com/nonexistent".to_string());
 
         assert_eq!(subject.get(&non_existent_predicate), None);
     }
