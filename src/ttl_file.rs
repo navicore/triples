@@ -53,7 +53,11 @@ pub async fn export_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Err
 
             let (ns, local_name) = if let Some(idx) = name_string.rfind('#') {
                 let (ns, name) = name_string.split_at(idx + 1); // +1 to include '#' in ns
-                (ns, name)
+                if name.contains('/') {
+                    ("", name_string.as_str())
+                } else {
+                    (ns, name)
+                }
             } else if let Some(idx) = name_string.rfind('/') {
                 let (ns, name) = name_string.split_at(idx + 1); // +1 to include '/' in ns if needed
                 (ns, &name[1..]) // remove '/' from the start of name
@@ -63,18 +67,24 @@ pub async fn export_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Err
                 }));
             };
 
-            match prefixes.get(ns) {
-                Some(prefix) => {
-                    println!("{}:{}", prefix, local_name);
-                }
-                _ => {
-                    let e = TriplesError::UnresolvableURIPrefix {
-                        prefix_name: ns.to_string(),
-                        name: local_name.to_string(),
-                    };
-                    error!("export_turtle no prefix: {:?}", e);
-                    return Err(Box::new(e));
-                }
+            if ns.is_empty() && name.to_string().contains(":/") {
+                println!("<{}>", local_name);
+            } else if ns.is_empty() {
+                println!("{}", local_name);
+            } else {
+                match prefixes.get(ns) {
+                    Some(prefix) => {
+                        println!("{}:{}", prefix, local_name);
+                    }
+                    _ => {
+                        let e = TriplesError::UnresolvableURIPrefix {
+                            prefix_name: ns.to_string(),
+                            name: local_name.to_string(),
+                        };
+                        error!("export_turtle no prefix: {:?}", e);
+                        return Err(Box::new(e));
+                    }
+                };
             };
             let pairs: Vec<_> = subject.predicate_object_pairs().collect();
             print_predicate_object_pairs(&pairs, &prefixes)?;
@@ -206,7 +216,7 @@ fn print_predicate_object_pairs(
     prefixes: &HashMap<String, String>,
 ) -> Result<(), TriplesError> {
     trace!("print_predicate_object_pairs");
-    for (predicate, objects) in pairs.iter() {
+    for (idx, (predicate, objects)) in pairs.iter().enumerate() {
         let name_string = predicate.to_string();
 
         let (ns, name) = if let Some(idx) = name_string.rfind('#') {
@@ -219,25 +229,40 @@ fn print_predicate_object_pairs(
             let e = TriplesError::InvalidIRI {
                 uri: name_string.to_string(),
             };
-            error!("print_predicate_object_pairs: {e}");
+            error!("print_predicate_object_pairs: {:?}", e);
             return Err(e);
         };
 
         match prefixes.get(ns) {
             Some(prefix) => {
-                for (idx, object) in objects.iter().enumerate() {
-                    if idx == objects.len() - 1 {
-                        println!("    {}:{} \"{}\" ; .\n", prefix, name, object);
-                    } else {
-                        println!("    {}:{} \"{}\" ;", prefix, name, object);
-                    }
+                let formatted_objects: Vec<String> = objects
+                    .iter()
+                    .map(|object| {
+                        if object.contains(":/") {
+                            format!("<{}>", object)
+                        } else {
+                            format!("\"{}\"", object)
+                        }
+                    })
+                    .collect();
+
+                // Calculate the dynamic indentation
+                let indentation = "    ".len() + prefix.len() + ":".len() + name.len() + 1; // +1 for the space after name
+                let spaces = " ".repeat(indentation);
+
+                let object_list = formatted_objects.join(&format!(" ,\n{}", spaces));
+                let is_last_pair = idx == pairs.len() - 1;
+                if is_last_pair {
+                    println!("    {}:{} {} .\n", prefix, name, object_list);
+                } else {
+                    println!("    {}:{} {} ;", prefix, name, object_list);
                 }
             }
             _ => {
                 return Err(TriplesError::UnresolvableURIPrefix {
                     prefix_name: ns.to_string(),
                     name: name.to_string(),
-                })
+                });
             }
         };
     }
