@@ -50,24 +50,9 @@ pub async fn export_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Err
     for name in &subject_names {
         if let Some(subject) = db_api.query(name).await? {
             let name_string = subject.name().to_string();
+            let (ns, local_name) = extract_namespace_and_local_name(&name_string)?;
 
-            let (ns, local_name) = if let Some(idx) = name_string.rfind('#') {
-                let (ns, name) = name_string.split_at(idx + 1); // +1 to include '#' in ns
-                if name.contains('/') {
-                    ("", name_string.as_str())
-                } else {
-                    (ns, name)
-                }
-            } else if let Some(idx) = name_string.rfind('/') {
-                let (ns, name) = name_string.split_at(idx + 1); // +1 to include '/' in ns if needed
-                (ns, &name[1..]) // remove '/' from the start of name
-            } else {
-                return Err(Box::new(TriplesError::InvalidIRI {
-                    uri: name_string.to_string(),
-                }));
-            };
-
-            if ns.is_empty() && name.to_string().contains(":/") {
+            if ns.is_empty() && local_name.contains(":/") {
                 println!("<{}>", local_name);
             } else if ns.is_empty() {
                 println!("{}", local_name);
@@ -86,6 +71,7 @@ pub async fn export_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Err
                     }
                 };
             };
+
             let pairs: Vec<_> = subject.predicate_object_pairs().collect();
             print_predicate_object_pairs(&pairs, &prefixes)?;
         }
@@ -94,6 +80,23 @@ pub async fn export_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Err
     Ok(())
 }
 
+fn extract_namespace_and_local_name(name_string: &str) -> Result<(&str, &str), TriplesError> {
+    if let Some(idx) = name_string.rfind('#') {
+        let (ns, name) = name_string.split_at(idx + 1);
+        if name.contains('/') {
+            return Ok(("", name_string));
+        } else {
+            return Ok((ns, name));
+        }
+    } else if let Some(idx) = name_string.rfind('/') {
+        let (ns, name) = name_string.split_at(idx + 1);
+        return Ok((ns, &name[1..]));
+    }
+
+    Err(TriplesError::InvalidIRI {
+        uri: name_string.to_string(),
+    })
+}
 /// use statefull stream to build subject objects and as they become
 /// complete, insert into db.
 ///
