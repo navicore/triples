@@ -35,7 +35,7 @@ fn test_isa_parsing() {
     let parser = LineParser::new();
     let input = "<http://cmu.edu/building/ontology/ghc#8Floor> a brick:Floor .";
     let parsed1 = parser.parse(input).unwrap();
-    if let ParsedLine::SubjectPredObj(spre, subj, predpre, pred, opre, obj, has_more) = parsed1 {
+    if let ParsedLine::SubjectPredObj(spre, subj, predpre, pred, opre, obj, _) = parsed1 {
         assert!(spre.is_none());
         assert_eq!(
             subj,

@@ -1,10 +1,10 @@
+use crate::data::TriplesError;
 /// functions in support of ttl file handling
 ///
 /// Prefer to process data via stdin and stdout to enable *nix style
 /// command pipelining.
 ///
-use crate::data::RdfName;
-use crate::data::TriplesError;
+use crate::data::{RdfName, Subject};
 use crate::db_api::DbApi;
 use crate::turtle_stream::TurtleStream;
 use std::collections::{HashMap, HashSet};
@@ -53,23 +53,18 @@ pub async fn export_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Err
             let (ns, local_name) = extract_namespace_and_local_name(&name_string)?;
 
             if ns.is_empty() && local_name.contains(":/") {
-                println!("<{}>", local_name);
+                println!("<{local_name}>");
             } else if ns.is_empty() {
-                println!("{}", local_name);
+                println!("{local_name}");
+            } else if let Some(prefix) = prefixes.get(ns) {
+                println!("{prefix}:{local_name}");
             } else {
-                match prefixes.get(ns) {
-                    Some(prefix) => {
-                        println!("{}:{}", prefix, local_name);
-                    }
-                    _ => {
-                        let e = TriplesError::UnresolvableURIPrefix {
-                            prefix_name: ns.to_string(),
-                            name: local_name.to_string(),
-                        };
-                        error!("export_turtle no prefix: {:?}", e);
-                        return Err(Box::new(e));
-                    }
+                let e = TriplesError::UnresolvableURIPrefix {
+                    prefix_name: ns.to_string(),
+                    name: local_name.to_string(),
                 };
+                error!("export_turtle no prefix: {e:?}");
+                return Err(Box::new(e));
             };
 
             let pairs: Vec<_> = subject.predicate_object_pairs().collect();
@@ -85,9 +80,8 @@ fn extract_namespace_and_local_name(name_string: &str) -> Result<(&str, &str), T
         let (ns, name) = name_string.split_at(idx + 1);
         if name.contains('/') {
             return Ok(("", name_string));
-        } else {
-            return Ok((ns, name));
         }
+        return Ok((ns, name));
     } else if let Some(idx) = name_string.rfind('/') {
         let (ns, name) = name_string.split_at(idx + 1);
         return Ok((ns, &name[1..]));
@@ -97,6 +91,7 @@ fn extract_namespace_and_local_name(name_string: &str) -> Result<(&str, &str), T
         uri: name_string.to_string(),
     })
 }
+
 /// use statefull stream to build subject objects and as they become
 /// complete, insert into db.
 ///
@@ -139,7 +134,7 @@ fn get_or_insert_prefix<'a>(
         .get(ns)
         .ok_or(TriplesError::UnresolvableURIPrefix {
             prefix_name: ns.to_string(),
-            name: "".to_string(),
+            name: String::new(),
         })?
         .as_str())
 }
@@ -168,6 +163,41 @@ fn handle_name_string<'a>(
     Ok(Some(ns))
 }
 
+fn handle_subject(
+    subject: &Subject,
+    prefixes: &mut HashMap<String, String>,
+    unique_ns_count: &mut u32,
+) -> Result<(), Box<dyn std::error::Error>> {
+    if handle_name_string(&subject.name().to_string(), prefixes, unique_ns_count)?.is_none() {
+        let e = TriplesError::InvalidIRI {
+            uri: subject.name().to_string(),
+        };
+        error!("handle_subject: {e}");
+        return Err(Box::new(e));
+    }
+
+    for pair in subject.predicate_object_pairs() {
+        if handle_name_string(&pair.0.to_string(), prefixes, unique_ns_count)?.is_none() {
+            let e = TriplesError::InvalidIRI {
+                uri: pair.0.to_string(),
+            };
+            error!("handle_subject: {e}");
+            return Err(Box::new(e));
+        };
+        for obj_name in pair.1 {
+            if handle_name_string(obj_name, prefixes, unique_ns_count)?.is_none() {
+                let e = TriplesError::InvalidIRI {
+                    uri: obj_name.to_string(),
+                };
+                error!("handle_subject: {e}");
+                return Err(Box::new(e));
+            };
+        }
+    }
+
+    Ok(())
+}
+
 async fn compute_prefixes(
     subject_names: &Vec<RdfName>,
     db_api: &DbApi,
@@ -178,40 +208,7 @@ async fn compute_prefixes(
 
     for name in subject_names {
         if let Some(subject) = db_api.query(name).await? {
-            if handle_name_string(
-                &subject.name().to_string(),
-                &mut prefixes,
-                &mut unique_ns_count,
-            )?
-            .is_none()
-            {
-                let e = TriplesError::InvalidIRI {
-                    uri: name.to_string(),
-                };
-                error!("compute_prefixes subject: {e}");
-                return Err(Box::new(e));
-            }
-            for pair in subject.predicate_object_pairs() {
-                if handle_name_string(&pair.0.to_string(), &mut prefixes, &mut unique_ns_count)?
-                    .is_none()
-                {
-                    let e = TriplesError::InvalidIRI {
-                        uri: name.to_string(),
-                    };
-                    error!("compute_prefixes pairs: {e}");
-                    return Err(Box::new(e));
-                };
-                for obj_name in pair.1 {
-                    if handle_name_string(obj_name, &mut prefixes, &mut unique_ns_count)?.is_none()
-                    {
-                        let e = TriplesError::InvalidIRI {
-                            uri: name.to_string(),
-                        };
-                        error!("compute_prefixes pairs: {e}");
-                        return Err(Box::new(e));
-                    };
-                }
-            }
+            handle_subject(&subject, &mut prefixes, &mut unique_ns_count)?;
         }
     }
 
@@ -251,30 +248,31 @@ fn print_predicate_object_pairs(
                 let formatted_objects: Vec<String> = objects
                     .iter()
                     .map(|object| {
-                        let (ons, oname) = if let Some(idx) = object.rfind('#') {
-                            let (ons, oname) = object.split_at(idx + 1); // +1 to include '#' in ns
-                            (ons, oname)
-                        } else if let Some(idx) = object.rfind('/') {
-                            let (ons, oname) = object.split_at(idx + 1); // +1 to include '/' in ns if needed
-                            let oname = &oname[1..];
-                            (ons, oname)
-                        } else {
-                            ("", object.as_str())
-                        };
+                        let (ons, objname) = object.rfind('#').map_or_else(
+                            || {
+                                object.rfind('/').map_or(("", object.as_str()), |idx| {
+                                    let (ons, objname) = object.split_at(idx + 1);
+                                    let objname = &objname[1..];
+                                    (ons, objname)
+                                })
+                            },
+                            |idx| {
+                                let (ons, objname) = object.split_at(idx + 1);
+                                (ons, objname)
+                            },
+                        );
 
                         let fmt_oname = match prefixes.get(ons) {
-                            Some(oprefix) if !oname.contains('/') => {
-                                format!("{oprefix}:{oname}")
+                            Some(obj_prefix) if !objname.contains('/') => {
+                                format!("{obj_prefix}:{objname}")
                             }
-                            _ => {
-                                format!("{object}")
-                            }
+                            _ => object.to_string(),
                         };
 
                         if fmt_oname.contains(":/") {
-                            format!("<{}>", fmt_oname)
+                            format!("<{fmt_oname}>")
                         } else {
-                            format!("\"{}\"", fmt_oname)
+                            format!("\"{fmt_oname}\"")
                         }
                     })
                     .collect();
@@ -283,12 +281,12 @@ fn print_predicate_object_pairs(
                 let indentation = "    ".len() + prefix.len() + ":".len() + name.len() + 1; // +1 for the space after name
                 let spaces = " ".repeat(indentation);
 
-                let object_list = formatted_objects.join(&format!(" ,\n{}", spaces));
+                let object_list = formatted_objects.join(&format!(" ,\n{spaces}"));
                 let is_last_pair = idx == pairs.len() - 1;
                 if is_last_pair {
-                    println!("    {}:{} {} .\n", prefix, name, object_list);
+                    println!("    {prefix}:{name} {object_list} .\n");
                 } else {
-                    println!("    {}:{} {} ;", prefix, name, object_list);
+                    println!("    {prefix}:{name} {object_list} ;");
                 }
             }
             _ => {

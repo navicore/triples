@@ -113,7 +113,7 @@ impl<'a> DbApi {
             let fetched_predicate_id = self.get_or_insert_name(&predicate.to_string()).await?;
 
             for object in objects {
-                let fetched_object_id = self.get_or_insert_object(&object).await?;
+                let fetched_object_id = self.get_or_insert_object(object).await?;
                 self.insert_triple(fetched_subject_id, fetched_predicate_id, fetched_object_id)
                     .await?;
             }

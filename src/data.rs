@@ -82,6 +82,7 @@ impl fmt::Display for Subject {
 }
 
 impl Subject {
+    #[must_use]
     pub fn new(subject: RdfName) -> Self {
         Self {
             subject,
@@ -89,6 +90,7 @@ impl Subject {
         }
     }
 
+    #[must_use]
     pub const fn name(&self) -> &RdfName {
         &self.subject
     }
@@ -116,6 +118,7 @@ impl Subject {
         }
     }
 
+    #[must_use]
     pub fn get(&self, predicate: &RdfName) -> Option<&HashSet<String>> {
         self.predicate_object_pairs.get(predicate)
     }

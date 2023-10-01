@@ -54,6 +54,7 @@ impl Default for TurtleStream {
 }
 
 impl TurtleStream {
+    #[must_use]
     pub fn get_state(&self) -> ParserState {
         self.state.clone()
     }
@@ -87,9 +88,9 @@ impl TurtleStream {
                     |ns| {
                         let ns_str = ns.to_string();
                         if ns_str.ends_with('#') {
-                            Ok(format!("{}{}", ns_str, object))
+                            Ok(format!("{ns_str}{object}"))
                         } else {
-                            Ok(format!("{}/{}", ns_str, object))
+                            Ok(format!("{ns_str}/{object}"))
                         }
                     },
                 )
@@ -116,9 +117,9 @@ impl TurtleStream {
                         let ns_str = ns.to_string();
                         trace!("resolve_iri for ns: {ns_str}");
                         if ns_str.ends_with('#') {
-                            Ok(format!("{}{}", ns_str, local_name))
+                            Ok(format!("{ns_str}{local_name}"))
                         } else {
-                            Ok(format!("{}/{}", ns_str, local_name))
+                            Ok(format!("{ns_str}/{local_name}"))
                         }
                     },
                 )
@@ -204,109 +205,119 @@ impl TurtleStream {
             })?;
         match self.state.clone() {
             ParserState::ObjectLoading(pre, predicate) => {
-                trace!("object loading");
-                match parsed {
-                    ParsedLine::Prefix(_, _) => Err(TriplesError::NotImplemented {
-                        trace: "object loading prefix".to_string(),
-                    }),
-                    ParsedLine::Subject(_, _) => Err(TriplesError::NotImplemented {
-                        trace: "object loading subject".to_string(),
-                    }),
-                    ParsedLine::PredObj(prefix, predicate, opre, object, is_end) => {
-                        self.handle_predicate(&prefix, &predicate, &opre, &object, *is_end)
-                    }
-                    ParsedLine::PredObjTerm(prefix, predicate, opre, object) => {
-                        self.handle_predicate_term(&prefix, &predicate, &opre, &object)
-                    }
-                    ParsedLine::SubjectPredObj(_, _, _, _, _, _, _) => {
-                        Err(TriplesError::NotImplemented {
-                            trace: "object loading subpredobj".to_string(),
-                        })
-                    }
-                    ParsedLine::ContinueObj(opre, obj, has_more) => {
-                        if *has_more {
-                            self.handle_predicate(
-                                &pre,
-                                &predicate,
-                                &opre,
-                                &obj.to_string(),
-                                *has_more,
-                            )
-                        } else {
-                            self.handle_predicate_term(&pre, &predicate, &opre, &obj.to_string())
-                        }
-                    }
+                self.handle_object_loading_state(parsed, &pre, &predicate)
+            }
+            ParserState::SubjectLoading => self.handle_subject_loading_state(parsed),
+            ParserState::PredicateLoading => self.handle_predicate_loading_state(parsed),
+        }
+    }
+
+    fn handle_object_loading_state(
+        &mut self,
+        parsed: &ParsedLine,
+        pre: &Option<Pre>,
+        predicate: &RdfName,
+    ) -> Result<Option<Subject>, TriplesError> {
+        trace!("object loading");
+        // Handling for ObjectLoading state
+        // ... (implement the specific logic for ObjectLoading state here)
+        trace!("object loading");
+        match parsed {
+            ParsedLine::Prefix(_, _) => Err(TriplesError::NotImplemented {
+                trace: "object loading prefix".to_string(),
+            }),
+            ParsedLine::Subject(_, _) => Err(TriplesError::NotImplemented {
+                trace: "object loading subject".to_string(),
+            }),
+            ParsedLine::PredObj(prefix, predicate, objpre, object, is_end) => {
+                self.handle_predicate(prefix, predicate, objpre, object, *is_end)
+            }
+            ParsedLine::PredObjTerm(prefix, predicate, objpre, object) => {
+                self.handle_predicate_term(prefix, predicate, objpre, object)
+            }
+            ParsedLine::SubjectPredObj(_, _, _, _, _, _, _) => Err(TriplesError::NotImplemented {
+                trace: "object loading subpredobj".to_string(),
+            }),
+            ParsedLine::ContinueObj(objpre, obj, has_more) => {
+                if *has_more {
+                    self.handle_predicate(pre, predicate, objpre, &obj.to_string(), *has_more)
+                } else {
+                    self.handle_predicate_term(pre, predicate, objpre, &obj.to_string())
                 }
             }
-            ParserState::SubjectLoading => {
-                trace!("subject loading");
-                match parsed {
-                    ParsedLine::Prefix(pre, uri) => {
-                        self.prefixes.insert(pre.clone(), uri.clone());
-                        Ok(None)
-                    }
-                    ParsedLine::Subject(prefix, name) => self.handle_subject(&prefix, &name),
-                    ParsedLine::PredObj(_, _, _, _, _) | ParsedLine::PredObjTerm(_, _, _, _) => {
-                        Err(TriplesError::NotImplemented {
-                            trace: "subject loading predobj".to_string(),
-                        })
-                    }
-                    ParsedLine::SubjectPredObj(
-                        name_prefix,
-                        name,
-                        prefix,
-                        predicate,
-                        objpre,
-                        object,
-                        has_more,
-                    ) => {
-                        self.handle_subject(&name_prefix, &name)?;
-                        let result =
-                            self.handle_predicate(&prefix, &predicate, &objpre, &object, *has_more);
-                        if !*has_more {
-                            self.current_subject = None;
-                            self.state = ParserState::SubjectLoading;
-                        } else {
-                            self.state =
-                                ParserState::ObjectLoading(prefix.clone(), predicate.clone());
-                        };
-                        result
-                    }
-                    ParsedLine::ContinueObj(_, _, _) => Err(TriplesError::NotImplemented {
-                        trace: "subject loading contobj".to_string(),
-                    }),
-                }
+        }
+    }
+
+    fn handle_subject_loading_state(
+        &mut self,
+        parsed: &ParsedLine,
+    ) -> Result<Option<Subject>, TriplesError> {
+        trace!("subject loading");
+        match parsed {
+            ParsedLine::Prefix(pre, uri) => {
+                self.prefixes.insert(pre.clone(), uri.clone());
+                Ok(None)
             }
-            ParserState::PredicateLoading => {
-                trace!("predicate loading");
-                match parsed {
-                    // you can load prefixes later in the file but only in-between subject blocks
-                    ParsedLine::Prefix(name, uri) => {
-                        if self.current_subject.is_some() {
-                            return Err(TriplesError::PreviousSubjectNotComplete);
-                        }
-                        self.prefixes.insert(name.clone(), uri.clone());
-                        Ok(None)
-                    }
-                    ParsedLine::PredObj(prefix, predicate, opre, object, is_end) => {
-                        self.handle_predicate(&prefix, &predicate, &opre, &object, *is_end)
-                    }
-                    ParsedLine::PredObjTerm(prefix, predicate, opre, object) => {
-                        self.handle_predicate_term(&prefix, &predicate, &opre, &object)
-                    }
-                    ParsedLine::Subject(_, _) => Err(TriplesError::NotImplemented {
-                        trace: "predicate loading subj".to_string(),
-                    }),
-                    ParsedLine::SubjectPredObj(_, _, _, _, _, _, _) => {
-                        Err(TriplesError::NotImplemented {
-                            trace: "predicate loading subjpredobj".to_string(),
-                        })
-                    }
-                    ParsedLine::ContinueObj(_, _, _) => Err(TriplesError::NotImplemented {
-                        trace: "predicate loading contobj".to_string(),
-                    }),
-                }
+            ParsedLine::Subject(prefix, name) => self.handle_subject(prefix, name),
+            ParsedLine::PredObj(_, _, _, _, _) | ParsedLine::PredObjTerm(_, _, _, _) => {
+                Err(TriplesError::NotImplemented {
+                    trace: "subject loading predobj".to_string(),
+                })
             }
+            ParsedLine::SubjectPredObj(
+                name_prefix,
+                name,
+                prefix,
+                predicate,
+                objpre,
+                object,
+                has_more,
+            ) => {
+                self.handle_subject(name_prefix, name)?;
+                let result = self.handle_predicate(prefix, predicate, objpre, object, *has_more);
+                if *has_more {
+                    self.state = ParserState::ObjectLoading(prefix.clone(), predicate.clone());
+                } else {
+                    self.current_subject = None;
+                    self.state = ParserState::SubjectLoading;
+                };
+                result
+            }
+            ParsedLine::ContinueObj(_, _, _) => Err(TriplesError::NotImplemented {
+                trace: "subject loading contobj".to_string(),
+            }),
+        }
+    }
+
+    fn handle_predicate_loading_state(
+        &mut self,
+        parsed: &ParsedLine,
+    ) -> Result<Option<Subject>, TriplesError> {
+        trace!("predicate loading");
+        match parsed {
+            // you can load prefixes later in the file but only in-between subject blocks
+            ParsedLine::Prefix(name, uri) => {
+                if self.current_subject.is_some() {
+                    return Err(TriplesError::PreviousSubjectNotComplete);
+                }
+                self.prefixes.insert(name.clone(), uri.clone());
+                Ok(None)
+            }
+            ParsedLine::PredObj(prefix, predicate, opre, object, is_end) => {
+                self.handle_predicate(prefix, predicate, opre, object, *is_end)
+            }
+            ParsedLine::PredObjTerm(prefix, predicate, opre, object) => {
+                self.handle_predicate_term(prefix, predicate, opre, object)
+            }
+            ParsedLine::Subject(_, _) => Err(TriplesError::NotImplemented {
+                trace: "predicate loading subj".to_string(),
+            }),
+            ParsedLine::SubjectPredObj(_, _, _, _, _, _, _) => Err(TriplesError::NotImplemented {
+                trace: "predicate loading subjpredobj".to_string(),
+            }),
+            ParsedLine::ContinueObj(_, _, _) => Err(TriplesError::NotImplemented {
+                trace: "predicate loading contobj".to_string(),
+            }),
         }
     }
 }
