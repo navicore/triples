@@ -9,12 +9,15 @@ use crate::db_api::DbApi;
 use crate::turtle_stream::TurtleStream;
 use std::collections::{HashMap, HashSet};
 use tokio::io::{stdin, AsyncBufReadExt, BufReader}; // assuming you have a Result type alias, adjust as necessary
+use tracing::{error, trace};
+
 /// read ttl from stdin and load db
 ///
 /// # Errors
 ///
 /// return `Err` if any entry can not be loaded
 pub async fn import_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Error>> {
+    trace!("import_turtle");
     let mut stream = TurtleStream::new();
     let stdin = stdin();
     let mut reader = BufReader::new(stdin);
@@ -38,32 +41,39 @@ pub async fn import_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Err
 ///
 /// Will return `Err` if any entry can not be marshaled out as valid turtle
 pub async fn export_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Error>> {
+    trace!("export_turtle");
     let subject_names = db_api.query_all_subject_names().await?;
     let prefixes = compute_prefixes(&subject_names, db_api).await?;
 
     print_prefixes(&prefixes);
 
-    // print each subject with lines for each predicate / object pair
-    // terminating each subject block with a '.' and a newline.
     for name in &subject_names {
         if let Some(subject) = db_api.query(name).await? {
             let name_string = subject.name().to_string();
 
-            match name_string.rsplit_once('/') {
-                Some((ns, name)) => match prefixes.get(ns) {
-                    Some(prefix) => {
-                        println!("{prefix}:{name}");
-                    }
-                    _ => {
-                        return Err(Box::new(TriplesError::InvalidIRI {
-                            uri: name.to_string(),
-                        }))
-                    }
-                },
-                None => {
-                    return Err(Box::new(TriplesError::InvalidIRI {
-                        uri: name.to_string(),
-                    }))
+            let (ns, local_name) = if let Some(idx) = name_string.rfind('#') {
+                let (ns, name) = name_string.split_at(idx + 1); // +1 to include '#' in ns
+                (ns, name)
+            } else if let Some(idx) = name_string.rfind('/') {
+                let (ns, name) = name_string.split_at(idx + 1); // +1 to include '/' in ns if needed
+                (ns, &name[1..]) // remove '/' from the start of name
+            } else {
+                return Err(Box::new(TriplesError::InvalidIRI {
+                    uri: name_string.to_string(),
+                }));
+            };
+
+            match prefixes.get(ns) {
+                Some(prefix) => {
+                    println!("{}:{}", prefix, local_name);
+                }
+                _ => {
+                    let e = TriplesError::UnresolvableURIPrefix {
+                        prefix_name: ns.to_string(),
+                        name: local_name.to_string(),
+                    };
+                    error!("export_turtle no prefix: {:?}", e);
+                    return Err(Box::new(e));
                 }
             };
             let pairs: Vec<_> = subject.predicate_object_pairs().collect();
@@ -85,6 +95,7 @@ async fn import_line(
     stream: &mut TurtleStream,
     db_api: &DbApi,
 ) -> Result<(), Box<dyn std::error::Error>> {
+    trace!("import line");
     if line.trim().is_empty() {
         return Ok(());
     }
@@ -105,6 +116,7 @@ fn get_or_insert_prefix<'a>(
     prefixes: &'a mut HashMap<String, String>,
     unique_count: &mut u32,
 ) -> Result<&'a str, TriplesError> {
+    trace!("get_or_insert_prefix");
     if !prefixes.contains_key(ns) {
         *unique_count += 1;
         let alias = format!("ns{unique_count}");
@@ -114,6 +126,7 @@ fn get_or_insert_prefix<'a>(
         .get(ns)
         .ok_or(TriplesError::UnresolvableURIPrefix {
             prefix_name: ns.to_string(),
+            name: "".to_string(),
         })?
         .as_str())
 }
@@ -123,6 +136,7 @@ fn handle_name_string<'a>(
     prefixes: &mut HashMap<String, String>,
     unique_ns_count: &mut u32,
 ) -> Result<Option<&'a str>, Box<dyn std::error::Error>> {
+    trace!("handle_name_string");
     let (ns, _) = if let Some(idx) = name_string.rfind('#') {
         let (ns, _) = name_string.split_at(idx + 1); // +1 to include '#' in ns
         (ns, &name_string[idx + 1..])
@@ -130,9 +144,11 @@ fn handle_name_string<'a>(
         let (ns, _) = name_string.split_at(idx + 1); // +1 to include '/' in ns if needed
         (ns, &name_string[idx + 1..]) // remove '/' from the start of name
     } else {
-        return Err(Box::new(TriplesError::InvalidIRI {
+        let e = TriplesError::InvalidIRI {
             uri: name_string.to_string(),
-        }));
+        };
+        error!("handle_name_string: {e}");
+        return Err(Box::new(e));
     };
 
     get_or_insert_prefix(ns, prefixes, unique_ns_count)?;
@@ -143,6 +159,7 @@ async fn compute_prefixes(
     subject_names: &Vec<RdfName>,
     db_api: &DbApi,
 ) -> Result<HashMap<String, String>, Box<dyn std::error::Error>> {
+    trace!("compute_prefixes");
     let mut prefixes: HashMap<String, String> = HashMap::new();
     let mut unique_ns_count = 0;
 
@@ -155,17 +172,21 @@ async fn compute_prefixes(
             )?
             .is_none()
             {
-                return Err(Box::new(TriplesError::InvalidIRI {
+                let e = TriplesError::InvalidIRI {
                     uri: name.to_string(),
-                }));
+                };
+                error!("compute_prefixes subject: {e}");
+                return Err(Box::new(e));
             }
             for pair in subject.predicate_object_pairs() {
                 if handle_name_string(&pair.0.to_string(), &mut prefixes, &mut unique_ns_count)?
                     .is_none()
                 {
-                    return Err(Box::new(TriplesError::InvalidIRI {
+                    let e = TriplesError::InvalidIRI {
                         uri: name.to_string(),
-                    }));
+                    };
+                    error!("compute_prefixes pairs: {e}");
+                    return Err(Box::new(e));
                 }
             }
         }
@@ -184,6 +205,7 @@ fn print_predicate_object_pairs(
     pairs: &[(&RdfName, &HashSet<String>)],
     prefixes: &HashMap<String, String>,
 ) -> Result<(), TriplesError> {
+    trace!("print_predicate_object_pairs");
     for (predicate, objects) in pairs.iter() {
         let name_string = predicate.to_string();
 
@@ -194,9 +216,11 @@ fn print_predicate_object_pairs(
             let (ns, name) = name_string.split_at(idx + 1); // +1 to include '/' in ns if needed
             (ns, &name[1..]) // remove '/' from the start of name
         } else {
-            return Err(TriplesError::InvalidIRI {
+            let e = TriplesError::InvalidIRI {
                 uri: name_string.to_string(),
-            });
+            };
+            error!("print_predicate_object_pairs: {e}");
+            return Err(e);
         };
 
         match prefixes.get(ns) {
@@ -212,6 +236,7 @@ fn print_predicate_object_pairs(
             _ => {
                 return Err(TriplesError::UnresolvableURIPrefix {
                     prefix_name: ns.to_string(),
+                    name: name.to_string(),
                 })
             }
         };

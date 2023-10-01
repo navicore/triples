@@ -1,3 +1,4 @@
+use std::fs;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
@@ -7,12 +8,14 @@ use triples::turtle_stream::TurtleStream;
 #[tokio::test]
 async fn test_ttl_to_db() {
     let path = Path::new("tests/data/k8p_sm.ttl");
+
     let file = File::open(&path).expect("Failed to open file");
     let reader = io::BufReader::new(file);
 
     let mut stream = TurtleStream::new();
 
     const TEST_DB_FILE: &str = "/tmp/triples_batch_load_test.db";
+    let _ = fs::remove_file(TEST_DB_FILE);
     let db_api = DbApi::new(TEST_DB_FILE.to_string()).await.unwrap();
     let tx = db_api.begin_txn().await.unwrap();
 
@@ -58,6 +61,7 @@ async fn test_bricks_to_db() {
     let mut stream = TurtleStream::new();
 
     const TEST_DB_FILE: &str = "/tmp/triples_bricks_load_test.db";
+    let _ = fs::remove_file(TEST_DB_FILE);
     let db_api = DbApi::new(TEST_DB_FILE.to_string()).await.unwrap();
     let tx = db_api.begin_txn().await.unwrap();
 
@@ -83,6 +87,6 @@ async fn test_bricks_to_db() {
     }
 
     let subject_names = db_api.query_all_subject_names().await.unwrap();
-    assert_eq!(subject_names.len(), 136);
+    assert_eq!(subject_names.len(), 119);
     tx.commit().await.unwrap();
 }

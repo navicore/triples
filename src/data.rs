@@ -5,7 +5,7 @@ use std::fmt;
 pub enum TriplesError {
     ParseError { reason: String },
     InvalidIRI { uri: String },
-    UnresolvableURIPrefix { prefix_name: String },
+    UnresolvableURIPrefix { prefix_name: String, name: String },
     NoSubjectDeclaired,
     PreviousSubjectNotComplete,
     NotImplemented { trace: String },
@@ -17,8 +17,8 @@ impl fmt::Display for TriplesError {
         match self {
             Self::ParseError { reason } => write!(f, "{reason}"),
             Self::InvalidIRI { uri } => write!(f, "Invalid IRI: {uri}"),
-            Self::UnresolvableURIPrefix { prefix_name } => {
-                write!(f, "can not locate URI for {prefix_name}")
+            Self::UnresolvableURIPrefix { prefix_name, name } => {
+                write!(f, "can not locate URI for {prefix_name} for name {name}")
             }
             Self::NoSubjectDeclaired => write!(f, "can not load predicate without a subject"),
             Self::PreviousSubjectNotComplete => write!(f, "previous subject stanza not terminated"),

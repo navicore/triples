@@ -81,6 +81,7 @@ impl TurtleStream {
                     || {
                         Err(TriplesError::UnresolvableURIPrefix {
                             prefix_name: ns.to_string(),
+                            name: object.to_string(),
                         })
                     },
                     |ns| {
@@ -108,10 +109,12 @@ impl TurtleStream {
                     || {
                         Err(TriplesError::UnresolvableURIPrefix {
                             prefix_name: ns.to_string(),
+                            name: local_name.to_string(),
                         })
                     },
                     |ns| {
                         let ns_str = ns.to_string();
+                        trace!("resolve_iri for ns: {ns_str}");
                         if ns_str.ends_with('#') {
                             Ok(format!("{}{}", ns_str, local_name))
                         } else {
