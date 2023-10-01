@@ -197,6 +197,16 @@ async fn compute_prefixes(
                     };
                     error!("compute_prefixes pairs: {e}");
                     return Err(Box::new(e));
+                };
+                for obj_name in pair.1 {
+                    if handle_name_string(obj_name, &mut prefixes, &mut unique_ns_count)?.is_none()
+                    {
+                        let e = TriplesError::InvalidIRI {
+                            uri: name.to_string(),
+                        };
+                        error!("compute_prefixes pairs: {e}");
+                        return Err(Box::new(e));
+                    };
                 }
             }
         }
@@ -238,10 +248,30 @@ fn print_predicate_object_pairs(
                 let formatted_objects: Vec<String> = objects
                     .iter()
                     .map(|object| {
-                        if object.contains(":/") {
-                            format!("<{}>", object)
+                        let (ons, oname) = if let Some(idx) = object.rfind('#') {
+                            let (ons, oname) = object.split_at(idx + 1); // +1 to include '#' in ns
+                            (ons, oname)
+                        } else if let Some(idx) = object.rfind('/') {
+                            let (ons, oname) = object.split_at(idx + 1); // +1 to include '/' in ns if needed
+                            let oname = &oname[1..];
+                            (ons, oname)
                         } else {
-                            format!("\"{}\"", object)
+                            ("", object.as_str())
+                        };
+
+                        let fmt_oname = match prefixes.get(ons) {
+                            Some(oprefix) if !oname.contains('/') => {
+                                format!("{oprefix}:{oname}")
+                            }
+                            _ => {
+                                format!("{object}")
+                            }
+                        };
+
+                        if fmt_oname.contains(":/") {
+                            format!("<{}>", fmt_oname)
+                        } else {
+                            format!("\"{}\"", fmt_oname)
                         }
                     })
                     .collect();
