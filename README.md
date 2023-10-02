@@ -99,7 +99,7 @@ ns1:8db9fa98-5017-43d3-accd-bebe822a4066
 * ~~normalizing object values~~
 * ~~import / export of RDF Turtle `*.tll` format~~
 * ~~import / export of triple csv `*.csv` format~~
-* meaningful prefix names on export
+* ~~meaningful prefix names on export~~
 * import of arbitrary column csv `*.csv` format
 * import of arbitrary json `*.json` format
 * import of arbitrary jsonl `*.jsonl` format

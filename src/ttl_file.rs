@@ -124,12 +124,37 @@ fn get_or_insert_prefix<'a>(
     prefixes: &'a mut HashMap<String, String>,
     unique_count: &mut u32,
 ) -> Result<&'a str, TriplesError> {
-    trace!("get_or_insert_prefix");
     if !prefixes.contains_key(ns) {
         *unique_count += 1;
-        let alias = format!("ns{unique_count}");
-        prefixes.insert(ns.to_string(), alias);
+
+        // Step 1: Extract meaningful substring from ns, and remove non-alphabetic characters
+        let meaningful_substring = ns
+            .split('/')
+            .last()
+            .unwrap_or("ns")
+            .chars()
+            .filter(|c| c.is_alphabetic())
+            .collect::<String>();
+
+        // Step 2: Shorten and format alias
+        let mut alias = meaningful_substring
+            .chars()
+            .take(5)
+            .collect::<String>()
+            .to_lowercase();
+
+        // Step 3: Ensure uniqueness by appending a number if necessary
+        let mut suffix = 1;
+        while prefixes.values().any(|v| v == &alias) {
+            alias = format!("{}{}", alias.chars().take(4).collect::<String>(), suffix);
+            suffix += 1;
+        }
+
+        // Step 4: Insert new alias into prefixes and return it
+        prefixes.insert(ns.to_string(), alias.clone());
+        return Ok(prefixes.get(ns).unwrap().as_str());
     }
+
     Ok(prefixes
         .get(ns)
         .ok_or(TriplesError::UnresolvableURIPrefix {
@@ -138,7 +163,6 @@ fn get_or_insert_prefix<'a>(
         })?
         .as_str())
 }
-
 fn handle_name_string<'a>(
     name_string: &'a str,
     prefixes: &mut HashMap<String, String>,
