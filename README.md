@@ -98,7 +98,10 @@ ns1:8db9fa98-5017-43d3-accd-bebe822a4066
 * ~~normalizes RDF names~~
 * ~~normalizing object values~~
 * ~~import / export of RDF Turtle `*.tll` format~~
-* ~~import / export of csv `*.csv` format~~
+* ~~import / export of triple csv `*.csv` format~~
+* import of arbitrary column csv `*.csv` format
+* import of arbitrary json `*.json` format
+* import of arbitrary jsonl `*.jsonl` format
 * txn control via api
 * insert performance
 * SparkQL
