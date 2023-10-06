@@ -158,6 +158,7 @@ fn get_or_insert_prefix<'a>(
         })
         .map(String::as_str)
 }
+
 fn handle_name_string<'a>(
     name_string: &'a str,
     prefixes: &mut HashMap<String, String>,
