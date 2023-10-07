@@ -1,5 +1,5 @@
 use clap::Parser;
-use tracing::error;
+use triples::csv_file;
 use triples::csv_triples_file;
 use triples::db_api::DbApi;
 use triples::ttl_file;
@@ -76,11 +76,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     match args.command {
         Command::ImportTurtle => ttl_file::import_turtle(&db_api).await?,
         Command::ExportTurtle => ttl_file::export_turtle(&db_api).await?,
-        Command::ImportCSV(_import_csv_args) => {
-            error!("not implemented");
+        Command::ImportCSV(import_csv_args) => {
+            csv_file::import_csv(
+                import_csv_args.subject_default_ns,
+                import_csv_args
+                    .subject_column_pos
+                    .map_or_else(|| Ok(1), |v| v.parse::<i32>())?,
+                import_csv_args.predicate_default_ns,
+                &db_api,
+            )
+            .await?;
         }
-        Command::ExportCSV(_export_csv_args) => {
-            error!("not implemented");
+        Command::ExportCSV(export_csv_args) => {
+            csv_file::export_csv(
+                export_csv_args.export_ns_name,
+                export_csv_args.export_headers,
+                &db_api,
+            )
+            .await?;
         }
         Command::ImportTriplesCSV(import_csv_args) => {
             csv_triples_file::import_csv(
