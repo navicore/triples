@@ -46,7 +46,7 @@ async fn test_ttl_to_db() {
         }
     }
 
-    let subject_names = db_api.query_all_subject_names().await.unwrap();
+    let subject_names = db_api.get_all_subject_names().await.unwrap();
     assert_eq!(subject_names.len(), 33);
     tx.commit().await.unwrap();
 }
@@ -86,7 +86,7 @@ async fn test_bricks_to_db() {
         }
     }
 
-    let subject_names = db_api.query_all_subject_names().await.unwrap();
+    let subject_names = db_api.get_all_subject_names().await.unwrap();
     assert_eq!(subject_names.len(), 119);
     tx.commit().await.unwrap();
 }

@@ -53,8 +53,8 @@ struct ExportCsvArgs {
     #[arg(long, default_value = "false")]
     export_ns_name: bool,
 
-    #[arg(long, default_value = "false")]
-    export_headers: bool,
+    #[arg(long)]
+    subject_column_name: Option<String>,
 }
 
 #[derive(Parser, Debug, Clone)]
@@ -90,7 +90,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Command::ExportCSV(export_csv_args) => {
             csv_file::export_csv(
                 export_csv_args.export_ns_name,
-                export_csv_args.export_headers,
+                export_csv_args.subject_column_name,
                 &db_api,
             )
             .await?;

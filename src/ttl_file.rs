@@ -42,7 +42,7 @@ pub async fn import_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Err
 /// Will return `Err` if any entry can not be marshaled out as valid turtle
 pub async fn export_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Error>> {
     trace!("export_turtle");
-    let subject_names = db_api.query_all_subject_names().await?;
+    let subject_names = db_api.get_all_subject_names().await?;
     let prefixes = compute_prefixes(&subject_names, db_api).await?;
 
     print_prefixes(&prefixes);

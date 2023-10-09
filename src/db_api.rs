@@ -169,9 +169,7 @@ impl<'a> DbApi {
     /// # Errors
     ///
     /// Will return `Err` if the data cannot be queried from the database or if any invalid IRI is encountered.
-    pub async fn query_all_subject_names(
-        &self,
-    ) -> Result<Vec<RdfName>, Box<dyn std::error::Error>> {
+    pub async fn get_all_subject_names(&self) -> Result<Vec<RdfName>, Box<dyn std::error::Error>> {
         let pool = &self.pool;
 
         let names_strings: Vec<String> = sqlx::query_scalar(
@@ -179,6 +177,37 @@ impl<'a> DbApi {
             SELECT DISTINCT subjects.name
             FROM triples
             JOIN names AS subjects ON triples.subject = subjects.id
+            "#,
+        )
+        .fetch_all(pool)
+        .await?;
+
+        let mut names_rdf = Vec::new();
+
+        for name_str in names_strings {
+            let name = RdfName::new(name_str);
+
+            names_rdf.push(name);
+        }
+
+        Ok(names_rdf)
+    }
+
+    /// Queries all distinct predicate names from the database.
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` if the data cannot be queried from the database or if any invalid IRI is encountered.
+    pub async fn get_all_predicate_names(
+        &self,
+    ) -> Result<Vec<RdfName>, Box<dyn std::error::Error>> {
+        let pool = &self.pool;
+
+        let names_strings: Vec<String> = sqlx::query_scalar(
+            r#"
+            SELECT DISTINCT predicates.name
+            FROM triples
+            JOIN names AS predicates ON triples.predicate = predicates.id
             "#,
         )
         .fetch_all(pool)
@@ -258,6 +287,12 @@ mod tests {
         .fetch_all(&db_api.pool)
         .await
         .expect("Failed to fetch from test DB");
+
+        let predicates = db_api.get_all_predicate_names().await;
+        assert!(predicates.is_ok());
+        if let Ok(pnames) = predicates {
+            assert_eq!(pnames.len(), 2);
+        }
 
         // Check that there are 2 rows
         assert_eq!(results.len(), 2);

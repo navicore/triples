@@ -1,3 +1,4 @@
+use crate::csv;
 /// Functions in support of csv file handling.
 ///
 /// Prefer to process data via stdin and stdout to enable *nix style
@@ -5,35 +6,11 @@
 ///
 use crate::data::RdfName;
 use crate::data::Subject;
-use crate::data::TriplesError;
 use crate::db_api::DbApi;
 use tokio::io::{stdin, AsyncBufReadExt, BufReader};
 
-// Utility function to determine the display name based on the strip_ns flag
-fn get_display_name(name_string: &str, export_ns_name: bool) -> Result<&str, TriplesError> {
-    if export_ns_name {
-        Ok(name_string)
-    } else {
-        name_string
-            .rsplit_once('/')
-            .map(|(_, name)| name)
-            .ok_or(TriplesError::InvalidIRI {
-                uri: name_string.to_string(),
-            })
-    }
-}
-
-fn sanitize_csv_field(field: &str) -> String {
-    if field.contains(',') || field.contains('\n') || field.contains('"') {
-        // Escape any double quotes and surround the whole field with double quotes
-        format!("\"{}\"", field.replace('\"', "\"\""))
-    } else {
-        field.to_string()
-    }
-}
-
 fn print_csv(subject: &str, predicate: &str, object: &str) {
-    let sanitized_object = sanitize_csv_field(object);
+    let sanitized_object = csv::sanitize_csv_field(object);
     println!("{subject},{predicate},{sanitized_object}");
 }
 
@@ -51,16 +28,16 @@ pub async fn export_csv(
         print_csv("Subject", "Predicate", "Object");
     };
 
-    let subject_names = db_api.query_all_subject_names().await?;
+    let subject_names = db_api.get_all_subject_names().await?;
 
     for name in &subject_names {
         if let Some(subject) = db_api.query(name).await? {
             let subject_str = subject.name().to_string();
-            let rdf_sub_name = get_display_name(&subject_str, export_ns_name)?;
+            let rdf_sub_name = csv::get_display_name(&subject_str, export_ns_name)?;
 
             for (predicate, objects) in subject.predicate_object_pairs() {
                 let predicate_str = predicate.to_string();
-                let rdf_predicate_name = get_display_name(&predicate_str, export_ns_name)?;
+                let rdf_predicate_name = csv::get_display_name(&predicate_str, export_ns_name)?;
 
                 for object in objects {
                     // Print the CSV line for each object associated with the subject-predicate pair
