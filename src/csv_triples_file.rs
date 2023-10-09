@@ -28,20 +28,19 @@ pub async fn export_csv(
         print_csv("Subject", "Predicate", "Object");
     };
 
-    let subject_names = db_api.get_all_subject_names().await?;
+    let subject_names = db_api.get_subject_names().await?;
 
     for name in &subject_names {
         if let Some(subject) = db_api.query(name).await? {
-            let subject_str = subject.name().to_string();
-            let rdf_sub_name = csv::get_display_name(&subject_str, export_ns_name)?;
+            let subject_rdf_name = subject.name();
+            let rdf_sub_name = csv::get_display_name(subject_rdf_name, export_ns_name)?;
 
             for (predicate, objects) in subject.predicate_object_pairs() {
-                let predicate_str = predicate.to_string();
-                let rdf_predicate_name = csv::get_display_name(&predicate_str, export_ns_name)?;
+                let rdf_predicate_name = csv::get_display_name(predicate, export_ns_name)?;
 
                 for object in objects {
                     // Print the CSV line for each object associated with the subject-predicate pair
-                    print_csv(rdf_sub_name, rdf_predicate_name, object);
+                    print_csv(&rdf_sub_name, &rdf_predicate_name, object);
                 }
             }
         }

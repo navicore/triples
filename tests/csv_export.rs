@@ -40,7 +40,7 @@ async fn load_bricks_from_ttl() {
         }
     }
 
-    let subject_names = db_api.get_all_subject_names().await.unwrap();
+    let subject_names = db_api.get_subject_names().await.unwrap();
     assert_eq!(subject_names.len(), 119);
     tx.commit().await.unwrap();
 }

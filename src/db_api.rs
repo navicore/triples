@@ -169,7 +169,7 @@ impl<'a> DbApi {
     /// # Errors
     ///
     /// Will return `Err` if the data cannot be queried from the database or if any invalid IRI is encountered.
-    pub async fn get_all_subject_names(&self) -> Result<Vec<RdfName>, Box<dyn std::error::Error>> {
+    pub async fn get_subject_names(&self) -> Result<Vec<RdfName>, Box<dyn std::error::Error>> {
         let pool = &self.pool;
 
         let names_strings: Vec<String> = sqlx::query_scalar(
@@ -198,9 +198,7 @@ impl<'a> DbApi {
     /// # Errors
     ///
     /// Will return `Err` if the data cannot be queried from the database or if any invalid IRI is encountered.
-    pub async fn get_all_predicate_names(
-        &self,
-    ) -> Result<Vec<RdfName>, Box<dyn std::error::Error>> {
+    pub async fn get_predicate_names(&self) -> Result<Vec<RdfName>, Box<dyn std::error::Error>> {
         let pool = &self.pool;
 
         let names_strings: Vec<String> = sqlx::query_scalar(
@@ -288,7 +286,7 @@ mod tests {
         .await
         .expect("Failed to fetch from test DB");
 
-        let predicates = db_api.get_all_predicate_names().await;
+        let predicates = db_api.get_predicate_names().await;
         assert!(predicates.is_ok());
         if let Ok(pnames) = predicates {
             assert_eq!(pnames.len(), 2);

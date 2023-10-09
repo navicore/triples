@@ -1,3 +1,4 @@
+use crate::data::RdfName;
 /// Functions in support of csv file handling.
 ///
 use crate::data::TriplesError;
@@ -7,16 +8,15 @@ use crate::data::TriplesError;
 /// # Errors
 ///
 /// return `Err` on `InvalidIRI`
-pub fn get_display_name(name_string: &str, export_ns_name: bool) -> Result<&str, TriplesError> {
+pub fn get_display_name(name: &RdfName, export_ns_name: bool) -> Result<String, TriplesError> {
+    let name_string = name.to_string();
     if export_ns_name {
         Ok(name_string)
     } else {
         name_string
             .rsplit_once('/')
-            .map(|(_, name)| name)
-            .ok_or(TriplesError::InvalidIRI {
-                uri: name_string.to_string(),
-            })
+            .map(|(_, name)| name.to_string())
+            .ok_or(TriplesError::InvalidIRI { uri: name_string })
     }
 }
 
