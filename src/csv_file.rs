@@ -20,9 +20,10 @@ pub async fn export_csv(
 ) -> Result<(), Box<dyn std::error::Error>> {
     error!("not implemented");
     let predicates = db_api.get_predicate_names().await?;
-    let _col_names = predicates
+    let col_names = predicates
         .iter()
         .map(|rdf_name| csv::get_display_name(rdf_name, export_ns_name));
+    println!("{col_names:?}");
     Ok(())
 }
 

@@ -45,10 +45,31 @@ async fn test_ttl_to_db() {
             }
         }
     }
+    tx.commit().await.unwrap();
 
     let subject_names = db_api.get_subject_names().await.unwrap();
     assert_eq!(subject_names.len(), 33);
-    tx.commit().await.unwrap();
+
+    let first_name = subject_names.get(0).unwrap();
+    assert_eq!(
+        first_name.to_string(),
+        "http://k8p.navicore.tech/resource/0604c9f2-a656-4384-ab8d-7291ac60dd34"
+    );
+    let first_subject = db_api.query(first_name).await.unwrap();
+    assert!(first_subject.is_some());
+    let first_subject = first_subject.unwrap();
+
+    let mut pairs: Vec<(_, _)> = first_subject.predicate_object_pairs().collect();
+    pairs.sort_by(|(p1, _), (p2, _)| p1.cmp(p2));
+
+    for (predicate, objects) in pairs {
+        assert_eq!(
+            predicate.to_string(),
+            "http://k8p.navicore.tech/property/k8p_appname"
+        );
+        assert_eq!(objects.len(), 1);
+        break;
+    }
 }
 
 #[tokio::test]

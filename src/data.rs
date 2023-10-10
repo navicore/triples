@@ -28,7 +28,7 @@ impl fmt::Display for TriplesError {
 }
 
 /// Represents an RDF name (a simple IRI validation is performed).
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Ord, PartialOrd, Clone, PartialEq, Eq, Hash)]
 pub struct RdfName(String);
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]

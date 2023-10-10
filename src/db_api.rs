@@ -121,7 +121,7 @@ impl<'a> DbApi {
 
         Ok(())
     }
-    /// Queries data from the database.
+    /// returns a `Subject` from the database.
     ///
     /// # Errors
     ///
