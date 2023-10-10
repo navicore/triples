@@ -132,6 +132,23 @@ impl Subject {
     }
 }
 
+pub fn extract_namespace_and_local_name(name_string: &str) -> Result<(&str, &str), TriplesError> {
+    if let Some(idx) = name_string.rfind('#') {
+        let (ns, name) = name_string.split_at(idx + 1);
+        if name.contains('/') {
+            return Ok(("", name_string));
+        }
+        return Ok((ns, name));
+    } else if let Some(idx) = name_string.rfind('/') {
+        let (ns, name) = name_string.split_at(idx + 1);
+        return Ok((ns, &name[1..]));
+    }
+
+    Err(TriplesError::InvalidIRI {
+        uri: name_string.to_string(),
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

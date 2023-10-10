@@ -1,7 +1,6 @@
-use crate::data::RdfName;
 /// Functions in support of csv file handling.
 ///
-use crate::data::TriplesError;
+use crate::data::{extract_namespace_and_local_name, RdfName, TriplesError};
 
 // Utility function to determine the display name based on the strip_ns flag
 ///
@@ -13,10 +12,8 @@ pub fn get_display_name(name: &RdfName, export_ns_name: bool) -> Result<String, 
     if export_ns_name {
         Ok(name_string)
     } else {
-        name_string
-            .rsplit_once('/')
-            .map(|(_, name)| name.to_string())
-            .ok_or(TriplesError::InvalidIRI { uri: name_string })
+        let (_ns, local_name) = extract_namespace_and_local_name(&name_string)?;
+        Ok(local_name.to_string())
     }
 }
 
