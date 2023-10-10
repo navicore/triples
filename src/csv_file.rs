@@ -1,4 +1,5 @@
 use crate::csv;
+use crate::data::TriplesError;
 /// Functions in support of csv file handling where all column headers
 /// are predicate names.
 ///
@@ -19,12 +20,16 @@ pub async fn export_csv(
     db_api: &DbApi,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let predicates = db_api.get_predicate_names().await?;
-    let col_names: Vec<_> = predicates
+    let col_names_result: Result<Vec<String>, TriplesError> = predicates
         .iter()
-        .map(|rdf_name| csv::get_display_name(rdf_name, export_ns_name))
-        .collect();
-    println!("{export_ns_name} {col_names:?}");
-    error!("not implemented?");
+        .map(|rdf_name| {
+            let display_name = csv::get_display_name(rdf_name, export_ns_name)?;
+            Ok(display_name.to_string())
+        })
+        .collect(); // Explicitly collecting into a Result<Vec<String>, TriplesError>
+    let col_names = col_names_result?;
+    let col_names_str = col_names.join(",");
+    println!("subject,{col_names_str}");
     Ok(())
 }
 
