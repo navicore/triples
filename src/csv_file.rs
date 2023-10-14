@@ -45,7 +45,7 @@ pub async fn export_csv(
     // Second pass: write out rows for each subject
     for name in &subject_names {
         if let Some(subject) = db_api.query(name).await? {
-            let subject_display_name = get_display_name(&subject.name(), export_ns_name)?;
+            let subject_display_name = get_display_name(subject.name(), export_ns_name)?;
             let mut line = vec![subject_display_name];
             for (predicate, max_count) in &headers_map {
                 //let predicate_display_name = get_display_name(predicate, export_ns_name)?;
@@ -56,12 +56,12 @@ pub async fn export_csv(
                         if i < objects_vec.len() {
                             line.push(objects_vec[i].clone());
                         } else {
-                            line.push("".to_string()); // fill with empty strings for missing values
+                            line.push(String::new()); // fill with empty strings for missing values
                         }
                     }
                 } else {
                     for _ in 0..*max_count {
-                        line.push("".to_string()); // fill with empty strings for missing predicates
+                        line.push(String::new()); // fill with empty strings for missing predicates
                     }
                 }
             }
@@ -79,10 +79,10 @@ pub async fn export_csv(
 /// # Errors
 ///
 /// return `Err` if any entry can not be loaded
-pub async fn import_csv(
-    _default_subject_ns: Option<String>,
+pub fn import_csv(
+    _default_subject_ns: &Option<String>,
     _subject_pos: i32,
-    _default_predicate_ns: Option<String>,
+    _default_predicate_ns: &Option<String>,
     _db_api: &DbApi,
 ) -> Result<(), Box<dyn std::error::Error>> {
     error!("not implemented");

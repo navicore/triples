@@ -132,6 +132,9 @@ impl Subject {
     }
 }
 
+/// # Errors
+///
+/// Will return `Err` if function cannot separate ns from base name
 pub fn extract_namespace_and_local_name(name_string: &str) -> Result<(&str, &str), TriplesError> {
     if let Some(idx) = name_string.rfind('#') {
         let (ns, name) = name_string.split_at(idx + 1);

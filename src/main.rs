@@ -78,14 +78,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Command::ExportTurtle => ttl_file::export_turtle(&db_api).await?,
         Command::ImportCSV(import_csv_args) => {
             csv_file::import_csv(
-                import_csv_args.subject_default_ns,
+                &import_csv_args.subject_default_ns,
                 import_csv_args
                     .subject_column_pos
                     .map_or_else(|| Ok(1), |v| v.parse::<i32>())?,
-                import_csv_args.predicate_default_ns,
+                &import_csv_args.predicate_default_ns,
                 &db_api,
-            )
-            .await?;
+            )?;
         }
         Command::ExportCSV(export_csv_args) => {
             csv_file::export_csv(
