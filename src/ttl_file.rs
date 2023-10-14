@@ -4,7 +4,7 @@ use crate::data::TriplesError;
 /// Prefer to process data via stdin and stdout to enable *nix style
 /// command pipelining.
 ///
-use crate::data::{RdfName, Subject};
+use crate::data::{extract_namespace_and_local_name, RdfName, Subject};
 use crate::db_api::DbApi;
 use crate::turtle_stream::TurtleStream;
 use std::collections::{HashMap, HashSet};
@@ -42,7 +42,7 @@ pub async fn import_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Err
 /// Will return `Err` if any entry can not be marshaled out as valid turtle
 pub async fn export_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Error>> {
     trace!("export_turtle");
-    let subject_names = db_api.query_all_subject_names().await?;
+    let subject_names = db_api.get_subject_names().await?;
     let prefixes = compute_prefixes(&subject_names, db_api).await?;
 
     print_prefixes(&prefixes);
@@ -73,23 +73,6 @@ pub async fn export_turtle(db_api: &DbApi) -> Result<(), Box<dyn std::error::Err
     }
 
     Ok(())
-}
-
-fn extract_namespace_and_local_name(name_string: &str) -> Result<(&str, &str), TriplesError> {
-    if let Some(idx) = name_string.rfind('#') {
-        let (ns, name) = name_string.split_at(idx + 1);
-        if name.contains('/') {
-            return Ok(("", name_string));
-        }
-        return Ok((ns, name));
-    } else if let Some(idx) = name_string.rfind('/') {
-        let (ns, name) = name_string.split_at(idx + 1);
-        return Ok((ns, &name[1..]));
-    }
-
-    Err(TriplesError::InvalidIRI {
-        uri: name_string.to_string(),
-    })
 }
 
 /// use statefull stream to build subject objects and as they become

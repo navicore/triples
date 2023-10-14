@@ -1,6 +1,8 @@
 use lalrpop_util::lalrpop_mod;
 
+pub mod csv;
 pub mod csv_file;
+pub mod csv_triples_file;
 pub mod data;
 pub mod db;
 pub mod db_api;
