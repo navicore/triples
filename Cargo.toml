@@ -30,7 +30,7 @@ tracing-subscriber = "0.3.18"
 sqlx = { version = "0.8", default-features = false, features = ["runtime-tokio-native-tls", "macros"] }
 anyhow = "1.0"
 glob = "0.3.1"
-lalrpop-util = { version = "0.20.2", features = ["lexer", "unicode"] }
+lalrpop-util = { version = "0.21.0", features = ["lexer", "unicode"] }
 
 [build-dependencies]
 lalrpop = "0.21.0"
