@@ -804,7 +804,7 @@ dependencies = [
  "bit-set",
  "ena",
  "itertools 0.13.0",
- "lalrpop-util",
+ "lalrpop-util 0.21.0",
  "petgraph",
  "pico-args",
  "regex",
@@ -823,6 +823,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "108dc8f5dabad92c65a03523055577d847f5dcc00f3e7d3a68bc4d48e01d8fe1"
 dependencies = [
  "regex-automata",
+]
+
+[[package]]
+name = "lalrpop-util"
+version = "0.22.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "feee752d43abd0f4807a921958ab4131f692a44d4d599733d4419c5d586176ce"
+dependencies = [
+ "regex-automata",
+ "rustversion",
 ]
 
 [[package]]
@@ -1841,7 +1851,7 @@ dependencies = [
  "futures",
  "glob",
  "lalrpop",
- "lalrpop-util",
+ "lalrpop-util 0.22.0",
  "regex",
  "sqlx",
  "tokio",
