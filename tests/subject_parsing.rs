@@ -6,7 +6,7 @@ use triples::turtle_stream::TurtleStream;
 #[test]
 fn test_ttl_to_subject() {
     let path = Path::new("tests/data/k8p.ttl");
-    let file = File::open(&path).expect("Failed to open file");
+    let file = File::open(path).expect("Failed to open file");
     let reader = io::BufReader::new(file);
 
     let mut stream = TurtleStream::new();
@@ -17,7 +17,7 @@ fn test_ttl_to_subject() {
     for line in reader.lines().take(max_lines_to_process) {
         line_num += 1;
         let line = line.expect("Failed to read a line");
-        if line.len() == 0 {
+        if line.is_empty() {
             continue;
         }
         match stream.load(&line) {
@@ -45,7 +45,12 @@ fn test_ttl_to_subject() {
                 }
             }
             Err(e) => {
-                assert!(false, "error: {} for input: {}", e, line)
+                panic!(
+                    "error: {} for state {} for input: {}",
+                    e,
+                    stream.get_state(),
+                    line
+                );
             }
         }
     }

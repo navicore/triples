@@ -10,20 +10,17 @@ fn test_prefix(input: &str) {
         result,
         input
     );
-    match result {
-        Ok((ns, name)) => {
-            assert_eq!(ns, Pre::new("myns".to_string()));
-            assert!(name.to_string().ends_with("://example.com/myns#"));
-        }
-        _ => {}
-    };
+    if let Ok((ns, name)) = result {
+        assert_eq!(ns, Pre::new("myns".to_string()));
+        assert!(name.to_string().ends_with("://example.com/myns#"));
+    }
 }
 
 fn test_bad_prefix(input: &str) {
     let parser = PrefixParser::new();
     let result = parser.parse(input);
     assert!(
-        !result.is_ok(),
+        result.is_err(),
         "Parse error handling failed with: {:?}",
         result
     );
