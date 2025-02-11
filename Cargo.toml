@@ -19,21 +19,21 @@ path = "src/main.rs"
 
 [dependencies]
 regex = "1"
-uuid = { version = "1.5.0", features = [ "v4" ] }
-clap = { version = "4.4", features = ["derive"] }
-tokio = { version = "1.33.0", features = ["macros", "rt-multi-thread", "signal", "io-std"] }
+uuid = { version = "1.13.1", features = [ "v4" ] }
+clap = { version = "4.5", features = ["derive"] }
+tokio = { version = "1.43.0", features = ["macros", "rt-multi-thread", "signal", "io-std"] }
 chrono = "0.4"
 futures = "0.3"
 tokio-util = "0.7"
-tracing = "0.1.40"
-tracing-subscriber = "0.3.17"
-sqlx = { version = "0.7", default-features = false, features = ["runtime-tokio-native-tls", "macros"] }
+tracing = "0.1.41"
+tracing-subscriber = "0.3.19"
+sqlx = { version = "0.8", default-features = false, features = ["runtime-tokio-native-tls", "macros"] }
 anyhow = "1.0"
-glob = "0.3.1"
-lalrpop-util = { version = "0.20.0", features = ["lexer", "unicode"] }
+glob = "0.3.2"
+lalrpop-util = { version = "0.22.1", features = ["lexer", "unicode"] }
 
 [build-dependencies]
-lalrpop = "0.20.0"
+lalrpop = "0.22.1"
 
 [features]
 default = ["sqlite"]
