@@ -129,13 +129,13 @@ impl TurtleStream {
 
     fn handle_subject(
         &mut self,
-        prefix: &Option<Pre>,
+        prefix: Option<&Pre>,
         name: &RdfName,
     ) -> Result<Option<Subject>, TriplesError> {
         if self.current_subject.is_some() {
             return Err(TriplesError::PreviousSubjectNotComplete);
         }
-        let subject_iri_text = self.resolve_iri(prefix.as_ref(), name)?;
+        let subject_iri_text = self.resolve_iri(prefix, name)?;
         let subject_iri = RdfName::new(subject_iri_text);
         self.current_subject = Some(Subject::new(subject_iri));
         self.state = ParserState::PredicateLoading;
@@ -144,19 +144,19 @@ impl TurtleStream {
 
     fn handle_predicate(
         &mut self,
-        prefix: &Option<Pre>,
+        prefix: Option<&Pre>,
         predicate: &RdfName,
-        opre: &Option<Pre>,
+        opre: Option<&Pre>,
         object: &str,
         has_more: bool,
     ) -> Result<Option<Subject>, TriplesError> {
-        let predicate_iri_text = self.resolve_iri(prefix.as_ref(), predicate)?;
+        let predicate_iri_text = self.resolve_iri(prefix, predicate)?;
         let predicate_iri = RdfName::new(predicate_iri_text);
 
-        let object_iri_text = self.resolve_obj_iri(opre.as_ref(), &object.to_string())?;
+        let object_iri_text = self.resolve_obj_iri(opre, &object.to_string())?;
 
         if has_more {
-            self.state = ParserState::ObjectLoading(prefix.clone(), predicate.clone());
+            self.state = ParserState::ObjectLoading(prefix.cloned(), predicate.clone());
         }
         self.current_subject
             .as_mut()
@@ -168,9 +168,9 @@ impl TurtleStream {
 
     fn handle_predicate_term(
         &mut self,
-        prefix: &Option<Pre>,
+        prefix: Option<&Pre>,
         predicate: &RdfName,
-        objpre: &Option<Pre>,
+        objpre: Option<&Pre>,
         object: &str,
     ) -> Result<Option<Subject>, TriplesError> {
         // Since the logic is same as handle_predicate for now, reuse it
@@ -205,7 +205,7 @@ impl TurtleStream {
             })?;
         match self.state.clone() {
             ParserState::ObjectLoading(pre, predicate) => {
-                self.handle_object_loading_state(parsed, &pre, &predicate)
+                self.handle_object_loading_state(parsed, pre.as_ref(), &predicate)
             }
             ParserState::SubjectLoading => self.handle_subject_loading_state(parsed),
             ParserState::PredicateLoading => self.handle_predicate_loading_state(parsed),
@@ -215,7 +215,7 @@ impl TurtleStream {
     fn handle_object_loading_state(
         &mut self,
         parsed: &ParsedLine,
-        pre: &Option<Pre>,
+        pre: Option<&Pre>,
         predicate: &RdfName,
     ) -> Result<Option<Subject>, TriplesError> {
         trace!("object loading");
@@ -230,19 +230,25 @@ impl TurtleStream {
                 trace: "object loading subject".to_string(),
             }),
             ParsedLine::PredObj(prefix, predicate, objpre, object, is_end) => {
-                self.handle_predicate(prefix, predicate, objpre, object, *is_end)
+                self.handle_predicate(prefix.as_ref(), predicate, objpre.as_ref(), object, *is_end)
             }
             ParsedLine::PredObjTerm(prefix, predicate, objpre, object) => {
-                self.handle_predicate_term(prefix, predicate, objpre, object)
+                self.handle_predicate_term(prefix.as_ref(), predicate, objpre.as_ref(), object)
             }
             ParsedLine::SubjectPredObj(_, _, _, _, _, _, _) => Err(TriplesError::NotImplemented {
                 trace: "object loading subpredobj".to_string(),
             }),
             ParsedLine::ContinueObj(objpre, obj, has_more) => {
                 if *has_more {
-                    self.handle_predicate(pre, predicate, objpre, &obj.to_string(), *has_more)
+                    self.handle_predicate(
+                        pre,
+                        predicate,
+                        objpre.as_ref(),
+                        &obj.to_string(),
+                        *has_more,
+                    )
                 } else {
-                    self.handle_predicate_term(pre, predicate, objpre, &obj.to_string())
+                    self.handle_predicate_term(pre, predicate, objpre.as_ref(), &obj.to_string())
                 }
             }
         }
@@ -258,7 +264,7 @@ impl TurtleStream {
                 self.prefixes.insert(pre.clone(), uri.clone());
                 Ok(None)
             }
-            ParsedLine::Subject(prefix, name) => self.handle_subject(prefix, name),
+            ParsedLine::Subject(prefix, name) => self.handle_subject(prefix.as_ref(), name),
             ParsedLine::PredObj(_, _, _, _, _) | ParsedLine::PredObjTerm(_, _, _, _) => {
                 Err(TriplesError::NotImplemented {
                     trace: "subject loading predobj".to_string(),
@@ -273,8 +279,14 @@ impl TurtleStream {
                 object,
                 has_more,
             ) => {
-                self.handle_subject(name_prefix, name)?;
-                let result = self.handle_predicate(prefix, predicate, objpre, object, *has_more);
+                self.handle_subject(name_prefix.as_ref(), name)?;
+                let result = self.handle_predicate(
+                    prefix.as_ref(),
+                    predicate,
+                    objpre.as_ref(),
+                    object,
+                    *has_more,
+                );
                 if *has_more {
                     self.state = ParserState::ObjectLoading(prefix.clone(), predicate.clone());
                 } else {
@@ -304,10 +316,10 @@ impl TurtleStream {
                 Ok(None)
             }
             ParsedLine::PredObj(prefix, predicate, opre, object, is_end) => {
-                self.handle_predicate(prefix, predicate, opre, object, *is_end)
+                self.handle_predicate(prefix.as_ref(), predicate, opre.as_ref(), object, *is_end)
             }
             ParsedLine::PredObjTerm(prefix, predicate, opre, object) => {
-                self.handle_predicate_term(prefix, predicate, opre, object)
+                self.handle_predicate_term(prefix.as_ref(), predicate, opre.as_ref(), object)
             }
             ParsedLine::Subject(_, _) => Err(TriplesError::NotImplemented {
                 trace: "predicate loading subj".to_string(),
