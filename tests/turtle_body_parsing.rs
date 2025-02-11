@@ -46,7 +46,7 @@ fn test_isa_parsing() {
         assert!(opre.is_some());
         assert_eq!(obj, "Floor".to_string());
     } else {
-        assert!(false)
+        panic!();
     };
 }
 
@@ -141,5 +141,5 @@ fn test_parsing_error_handling() {
     // add some white space and chars that mean something elsewhere in the grammar
     let line2 = "    -prop-k8p_metric_name \"envoy_cluster:internal upstream_rq_200\"; .";
     let parsed2 = parser.parse(line2);
-    assert!(!parsed2.is_ok());
+    assert!(parsed2.is_err());
 }

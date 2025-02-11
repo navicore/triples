@@ -6,7 +6,7 @@
 
 ex:device1000 bacnet:device-identifier 1000 .
 
-ex:obj1 
+ex:obj1
     bacnet:object-type "analog-input" ;
     bacnet:object-name "temp-sensor" ;
     bacnet:object-identifier "analog-input,1" ;

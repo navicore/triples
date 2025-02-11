@@ -102,7 +102,7 @@ impl Subject {
     pub fn add(&mut self, predicate: RdfName, object: String) {
         self.predicate_object_pairs
             .entry(predicate)
-            .or_insert_with(HashSet::new)
+            .or_default()
             .insert(object);
     }
 

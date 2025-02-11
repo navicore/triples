@@ -11,14 +11,14 @@ use tracing::debug;
 #[cfg(all(feature = "sqlite", not(feature = "disable-sqlite")))]
 async fn create_objects_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::error::Error>> {
     sqlx::query(
-        r#"
+        r"
         CREATE TABLE IF NOT EXISTS objects (
             id INTEGER PRIMARY KEY,
             object TEXT UNIQUE NOT NULL
         );
 
         CREATE INDEX IF NOT EXISTS idx_objects ON objects (object);
-        "#,
+        ",
     )
     .execute(pool)
     .await?;
@@ -33,14 +33,14 @@ async fn create_objects_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::er
 #[cfg(all(feature = "sqlite", not(feature = "disable-sqlite")))]
 async fn create_names_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::error::Error>> {
     sqlx::query(
-        r#"
+        r"
         CREATE TABLE IF NOT EXISTS names (
             id INTEGER PRIMARY KEY,
             name TEXT UNIQUE NOT NULL
         );
 
         CREATE INDEX IF NOT EXISTS idx_names ON names (name);
-        "#,
+        ",
     )
     .execute(pool)
     .await?;
@@ -55,7 +55,7 @@ async fn create_names_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::erro
 #[cfg(all(feature = "sqlite", not(feature = "disable-sqlite")))]
 async fn create_triples_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::error::Error>> {
     sqlx::query(
-        r#"
+        r"
         CREATE TABLE IF NOT EXISTS triples (
             id INTEGER PRIMARY KEY,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -70,7 +70,7 @@ async fn create_triples_table(pool: &Pool<Sqlite>) -> Result<(), Box<dyn std::er
         CREATE INDEX IF NOT EXISTS idx_subject ON triples (subject);
         CREATE INDEX IF NOT EXISTS idx_predicate ON triples (predicate);
         CREATE INDEX IF NOT EXISTS idx_object ON triples (object);
-        "#,
+        ",
     )
     .execute(pool)
     .await?;
@@ -97,12 +97,12 @@ pub async fn init(db_location: String) -> Result<Pool<Sqlite>, Box<dyn std::erro
     let pool = Pool::connect(&db_url).await?;
 
     sqlx::query(
-        r#"
+        r"
         PRAGMA journal_mode=WAL;
         PRAGMA temp_store=MEMORY;
         PRAGMA cache_size=10000;
         PRAGMA page_size=8192;
-        "#,
+        ",
     )
     .execute(&pool)
     .await?;

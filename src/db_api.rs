@@ -19,7 +19,7 @@ pub struct DbApi {
     pool: Pool<Sqlite>,
 }
 
-impl<'a> DbApi {
+impl DbApi {
     /// Constructs a new instance of `DbApi` and initializes the pool.
     ///
     /// # Errors
@@ -88,9 +88,9 @@ impl<'a> DbApi {
         object_id: i64,
     ) -> Result<(), Box<dyn std::error::Error>> {
         sqlx::query(
-            r#"
+            r"
         INSERT INTO triples (subject, predicate, object) VALUES (?1, ?2, ?3)
-        "#,
+        ",
         )
         .bind(subject_id)
         .bind(predicate_id)
@@ -134,14 +134,14 @@ impl<'a> DbApi {
 
         // Use the provided subject name to query the database for all predicate/object pairs
         let results: Vec<(String, String)> = sqlx::query_as(
-            r#"
+            r"
         SELECT predicates.name, objects.object
         FROM triples
         JOIN names AS subjects ON triples.subject = subjects.id
         JOIN names AS predicates ON triples.predicate = predicates.id
         JOIN objects AS objects ON triples.object = objects.id
         WHERE subjects.name = ?1
-        "#,
+        ",
         )
         .bind(subject_name.to_string())
         .fetch_all(pool)
@@ -173,11 +173,11 @@ impl<'a> DbApi {
         let pool = &self.pool;
 
         let names_strings: Vec<String> = sqlx::query_scalar(
-            r#"
+            r"
             SELECT DISTINCT subjects.name
             FROM triples
             JOIN names AS subjects ON triples.subject = subjects.id
-            "#,
+            ",
         )
         .fetch_all(pool)
         .await?;
@@ -202,11 +202,11 @@ impl<'a> DbApi {
         let pool = &self.pool;
 
         let names_strings: Vec<String> = sqlx::query_scalar(
-            r#"
+            r"
             SELECT DISTINCT predicates.name
             FROM triples
             JOIN names AS predicates ON triples.predicate = predicates.id
-            "#,
+            ",
         )
         .fetch_all(pool)
         .await?;
@@ -271,7 +271,7 @@ mod tests {
 
         // Fetch all matching rows
         let results: Vec<(String, String, String)> = sqlx::query_as(
-            r#"
+            r"
             SELECT subjects.name, predicates.name, objects.object
             FROM triples
             JOIN names AS subjects ON triples.subject = subjects.id
@@ -279,9 +279,9 @@ mod tests {
             JOIN objects AS objects ON triples.object = objects.id
             WHERE subjects.name = ?1
             ORDER BY predicates.name
-            "#,
+            ",
         )
-        .bind(&subject.name().to_string())
+        .bind(subject.name().to_string())
         .fetch_all(&db_api.pool)
         .await
         .expect("Failed to fetch from test DB");
