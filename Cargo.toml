@@ -33,7 +33,7 @@ glob = "0.3.2"
 lalrpop-util = { version = "0.22.2", features = ["lexer", "unicode"] }
 
 [build-dependencies]
-lalrpop = "0.22.1"
+lalrpop = "0.22.2"
 
 [features]
 default = ["sqlite"]
