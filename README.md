@@ -1,3 +1,8 @@
+<!-- ghmig:moved -->
+> **This repository has moved to [https://git.navicore.tech/navicore/triples](https://git.navicore.tech/navicore/triples).**
+>
+> The GitHub copy is archived and no longer maintained.
+
 # triples
 
 Experimental Rust lib to store any data in triple format.
